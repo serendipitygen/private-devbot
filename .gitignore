@@ -1,0 +1,5 @@
+uploads/
+faiss_index/
+document_store/
+__pycache__/
+.env
