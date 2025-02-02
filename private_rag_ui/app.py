@@ -3,7 +3,7 @@ import requests
 import re
 import time
 from typing import List
-import hashlib
+import os
 
 # CSS 스타일 수정
 HIGHLIGHT_CSS = """
@@ -24,9 +24,6 @@ def highlight_keywords(text: str, keywords: List[str]) -> str:
         pattern = re.compile(re.escape(keyword), re.IGNORECASE)
         text = pattern.sub(r'<span class="highlight">\g<0></span>', text)
     return text
-
-def compute_file_hash(file_content: bytes) -> str:
-    return hashlib.md5(file_content).hexdigest()
 
 st.title("Private RAG 관리자 패널")
 
@@ -153,26 +150,35 @@ with st.expander("📂 문서 관리", expanded=True):
     
     if uploaded_file:
         file_content = uploaded_file.getvalue()
-        file_hash = compute_file_hash(file_content)
         files = {"file": (uploaded_file.name, file_content)}
         try:
-            response = requests.post(
-                "http://localhost:8123/upload",
-                files=files,
-                data={"file_hash": file_hash}
-            )
-            if response.status_code == 200:
-                result = response.json()
-                if result.get("duplicate"):
-                    st.warning(f"문서 '{uploaded_file.name}'는 이미 존재합니다. 중복 인덱싱을 건너뛰었습니다.")
+            data = {
+                "file_path": os.path.abspath(uploaded_file.name),
+                "last_modified": time.time()
+            }
+            
+            with st.spinner("파일 업로드 중..."):
+                response = requests.post(
+                    "http://localhost:8123/upload",
+                    files=files,
+                    data=data
+                )
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    if "chunks" in result:  # 새로운 문서가 추가된 경우
+                        st.success(f"✅ 문서 업로드 완료: {uploaded_file.name} (문서 수: {result['chunks']})")
+                    else:  # 이미 존재하는 문서인 경우
+                        st.info(f"ℹ️ {result['message']}")
+                        st.caption(f"파일: {result['filename']}")
+                    
+                    # 문서 목록 갱신
+                    st.session_state.documents = load_document_list()
                 else:
-                    st.success(f"문서 업로드 완료: {uploaded_file.name}")
-                # 문서 목록 갱신
-                st.session_state.documents = load_document_list()
-            else:
-                st.error(f"업로드 실패: {response.text}")
+                    st.error(f"❌ 업로드 실패: {response.text}")
+                    
         except Exception as e:
-            st.error(f"업로드 오류: {str(e)}")
+            st.error(f"❌ 업로드 오류: {str(e)}")
 
     # 문서 목록 표시
     if st.session_state.documents:

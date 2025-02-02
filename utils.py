@@ -24,51 +24,64 @@ class PPTXLoader:
                     text.append(shape.text)
         return [Document(page_content="\n".join(text), metadata={"source": self.file_path})]
 
-def process_file(file_content, filename):
-    # 임시 파일 생성 및 저장
-    with tempfile.NamedTemporaryFile(delete=False, suffix=filename) as tmp:
-        try:
+def process_file(file_content, filename, file_path):  # file_path 매개변수 추가
+    """
+    file_content는 메모리에 있는 바이트 데이터입니다.
+    하지만 문서 로더는 파일 시스템의 파일 경로가 필요합니다.
+    따라서 임시로 파일을 생성해서 처리합니다.
+    """
+    tmp = None
+    try:
+        # 1. 메모리의 내용을 임시 파일로 저장
+        with tempfile.NamedTemporaryFile(delete=False, suffix=filename) as tmp:
             tmp.write(file_content)
-            tmp.flush()  # 버퍼 내용을 즉시 디스크에 쓰기
-            print(f"[DEBUG] Created temp file: {tmp.name}")
+            tmp.flush()
+            tmp_path = tmp.name
+        
+        print(f"[DEBUG] Processing file - Name: {filename}, Path: {tmp_path}")
+        
+        # 파일 처리
+        file_ext = os.path.splitext(filename)[1].lower()
+        print(f"[DEBUG] Processing file type: {file_ext}")
 
-            file_ext = os.path.splitext(filename)[1].lower()
-            print(f"[DEBUG] Processing file type: {file_ext}")
+        # 파일 유형별 처리
+        if file_ext == ".pdf":
+            loader = PyPDFLoader(tmp_path)
+        elif file_ext == ".docx":
+            loader = Docx2txtLoader(tmp_path)
+        elif file_ext == ".pptx":
+            loader = PPTXLoader(tmp_path)
+        elif file_ext in [".txt", ".md"]:
+            loader = TextLoader(tmp_path, encoding='utf-8')
+        else:
+            raise ValueError(f"Unsupported file type: {file_ext}")
 
-            # 파일 유형별 처리
-            if file_ext == ".pdf":
-                loader = PyPDFLoader(tmp.name)
-            elif file_ext == ".docx":
-                loader = Docx2txtLoader(tmp.name)
-            elif file_ext == ".pptx":
-                loader = PPTXLoader(tmp.name)
-            elif file_ext in [".txt", ".md"]:
-                loader = TextLoader(tmp.name, encoding='utf-8')
-            else:
-                raise ValueError(f"Unsupported file type: {file_ext}")
+        # 문서 로드
+        docs = loader.load()
+        print(f"[DEBUG] Loaded {len(docs)} documents from {filename}")
 
-            # 문서 로드
-            docs = loader.load()
-            print(f"[DEBUG] Loaded {len(docs)} documents from {filename}")
+        # 메타데이터 추가 시 file_path 사용
+        for doc in docs:
+            doc.metadata.update({
+                "source": file_path,  # filename 대신 file_path 사용
+                "filename": filename,  # 원본 파일명도 보존
+                "file_type": file_ext[1:],
+                "timestamp": time.time()
+            })
 
-            # 메타데이터 추가
-            for doc in docs:
-                doc.metadata.update({
-                    "source": filename,
-                    "file_type": file_ext[1:],
-                    "timestamp": time.time()
-                })
+        return docs
 
-            return docs
+    except Exception as e:
+        print(f"[ERROR] Failed to process {filename}: {str(e)}")
+        raise
 
-        except Exception as e:
-            print(f"[ERROR] Failed to process {filename}: {str(e)}")
-            raise
-
-        finally:
-            # 임시 파일 정리
+    finally:
+        # 3. 임시 파일 정리
+        if tmp is not None:
             try:
-                os.unlink(tmp.name)
-                print(f"[DEBUG] Cleaned up temp file: {tmp.name}")
+                if os.path.exists(tmp_path):
+                    os.unlink(tmp_path)
+                    print(f"[DEBUG] Cleaned up temp file: {tmp_path}")
             except Exception as e:
-                print(f"[WARNING] Failed to cleanup temp file: {str(e)}")
+                print(f"[WARNING] Temp file cleanup failed: {str(e)}")
+                # 오류는 기록하지만 진행은 계속함

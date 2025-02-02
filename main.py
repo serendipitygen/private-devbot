@@ -1,10 +1,17 @@
+import shutil
+import stat
+import asyncio
+import time
+import re
+import os
+import pickle
+import datetime
+import numpy as np
+
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List, Optional
-import os
-import shutil
-import stat
 from langchain_community.document_loaders import (
     PyPDFLoader,
     Docx2txtLoader,
@@ -12,20 +19,42 @@ from langchain_community.document_loaders import (
     CSVLoader,  # 추가
     PythonLoader,
 )
-
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
-import asyncio
-import time
-import hashlib
-import os
-import re
 
+from sentence_transformers import SentenceTransformer
 
-# PPTX 커스텀 로더 추가
 from pptx import Presentation
+
+import hashlib
+
+import config
+
+from contextlib import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
+
+os.makedirs(config.FAISS_INDEX, exist_ok=True)
+
+# 벡터 저장소 및 관련 변수 초기화
+vector_store = None
+vector_store_lock = asyncio.Lock()
+
+# 문서 기록 저장
+indexed_file_list = None
+
+# 임베딩 모델 초기화
+if not os.path.exists(config.EMBEDDING_MODEL_PATH):
+    embeddings = HuggingFaceEmbeddings(model_name=config.MODEL_NAME)
+
+    os.makedirs(config.EMBEDDING_MODEL_PATH, exist_ok=True)
+    model = SentenceTransformer(config.MODEL_NAME)
+    model.save(config.EMBEDDING_MODEL_PATH)
+else:
+    print(f"[DEBUG] 저장된 임베딩 모델을 로딩: {config.EMBEDDING_MODEL_PATH}")
+    embeddings = HuggingFaceEmbeddings(model_name=config.EMBEDDING_MODEL_PATH)
+
 
 class PPTXLoader:
     def __init__(self, file_path: str):
@@ -40,123 +69,225 @@ class PPTXLoader:
                     text_content.append(shape.text)
         return [Document(page_content="\n".join(text_content), metadata={"source": self.file_path})]
 
-# 상수 정의
-FAISS_INDEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), "faiss_index")
-UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 
-# FAISS 디렉토리 생성 (디렉토리 자체가 없을 경우)
-if not os.path.exists(FAISS_INDEX):
-    os.makedirs(FAISS_INDEX)
-    print(f"Created FAISS directory: {FAISS_INDEX}")
-
-# 업로드 디렉토리 생성
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-    print(f"Created uploads directory: {UPLOAD_FOLDER}")
-
-ALLOWED_EXTENSIONS = {
-    "txt", "pdf", "png", "jpg", "jpeg", "gif", "csv", "md", 
-    "html", "pptx", "docx", "epub", "odt"
-}
-
-app = FastAPI()
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(FAISS_INDEX, exist_ok=True)
-
-# 벡터 저장소 및 관련 변수 초기화
-vector_store = None
-vector_store_lock = asyncio.Lock()
-document_hashes = {}
-
-# 서버 시작 시 FAISS 저장소 초기화
-def initialize_vector_store():
-    global vector_store
-    if os.path.exists(FAISS_INDEX):
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # 시작 시 실행
+    print("[INFO] Starting up FastAPI application...")
+    try:
+        global vector_store, indexed_file_list
+        
+        # FAISS 벡터 스토어 초기화
         try:
-            print("[INFO] Loading existing FAISS index...")
+            print(f"[INFO] Loading FAISS index from: {config.FAISS_INDEX}")
             vector_store = FAISS.load_local(
-                FAISS_INDEX, 
-                embeddings, 
-                allow_dangerous_deserialization=True  # 옵션 재추가
+                config.FAISS_INDEX,
+                embeddings,
+                allow_dangerous_deserialization=True
             )
+            if vector_store:
+                doc_count = len(vector_store.docstore._dict)
+                print(f"[INFO] Successfully loaded FAISS index with {doc_count} documents")
+            else:
+                print("[INFO] Creating new Vector Store")
+                initialize_empty_vector_store()
         except Exception as e:
-            print(f"[ERROR] Failed to load FAISS index: {e}")
-            vector_store = None
+            print(f"[ERROR] Failed to initialize vector store: {e}")
+            print("[INFO] Creating new empty vector store")
+            initialize_empty_vector_store()
 
-# FastAPI 앱 초기화 시 실행
-@app.on_event("startup")
-async def startup_event():
-    initialize_vector_store()
+        # 인덱스된 파일 목록 초기화
+        try:
+            if os.path.exists(config.INDEXED_FILE_LIST):
+                with open(config.INDEXED_FILE_LIST, 'rb') as f:
+                    indexed_file_list = pickle.load(f)  # loads() 대신 load() 사용
+                print(f"[INFO] Loaded {len(indexed_file_list)} indexed files")
+            else:
+                indexed_file_list = {}
+                print("[INFO] Created new indexed file list")
+        except Exception as e:
+            print(f"[ERROR] Failed to load indexed file list: {e}")
+            indexed_file_list = {}
+    
+    except Exception as e:
+        print(f"[ERROR] Startup error: {e}")
+        # 기본값으로 초기화
+        vector_store = None
+        indexed_file_list = {}
+    
+    yield  # FastAPI 애플리케이션 실행
+    
+    # 종료 시 실행
+    try:
+        if vector_store:
+            vector_store.save_local(config.FAISS_INDEX)
+            print("[INFO] Saved vector store before shutdown")
+        
+        if indexed_file_list:
+            with open(config.INDEXED_FILE_LIST, 'wb') as f:
+                pickle.dump(indexed_file_list, f)
+            print("[INFO] Saved indexed file list")
 
-# 임베딩 모델 초기화
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    except Exception as e:
+        print(f"[ERROR] Shutdown error: {e}")
+
+# FastAPI 앱 초기화
+app = FastAPI(lifespan=lifespan)
+
+# CORS 설정
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 class SearchRequest(BaseModel):
     query: str
     k: int = 5
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def compute_file_hash(file_content: bytes) -> str:
-    return hashlib.md5(file_content).hexdigest()
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in config.ALLOWED_EXTENSIONS
 
 @app.post("/upload")
-async def upload_file(file: UploadFile = File(...), file_hash: str = Form(...)):
-    global vector_store
+async def upload_file(
+    file: UploadFile = File(...),
+    file_path: str = Form(...),
+    last_modified: float = Form(...)
+):
+    global vector_store, indexed_file_list
     async with vector_store_lock:
         try:
-            # 파일 저장
-            safe_filename = re.sub(r'[^\w가-힣-_.]', '_', file.filename)
-            file_path = os.path.join(UPLOAD_FOLDER, safe_filename)
+            print(f"[DEBUG] Upload request - Path: {file_path}, Modified: {time.ctime(last_modified)}")
             
-            # 파일 저장
+            # 파일 존재 여부 및 수정 시간 체크
+            is_update_needed = True
+            if file_path in indexed_file_list:
+                existing_last_modified = indexed_file_list[file_path]
+                print(f"[DEBUG] Last modified comparison:")
+                print(f"  - Existing: {time.ctime(existing_last_modified)} ({existing_last_modified})")
+                print(f"  - New     : {time.ctime(last_modified)} ({last_modified})")
+                
+                # 수정 시간이 같거나 더 오래된 파일은 스킵
+                if last_modified <= existing_last_modified:
+                    print(f"[INFO] Skip indexing - File is up to date: {file_path}")
+                    return JSONResponse(
+                        status_code=200,
+                        content={
+                            "message": "File already exists and is up to date",
+                            "filename": file_path,
+                            "duplicate": True,
+                            "existing_time": existing_last_modified,
+                            "new_time": last_modified
+                        }
+                    )
+
             content = await file.read()
-            with open(file_path, "wb") as buffer:
-                buffer.write(content)
             
-            print(f"[DEBUG] Saved file: {os.path.abspath(file_path)}")
+            # 기존 문서 삭제 (업데이트가 필요한 경우만)
+            if file_path in indexed_file_list:
+                print(f"[INFO] Updating existing file: {file_path}")
+                await remove_existing_documents(file_path)
 
-            # 문서 처리를 위해 utils.process_file 사용
-            from utils import process_file
-            try:
-                texts = process_file(content, safe_filename)
-                print(f"[DEBUG] Processed {len(texts)} documents")
-
-                # 청크 생성
-                text_splitter = RecursiveCharacterTextSplitter(
-                    chunk_size=1000,
-                    chunk_overlap=200,
-                    separators=["\n\n", "\n", " ", ""]
-                )
-                chunks = text_splitter.split_documents(texts)
-                print(f"[DEBUG] Created {len(chunks)} chunks")
-
-                # 벡터 저장소에 추가
-                if vector_store is None:
-                    print("[DEBUG] Creating new vector store")
-                    vector_store = FAISS.from_documents(chunks, embeddings)
-                else:
-                    print("[DEBUG] Adding to existing vector store")
-                    vector_store.add_documents(chunks)
-
-                # 저장
-                vector_store.save_local(FAISS_INDEX)
-                print(f"[DEBUG] Saved vector store to {FAISS_INDEX}")
-
-                return JSONResponse(content={
-                    "message": "File uploaded successfully",
-                    "filename": safe_filename,
-                    "chunks": len(chunks)
-                })
-
-            except Exception as e:
-                print(f"[ERROR] Document processing failed: {str(e)}")
-                raise HTTPException(500, detail=f"Document processing failed: {str(e)}")
+            # 새 문서 처리 및 추가
+            texts = await process_and_add_documents(content, file, file_path)
+            
+            # 성공적으로 처리된 경우에만 indexed_file_list 업데이트
+            indexed_file_list[file_path] = last_modified
+            print(f"[INFO] Updated index timestamp for {file_path}: {time.ctime(last_modified)}")
+            
+            return JSONResponse(content={
+                "message": "File uploaded successfully",
+                "filename": file_path,
+                "chunks": len(texts) if texts else 0
+            })
 
         except Exception as e:
-            print(f"[ERROR] File upload failed: {str(e)}")
-            raise HTTPException(500, detail=f"File upload failed: {str(e)}")
+            print(f"[ERROR] Upload failed: {str(e)}")
+            raise HTTPException(500, detail=f"Upload failed: {str(e)}")
+
+async def remove_existing_documents(file_path: str):
+    """기존 문서 삭제 함수"""
+    global vector_store
+    if not vector_store:
+        return
+        
+    try:
+        # 삭제할 문서 수집
+        docs_with_id = {
+            idx: doc for idx, doc in vector_store.docstore._dict.items()
+            if doc.metadata.get("source", "") == file_path
+        }
+        
+        if docs_with_id:
+            print(f"[DEBUG] Removing {len(docs_with_id)} documents for: {file_path}")
+            
+            # 문서 삭제
+            for doc_id in docs_with_id.keys():
+                vector_store.docstore._dict.pop(doc_id)
+            
+            # 남은 문서로 벡터 저장소 재구축
+            remaining_docs = list(vector_store.docstore._dict.values())
+            
+            if remaining_docs:
+                # 기존 문서의 docstore ID를 보존하면서 재구축
+                temp_store = FAISS.from_documents(remaining_docs, embeddings)
+                vector_store = temp_store
+            else:
+                initialize_empty_vector_store()
+                
+            print(f"[INFO] Successfully rebuilt vector store with {len(remaining_docs)} documents")
+            
+            # 벡터 저장소 저장
+            vector_store.save_local(config.FAISS_INDEX)
+            
+    except Exception as e:
+        print(f"[ERROR] Failed to remove documents: {str(e)}")
+        raise
+
+async def process_and_add_documents(content: bytes, file: UploadFile, file_path: str):
+    """문서 처리 및 추가 함수"""
+    global vector_store
+    
+    try:
+        from utils import process_file
+        texts = process_file(content, file.filename, file_path)
+        print(f"[DEBUG] Processed {len(texts)} documents")
+
+        # 청크 생성
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=200,
+            separators=["\n\n", "\n", " ", ""]
+        )
+        chunks = text_splitter.split_documents(texts)
+        print(f"[DEBUG] Created {len(chunks)} chunks")
+
+        # 벡터 저장소에 추가
+        if vector_store is None:
+            print("[DEBUG] Creating new vector store")
+            vector_store = FAISS.from_documents(chunks, embeddings)
+        else:
+            print("[DEBUG] Adding to existing vector store")
+            # 기존 문서의 docstore ID를 보존하면서 추가
+            existing_docs = list(vector_store.docstore._dict.values())
+            all_docs = existing_docs + chunks
+            
+            # 전체 문서로 새로운 벡터 저장소 생성
+            temp_store = FAISS.from_documents(all_docs, embeddings)
+            vector_store = temp_store
+
+        # 저장
+        vector_store.save_local(config.FAISS_INDEX)
+        print(f"[DEBUG] Saved vector store with {len(vector_store.docstore._dict)} total documents")
+        
+        return texts
+
+    except Exception as e:
+        print(f"[ERROR] Document processing failed: {str(e)}")
+        raise
 
 @app.post("/search")
 async def search_documents(request: SearchRequest):
@@ -206,60 +337,77 @@ async def get_documents():
 
     try:
         documents = []
-        for filename in os.listdir(UPLOAD_FOLDER):
-            file_path = os.path.join(UPLOAD_FOLDER, filename)
-            if os.path.isfile(file_path):
-                file_type = filename.rsplit('.', 1)[1].lower()
-                last_modified = os.path.getmtime(file_path)
-                chunk_count = get_chunk_count(filename)
-                documents.append({
-                    "filename": filename,
-                    "file_type": file_type,
-                    "last_updated": last_modified,
-                    "chunk_count": chunk_count
-                })
-        return {"documents": documents}
+        doc_paths = {}  # 파일 경로별 청크 수 집계
+        
+        # 먼저 벡터 스토어에서 문서 정보 수집
+        if vector_store:
+            for doc in vector_store.docstore._dict.values():
+                path = doc.metadata.get("source")
+                if path:
+                    if path not in doc_paths:
+                        doc_paths[path] = {
+                            "filename": doc.metadata.get("filename", os.path.basename(path)),
+                            "file_type": doc.metadata.get("file_type", "unknown"),
+                            "last_updated": doc.metadata.get("timestamp", 0),
+                            "chunk_count": 1
+                        }
+                    else:
+                        doc_paths[path]["chunk_count"] += 1
+
+        # 문서 목록 생성
+        documents = [
+            {
+                "filename": info["filename"],
+                "file_type": info["file_type"],
+                "last_updated": info["last_updated"],
+                "chunk_count": info["chunk_count"],
+                "file_path": path
+            }
+            for path, info in doc_paths.items()
+        ]
+        
+        return {"documents": sorted(documents, key=lambda x: x["filename"])}
     except Exception as e:
         raise HTTPException(500, detail=str(e))
 
 @app.get("/status")
 async def get_status():
     try:
-        document_count = len(os.listdir(UPLOAD_FOLDER))
-        index_size = get_directory_size(FAISS_INDEX) / (1024 * 1024)  # MB로 변환
+        document_count = len(indexed_file_list)
+        index_size = get_directory_size(config.FAISS_INDEX) / (1024 * 1024)  # MB로 변환
         return {
             "document_count": document_count,
             "index_size_mb": round(index_size, 2),
-            "index_path": os.path.abspath(FAISS_INDEX)
+            "index_path": os.path.abspath(config.FAISS_INDEX)
         }
     except Exception as e:
         raise HTTPException(500, detail=str(e))
 
 @app.post("/reset")
 async def reset_storage():
-    global vector_store
+    global vector_store, indexed_file_list
     async with vector_store_lock:
         try:
-            # FAISS 인덱스 삭제
-            if os.path.exists(FAISS_INDEX):
-                shutil.rmtree(FAISS_INDEX, onerror=remove_readonly)
+            # FAISS 인덱스 디렉토리 삭제
+            if os.path.exists(config.FAISS_INDEX):
+                shutil.rmtree(config.FAISS_INDEX, onerror=remove_readonly)
+            os.makedirs(config.FAISS_INDEX, exist_ok=True)
 
-            # 업로드된 파일 삭제
-            for filename in os.listdir(UPLOAD_FOLDER):
-                file_path = os.path.join(UPLOAD_FOLDER, filename)
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
+            # indexed_file_list 초기화
+            indexed_file_list = {}
+            if os.path.exists(config.INDEXED_FILE_LIST):
+                os.remove(config.INDEXED_FILE_LIST)
 
-            # 벡터 저장소 및 문서 해시 초기화
-            vector_store = None
-            document_hashes.clear()
+            # 새로운 빈 벡터 스토어 생성
+            initialize_empty_vector_store()
 
             return JSONResponse(content={
                 "status": "success", 
-                "message": "Vector store and uploaded files have been reset."
+                "message": "Vector store and indexed files have been reset."
             })
         except Exception as e:
-            raise HTTPException(500, detail=str(e))
+            print(f"[ERROR] Reset failed: {str(e)}")
+            raise HTTPException(500, detail=f"Reset failed: {str(e)}")
 
 def remove_readonly(func, path, _):
     os.chmod(path, stat.S_IWRITE)
@@ -292,12 +440,40 @@ def get_directory_size(path):
     return total_size
 
 from langchain_community.vectorstores import FAISS
-def get_chunk_count(filename):
+def get_chunk_count(file_path):  # filename 대신 file_path 사용
     if vector_store is None:
         return 0
     return len([doc for doc in vector_store.docstore._dict.values() 
-                if doc.metadata.get("source") == filename])
+                if doc.metadata.get("source") == file_path])
+
+def initialize_empty_vector_store():
+    """빈 FAISS 벡터 스토어 생성"""
+    global vector_store
+    try:
+        print("[INFO] Creating new empty vector store")
+        
+        # 디렉토리 생성
+        os.makedirs(config.FAISS_INDEX, exist_ok=True)
+        
+        # 빈 텍스트로 벡터 스토어 초기화
+        empty_text = [""]  # 최소한 하나의 문서 필요
+        vector_store = FAISS.from_texts(
+            texts=empty_text,
+            embedding=embeddings
+        )
+        
+        # 초기 문서 제거
+        vector_store.docstore._dict.clear()
+        
+        # 저장
+        vector_store.save_local(config.FAISS_INDEX)
+        print(f"[INFO] Created and saved empty vector store at {config.FAISS_INDEX}")
+        return True
+    except Exception as e:
+        print(f"[ERROR] Failed to create empty vector store: {str(e)}")
+        vector_store = None
+        return False
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8123)
+    uvicorn.run(app, host="0.0.0.0", port=config.server_port)
