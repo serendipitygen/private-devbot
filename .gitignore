@@ -4,3 +4,5 @@ document_store/
 __pycache__/
 .env
 embedding_model/
+**/__pycache__/
+store/

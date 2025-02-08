@@ -85,3 +85,12 @@ def process_file(file_content, filename, file_path):  # file_path 매개변수 �
             except Exception as e:
                 print(f"[WARNING] Temp file cleanup failed: {str(e)}")
                 # 오류는 기록하지만 진행은 계속함
+
+def get_directory_size(directory: str) -> int:
+    total = 0
+    for dirpath, dirnames, filenames in os.walk(directory):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            if os.path.exists(fp):
+                total += os.path.getsize(fp)
+    return total
