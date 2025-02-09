@@ -46,16 +46,17 @@ async def upload_file(
     global vector_store
 
     try:
-        logger.debug(f"**********[DEBUG] Upload request - Path: {file_path}")
+        logger.debug(f"[DEBUG] Upload request - Path: {file_path}")
         
         file_contents = await file.read()
         content = await vector_store.upload(file_path=file_path, file_name=file.filename,
                             content=file_contents)
         return JSONResponse(content=content)
-
     except Exception as e:
         logger.exception(f"[ERROR] Upload failed: {str(e)}")
         raise HTTPException(500, detail=f"Upload failed: {str(e)}")
+    finally:
+        vector_store.save_indexed_files_and_vector_db()
 
 @app.post("/upload/batch")
 async def upload_files(

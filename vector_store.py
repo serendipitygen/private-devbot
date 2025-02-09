@@ -49,18 +49,17 @@ class VectorStore:
             logger.error(f"Error initializing embedding model: {str(e)}")
             raise
 
+    # 파일 1건 업로드
     async def upload(self, file_path: str, file_name: str, content: bytes) -> Dict:
         try:
+            # 지원되지 않는 파일 타입은 제거
+            if not self.splitter.is_supported_file_type(file_path):
+                return {"status": "fail", "message": f"File {file_name} is not supported file type"}
+            
             # 동일 파일 존재 시 벡터스토어 및 파일 목록에서 삭제
             if file_path in self.indexed_files.keys():
                 self.vector_store.delete_files(list(file_path))
                 del self.indexed_files[file_path]
-                self.save_indexed_files()
-
-            # 지원되지 않는 파일 타입은 제거
-            if not self.splitter.is_supported_file_type(file_path):
-
-                return {"status": "fail", "message": f"File {file_name} is not supported file type"}
 
             # 임시 파일 생성
             with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file_name)[1]) as temp_file:
@@ -69,11 +68,7 @@ class VectorStore:
                 creation_time = os.path.getctime(temp_file_path)
 
             # 문서 분할
-            try:
-                chunks = self.splitter.split_document(file_path)
-            except Exception as e:
-                logger.exception(f"[ERROR] 파일의 청크 생성에 실패했습니다: {file_path}\n{str(e)}")
-                return {"status": "fail", "message": f"File {file_name} is not supported to read"}
+            chunks = self.splitter.split_document(file_path)
             
             # 분할된 청크를 벡터 스토어에 추가
             for chunk in chunks:
@@ -96,13 +91,10 @@ class VectorStore:
             }
             self.indexed_files[file_path] = file_metadata
 
-            self.vector_store.save_local(self.store_path)
-            self.save_indexed_files()
-
             return {"status": "success", "message": f"File {file_name} uploaded and indexed successfully"}
         except Exception as e:
             logger.exception(f"Upload failed: {str(e)}")
-            return {"status": "error", "message": str(e)}
+            return {"status": "fail", "message": str(e)}
 
     def search(self, query: str, k: int = 5) -> List[Dict]:
         try:
@@ -161,9 +153,11 @@ class VectorStore:
             with open(indexed_files_path, 'rb') as f:
                 self.indexed_files = pickle.load(f)
     
-    def save_indexed_files(self):
+    def save_indexed_files_and_vector_db(self):
         indexed_files_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "store") + "/indexed_files.pickle"
 
         with open(indexed_files_path, 'wb') as f:
             pickle.dump(self.indexed_files, f)
+
+        self.vector_store.save_local(self.store_path)
 
