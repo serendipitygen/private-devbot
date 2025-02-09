@@ -1,27 +1,11 @@
-import time
-import os
 import asyncio
 import json
-import numpy as np
-from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form
 from fastapi.responses import JSONResponse
 from fastapi.responses import Response
 from pydantic import BaseModel
-from typing import List, Optional
-from langchain_community.document_loaders import (
-    PyPDFLoader,
-    Docx2txtLoader,
-    TextLoader,  # 추가
-    CSVLoader,  # 추가
-    PythonLoader,
-)
-from langchain.docstore.document import Document
-
-
-from pptx import Presentation
+from typing import List
 
 import config
 import logger_util
@@ -34,19 +18,6 @@ from vector_store import VectorStore
 vector_store = VectorStore()
 
 logger = logger_util.get_logger()
-
-class PPTXLoader:
-    def __init__(self, file_path: str):
-        self.file_path = file_path
-    
-    def load(self) -> list:
-        prs = Presentation(self.file_path)
-        text_content = []
-        for slide in prs.slides:
-            for shape in slide.shapes:
-                if hasattr(shape, "text"):
-                    text_content.append(shape.text)
-        return [Document(page_content="\n".join(text_content), metadata={"source": self.file_path})]
 
 
 @asynccontextmanager
@@ -232,23 +203,6 @@ async def reset_storage():
     except Exception as e:
         logger.exception(f"[ERROR] Reset failed: {str(e)}")
         raise HTTPException(500, detail=f"Reset failed: {str(e)}")
-
-def get_loader_class(file_name):
-    extension = file_name.split(".")[-1].lower()
-    loader_map = {
-        "tsv": CSVLoader,
-        "csv": CSVLoader,
-        "pdf": PyPDFLoader,
-        "txt": TextLoader,
-        "md": TextLoader,
-        "pptx": PPTXLoader,
-        "docx": Docx2txtLoader,
-        "py": PythonLoader,
-        "html": TextLoader,
-    }
-    if extension not in loader_map:
-        raise ValueError(f"Unsupported file extension: {extension}")
-    return loader_map.get(extension)
 
 
 if __name__ == "__main__":
