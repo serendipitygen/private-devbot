@@ -20,20 +20,6 @@ vector_store = VectorStore()
 logger = logger_util.get_logger()
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    try:
-        yield  # FastAPI 애플리케이션 실행
-    except asyncio.CancelledError:
-        # 종료 시 CancelledError를 무시하도록 처리
-        pass
-    finally:
-        try:
-            if vector_store:
-                vector_store.save_vector_db()  # 저장 호출
-                logger.info("[INFO] Saved vector store before shutdown")
-        except Exception as e:
-            logger.error(f"[ERROR] Shutdown error: {e}")
 
 # FastAPI 앱 초기화
 app = FastAPI(lifespan=lifespan)
