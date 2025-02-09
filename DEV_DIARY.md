@@ -1,5 +1,6 @@
 ## TODO
 
+[] UI에서 다중 파일 등록 처리
 [] 재인덱싱 기능 제공 : 청크, overlap 크기 조절 가능
 [] 파일 등록 시, 키값을 클라이언트 IP + 파일 경로로 해야 함.
 [] Fast API startup/shutdown 이벤트 처리 방식 변경경
@@ -7,7 +8,6 @@
 [] 랭체인 기반으로 변경
 [] 벡터 저장소 저장 로직 개선 (성능)
 [] FLUX UI에 로그파일 처리
-[] 백엔드-프론트엔드 통합해서 하나로 둘다 실행 필요
 [] 문서 목록에 파일명, 폴더명 검색 기능 추가
 [] 문서 목록은 파일, 폴더의 Tree 형태로 표시
 [] 문서 목록에 글꼴 작게 해서 많은 정보 표시
@@ -38,24 +38,41 @@
 [완료] 파일, 폴더 단위로 삭제 지원
 [완료] Streamlit 기반 테스트 UI에서 Flutter 기반 UI로 전환
 [완료] 유사도 점수 계산 방법 개선
+[완료] 폴더 단위 등록
+
+---
+
+## 2025.02.09
+### NUITKA로 EXE 파일 생성
+python -m nuitka --follow-imports --include-package=fastapi --include-package=uvicorn --include-package=langchain --include-package=faiss --include-package=numpy --include-package=cv2 --include-package=easyocr --include-package=sentence_transformers --include-package=pydantic --include-package=pptx --include-package=PIL --include-package=torch --include-package=transformers --include-package=tokenizers --include-package=tqdm --include-package=yaml --include-package=packaging --include-package=filelock --include-package=regex --include-package=requests --include-package=charset_normalizer --include-package=certifi --include-package=idna --include-package=urllib3 --include-package=typing_extensions --include-package=starlette --include-package=anyio --include-package=sniffio --include-package=click --include-package=h11 --include-package=websockets --include-package=httptools --include-package=watchfiles --include-package=python-multipart --enable-plugin=numpy --enable-plugin=torch --standalone --onefile --windows-icon-from-ico=app_icon.ico --output-dir=build main.py
+
+
+websockets
 
 ---
 
 ## 2025.02.08
+### 이미지 OCR 적용
+- 문서의 의미 없는 내용도 다 추출하여 유사도 검색에 안 좋은 영향을 끼침
+- 
+### 폴더 선택 후 하위 모든 폴더와 파일을 등록
+
 ### kss 제거 및 kiepiepy 기반 구조로 변경 완료
 
 $uri = "http://localhost:8123/documents"
 $headers = @{"Content-Type" = "application/json"}
 
-# 파일 경로를 원래 문자열로 사용하고 백슬래시 이스케이프
+### 파일 경로를 원래 문자열로 사용하고 백슬래시 이스케이프
+
 $filePath = "D:/docs/google_drive_serencode_bak/노트/obsidian/임시 기록.md"
 
 # 요청 본문 생성 (백슬래시 이스케이프)
+
 $body = '{"file_paths": ["' + $filePath + '"]}'
 
 # DELETE 요청 보내기
-Invoke-WebRequest -Uri $uri -Method DELETE -Headers $headers -Body $body
 
+Invoke-WebRequest -Uri $uri -Method DELETE -Headers $headers -Body $body
 
 ## 2025.02.07
 

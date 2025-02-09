@@ -3,6 +3,8 @@ import os
 import asyncio
 import json
 import numpy as np
+from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form
 from fastapi.responses import JSONResponse
@@ -101,6 +103,53 @@ async def upload_file(
         logger.exception(f"[ERROR] Upload failed: {str(e)}")
         raise HTTPException(500, detail=f"Upload failed: {str(e)}")
 
+@app.post("/upload/batch")
+async def upload_files(
+    files: List[UploadFile] = File(...),
+    file_paths: str = Form(...)  # JSON 문자열로 전달된 파일 경로 정보
+):
+    try:
+        file_paths_data = json.loads(file_paths)
+        success_count = 0
+        failed_files = []
+        
+        # 파일 경로 매핑 생성
+        path_mapping = {
+            fp['filename']: fp['file_path'] 
+            for fp in file_paths_data
+        }
+
+        async def process_file(file: UploadFile):
+            try:
+                file_contents = await file.read()
+                file_path = path_mapping.get(file.filename)
+                content = await vector_store.upload(file_path=file_path, file_name=file.filename,
+                            content=file_contents)
+                if content['status'] != 'success':
+                    failed_files.append(file.filename)
+                    return False
+                
+                return True
+            except Exception as e:
+                print(f"Error processing {file.filename}: {str(e)}")
+                failed_files.append(file.filename)
+                return False
+
+        # 모든 파일 동시 처리
+        tasks = [process_file(file) for file in files]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        
+        success_count = sum(1 for result in results if result is True)
+
+        return {
+            "status": "success",
+            "message": f"Processed {len(files)} files",
+            "success_count": success_count,
+            "failed_files": failed_files
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/search")
 async def search_documents(request: SearchRequest):

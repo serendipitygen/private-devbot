@@ -51,9 +51,16 @@ class VectorStore:
 
     async def upload(self, file_path: str, file_name: str, content: bytes) -> Dict:
         try:
-            # 동일 파일 존재 시 벡터스토어에서 삭제
+            # 동일 파일 존재 시 벡터스토어 및 파일 목록에서 삭제
             if file_path in self.indexed_files.keys():
-                self.vector_store.delete_file(list(file_path))
+                self.vector_store.delete_files(list(file_path))
+                del self.indexed_files[file_path]
+                self.save_indexed_files()
+
+            # 지원되지 않는 파일 타입은 제거
+            if not self.splitter.is_supported_file_type(file_path):
+
+                return {"status": "fail", "message": f"File {file_name} is not supported file type"}
 
             # 임시 파일 생성
             with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file_name)[1]) as temp_file:
@@ -62,7 +69,11 @@ class VectorStore:
                 creation_time = os.path.getctime(temp_file_path)
 
             # 문서 분할
-            chunks = self.splitter.split_document(file_path)
+            try:
+                chunks = self.splitter.split_document(file_path)
+            except Exception as e:
+                logger.exception(f"[ERROR] 파일의 청크 생성에 실패했습니다: {file_path}\n{str(e)}")
+                return {"status": "fail", "message": f"File {file_name} is not supported to read"}
             
             # 분할된 청크를 벡터 스토어에 추가
             for chunk in chunks:
@@ -135,10 +146,14 @@ class VectorStore:
             if file_path in self.indexed_files:
                 del self.indexed_files[file_path]
         self.save_indexed_files()
+        self.vector_store.save_local(self.store_path)
+
     def delete_all_documents(self):
         self.vector_store.delete_all()
         self.indexed_files = {}
-
+        self.save_indexed_files()
+        self.vector_store.save_local(self.store_path)
+        
     def load_indexed_files_if_exist(self):
         indexed_files_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "store") + "/indexed_files.pickle" 
 

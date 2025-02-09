@@ -107,6 +107,7 @@ class FAISS_VECTOR_STORE:
         if ids_to_delete:
             self.vectorstore.delete(ids_to_delete)
 
+
     def similarity_search(self, query: str, filter: dict = None, k: int = 4):
         """
         유사도 검색을 수행합니다.

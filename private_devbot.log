@@ -2061,3 +2061,3271 @@ AttributeError: 'FAISS_VECTOR_STORE' object has no attribute 'delete_file'
 2025-02-08 16:42:49,209 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
 2025-02-08 18:45:36,775 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
 2025-02-08 18:45:39,727 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:36:12,454 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:36:44,621 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:36:45,952 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:36:46,006 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:37:11,021 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:37:12,180 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:38:04,571 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:38:40,715 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:38:41,967 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:38:42,068 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:39:11,609 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:39:12,830 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:39:12,912 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:39:40,548 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:39:42,122 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:39:42,199 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:40:34,951 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:40:36,205 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:40:36,268 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:41:06,543 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:41:07,796 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:41:07,880 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:41:55,806 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:41:57,285 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:41:57,367 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:42:45,832 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:42:47,120 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:42:47,174 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:43:20,319 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:43:22,118 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:43:22,178 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:43:49,195 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:43:50,455 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:43:50,532 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:44:18,740 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:44:20,004 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:46:28,823 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:46:55,931 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:46:57,363 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:48:12,992 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:48:40,979 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:48:42,297 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:48:42,368 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:49:07,121 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:49:08,494 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:54:26,949 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:54:58,266 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:54:59,861 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:55:04,771 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:55:40,029 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:55:41,520 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:55:41,621 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:56:17,908 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:56:20,210 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:56:20,280 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:56:52,119 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:56:53,584 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:56:53,653 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:57:27,024 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:57:28,519 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:57:28,641 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:58:26,571 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:58:28,003 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 19:58:28,170 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 19:58:57,020 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 19:58:58,457 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 20:04:26,290 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 20:04:53,944 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 20:04:55,164 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 20:05:22,780 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 20:05:53,260 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 20:05:54,418 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 20:05:54,493 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 20:06:23,208 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 20:06:24,468 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 20:06:24,572 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 20:07:20,955 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 20:07:22,110 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 20:07:22,189 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 20:07:47,666 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 20:07:48,772 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 20:07:58,436 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 20:08:29,851 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 20:08:31,350 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 20:14:13,037 - private_devbot_logger - ERROR - Upload failed: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 59, in upload
+    if not self.splitter.is_supported_file_type(file_path):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+2025-02-08 20:14:13,042 - private_devbot_logger - ERROR - Upload failed: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 59, in upload
+    if not self.splitter.is_supported_file_type(file_path):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+2025-02-08 20:14:13,045 - private_devbot_logger - ERROR - Upload failed: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 59, in upload
+    if not self.splitter.is_supported_file_type(file_path):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+2025-02-08 20:14:13,048 - private_devbot_logger - ERROR - Upload failed: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 59, in upload
+    if not self.splitter.is_supported_file_type(file_path):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+2025-02-08 20:14:13,052 - private_devbot_logger - ERROR - Upload failed: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 59, in upload
+    if not self.splitter.is_supported_file_type(file_path):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+2025-02-08 20:14:13,171 - private_devbot_logger - ERROR - Upload failed: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 59, in upload
+    if not self.splitter.is_supported_file_type(file_path):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+2025-02-08 20:14:13,173 - private_devbot_logger - ERROR - Upload failed: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 59, in upload
+    if not self.splitter.is_supported_file_type(file_path):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+2025-02-08 20:14:13,175 - private_devbot_logger - ERROR - Upload failed: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 59, in upload
+    if not self.splitter.is_supported_file_type(file_path):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+2025-02-08 20:14:13,179 - private_devbot_logger - ERROR - Upload failed: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 59, in upload
+    if not self.splitter.is_supported_file_type(file_path):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+2025-02-08 20:14:13,181 - private_devbot_logger - ERROR - Upload failed: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 59, in upload
+    if not self.splitter.is_supported_file_type(file_path):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+2025-02-08 20:14:13,221 - private_devbot_logger - ERROR - Upload failed: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 59, in upload
+    if not self.splitter.is_supported_file_type(file_path):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+2025-02-08 20:14:13,223 - private_devbot_logger - ERROR - Upload failed: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 59, in upload
+    if not self.splitter.is_supported_file_type(file_path):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+2025-02-08 20:14:13,227 - private_devbot_logger - ERROR - Upload failed: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 59, in upload
+    if not self.splitter.is_supported_file_type(file_path):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DocumentSplitter' object has no attribute 'is_supported_file_type'
+2025-02-08 20:14:36,562 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 20:15:09,115 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 20:15:10,972 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 20:22:05,914 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 20:31:53,177 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 20:31:54,986 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 20:32:34,222 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 20:33:00,983 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 20:33:02,512 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 20:35:09,682 - private_devbot_logger - DEBUG - **********[DEBUG] Upload request - Path: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240916150419.png
+2025-02-08 20:35:32,965 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240916150419.png
+이미지 처리 중 오류 발생: 'NoneType' object has no attribute 'shape'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 24, in load
+    result = self.reader.readtext(self.file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stars\.conda\envs\pd3\Lib\site-packages\easyocr\easyocr.py", line 468, in readtext
+    result = self.recognize(img_cv_grey, horizontal_list, free_list,\
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stars\.conda\envs\pd3\Lib\site-packages\easyocr\easyocr.py", line 383, in recognize
+    image_list, max_width = get_image_list(h_list, f_list, img_cv_grey, model_height = imgH)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stars\.conda\envs\pd3\Lib\site-packages\easyocr\utils.py", line 582, in get_image_list
+    maximum_y,maximum_x = img.shape
+                          ^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'shape'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 62, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 35, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 'NoneType' object has no attribute 'shape'
+2025-02-08 20:36:43,696 - private_devbot_logger - DEBUG - **********[DEBUG] Upload request - Path: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20241019002051.png
+2025-02-08 20:36:46,415 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20241019002051.png
+이미지 처리 중 오류 발생: 'NoneType' object has no attribute 'shape'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 24, in load
+    result = self.reader.readtext(self.file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stars\.conda\envs\pd3\Lib\site-packages\easyocr\easyocr.py", line 468, in readtext
+    result = self.recognize(img_cv_grey, horizontal_list, free_list,\
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stars\.conda\envs\pd3\Lib\site-packages\easyocr\easyocr.py", line 383, in recognize
+    image_list, max_width = get_image_list(h_list, f_list, img_cv_grey, model_height = imgH)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\stars\.conda\envs\pd3\Lib\site-packages\easyocr\utils.py", line 582, in get_image_list
+    maximum_y,maximum_x = img.shape
+                          ^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'shape'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 62, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 35, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 'NoneType' object has no attribute 'shape'
+2025-02-08 20:37:52,933 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 20:39:18,006 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 20:39:19,316 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 20:39:30,574 - private_devbot_logger - DEBUG - **********[DEBUG] Upload request - Path: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20241019002051.png
+2025-02-08 20:43:55,309 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 20:46:37,794 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 20:46:39,145 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 20:46:39,245 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 20:47:05,860 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 20:47:06,998 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 20:52:04,924 - private_devbot_logger - ERROR - Upload failed: 'FAISS_VECTOR_STORE' object has no attribute 'delete_file'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 56, in upload
+    self.vector_store.delete_file(list(file_path))
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FAISS_VECTOR_STORE' object has no attribute 'delete_file'
+2025-02-08 23:23:30,405 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 23:23:31,958 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 23:40:41,584 - private_devbot_logger - DEBUG - **********[DEBUG] Upload request - Path: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240919215350.png
+2025-02-08 23:40:41,586 - private_devbot_logger - ERROR - Upload failed: 'FAISS_VECTOR_STORE' object has no attribute 'delete_file'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 56, in upload
+    self.vector_store.delete_file(list(file_path))
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FAISS_VECTOR_STORE' object has no attribute 'delete_file'
+2025-02-08 23:41:58,524 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 23:42:24,636 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 23:42:25,712 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 23:42:42,752 - private_devbot_logger - DEBUG - **********[DEBUG] Upload request - Path: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240919215350.png
+2025-02-08 23:43:45,634 - private_devbot_logger - DEBUG - **********[DEBUG] Upload request - Path: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\20240923_213146.jpg
+2025-02-08 23:44:55,379 - private_devbot_logger - DEBUG - **********[DEBUG] Upload request - Path: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240920232852.png
+2025-02-08 23:45:28,345 - private_devbot_logger - DEBUG - **********[DEBUG] Upload request - Path: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240921195430.png
+2025-02-08 23:46:15,721 - private_devbot_logger - DEBUG - **********[DEBUG] Upload request - Path: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107092511.png
+2025-02-08 23:46:50,981 - private_devbot_logger - DEBUG - **********[DEBUG] Upload request - Path: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250110144515.png
+2025-02-08 23:47:02,385 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250110144515.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:47:28,939 - private_devbot_logger - DEBUG - **********[DEBUG] Upload request - Path: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108165238.png
+2025-02-08 23:47:38,743 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108165238.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:50:48,317 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240920234532.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:53:24,188 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107130021.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:53:30,518 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107140846.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:53:31,010 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107141831.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:53:32,733 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107143734.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:53:33,192 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107144059.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:53:46,022 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107155926.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:53:46,903 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107160502.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:54:27,624 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108150130.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:54:28,741 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108150333.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:54:48,949 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108161039.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:54:50,580 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108161131.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:55:03,293 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108165238.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:55:04,623 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108170112.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:56:12,217 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250110144515.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 68, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 106, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 79, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-08 23:58:59,441 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-08 23:59:26,738 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-08 23:59:27,841 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-08 23:59:54,899 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:00:18,522 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:00:19,515 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:08:29,422 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\1709163013663.jpg
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:09:51,797 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240917002101.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:10:04,008 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240919181817.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:10:10,733 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240919220009.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:10:12,809 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240919232829.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:10:15,894 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240920231554.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:10:25,068 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240920232127.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:10:35,018 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240920234532.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:10:48,993 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240921142953.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:10:55,062 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240921170437.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:11:04,243 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240921190638.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:11:07,811 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240921195430.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:11:14,548 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240921200142.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:11:30,947 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240922214056.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:12:05,712 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20241019002241.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:12:09,613 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20241019002244.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:12:21,866 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20241019004114.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:12:36,996 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107101238.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:12:40,990 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107110258.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:12:41,726 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107123854.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:02,124 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107130021.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:06,545 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107130252.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:08,523 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107140846.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:09,036 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107141831.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:10,799 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107143734.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:11,224 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107144059.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:15,150 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107154407.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:17,036 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107154637.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:19,767 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107154648.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:24,353 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107155926.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:25,249 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107160502.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:29,282 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108100752.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:35,379 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108100923.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:36,782 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108103556.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:43,706 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108105336.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:55,654 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108140428.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:13:58,146 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108143907.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:14:05,725 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108150130.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:14:06,793 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108150333.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:14:20,566 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108153826.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:14:22,710 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108160638.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:14:25,732 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108160822.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:14:26,766 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108161039.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:14:28,383 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108161131.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:14:30,492 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108161340.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:14:40,497 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108164425.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:14:41,054 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108165238.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:14:42,361 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108170112.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:14:53,677 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250109094134.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:14:55,277 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250109095534.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:15:02,457 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250109095827.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:15:03,902 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250109100323.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:15:06,451 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250109104742.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:15:19,620 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250110094530.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:15:20,418 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250110104640.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:15:26,177 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250110104945.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:15:50,123 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250110144515.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 75, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 113, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 86, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:18:16,918 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:18:43,420 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:18:44,365 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:26:19,360 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:27:43,583 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:27:44,418 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:28:24,606 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:28:56,119 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:28:57,114 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:29:49,590 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:30:13,251 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:30:14,205 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:30:14,274 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:30:36,046 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:30:37,127 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:30:48,302 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:31:42,546 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:31:43,550 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:31:43,623 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:32:06,348 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:32:07,333 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:32:07,402 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:32:34,016 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:32:35,497 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:35:23,031 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\20240923_213146.jpg
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:36:14,239 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\20240923_213628 1.jpg
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 70, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:36:27,835 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:36:53,959 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:36:55,404 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:40:31,774 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:40:57,331 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:40:58,563 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:40:58,660 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:41:23,496 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:41:24,760 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:41:24,857 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:41:49,063 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:41:50,126 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:41:50,209 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:42:13,656 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:42:14,741 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:42:18,720 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:42:42,477 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:42:43,688 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:42:43,782 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:43:08,044 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:43:09,371 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:43:09,452 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:43:34,414 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:43:35,441 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 00:43:35,551 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 00:44:54,070 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 00:44:55,058 - private_devbot_logger - DEBUG - [DEBUG] 벡터 DB를 새로 생성합니다.
+2025-02-09 00:49:02,836 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\1709163013663.jpg
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:50:23,124 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240917002101.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:50:24,305 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240917002733.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:50:33,314 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240919181552.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:50:35,228 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240919181817.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:50:42,013 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240919220009.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:50:44,058 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240919232829.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:50:47,000 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240920231554.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:50:52,604 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240920231744.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:50:55,796 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240920232127.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:51:03,645 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240920234004.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:51:04,630 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240920234532.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:51:13,978 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240921142830.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:51:17,377 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240921142953.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:51:22,882 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240921170437.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:51:31,504 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240921190638.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:51:34,666 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240921195430.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:51:40,361 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240921200142.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:51:55,037 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240922214003.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:51:55,569 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240922214056.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:51:55,717 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240922223846.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:51:55,902 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240922223913.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:51:57,991 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20240922224241.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:52:27,077 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20241019002241.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:52:30,604 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20241019002244.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:52:41,671 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20241019004114.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:52:43,301 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107092511.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:52:50,082 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107100914.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:52:53,698 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107101022.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:52:55,466 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107101238.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:52:59,095 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107110258.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:52:59,842 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107123854.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:00,887 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107124022.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:18,854 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107130021.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:22,861 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107130252.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:24,788 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107140846.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:25,262 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107141831.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:26,942 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107143734.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:27,361 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107144059.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:31,090 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107154407.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:32,880 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107154637.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:35,296 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107154648.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:38,310 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107154957.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:39,548 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107155926.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:40,366 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250107160502.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:44,163 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108100752.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:49,265 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108100923.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:50,585 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108103556.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:53:56,900 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108105336.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:08,137 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108140428.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:10,467 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108143907.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:17,904 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108150130.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:19,011 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108150333.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:21,083 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108151130.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:26,443 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108151326.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:31,374 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108153826.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:33,483 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108160638.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:36,334 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108160822.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:37,350 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108161039.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:38,906 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108161131.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:40,929 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108161340.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:50,601 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108164425.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:51,197 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108165238.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:51,763 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108165306.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:54:52,496 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250108170112.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:55:02,201 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250109090106.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:55:03,286 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250109094134.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:55:04,926 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250109095534.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:55:11,757 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250109095827.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:55:13,087 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250109100323.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:55:15,394 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250109104742.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:55:22,980 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250109133921.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:55:27,262 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250110094530.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:55:28,044 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250110104640.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:55:33,218 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250110104945.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:55:39,943 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250110105904.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:55:45,603 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250110124905.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:55:54,293 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250110125125.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 00:55:55,501 - private_devbot_logger - ERROR - [ERROR] 파일의 청크 생성에 실패했습니다: D:\docs\google_drive_serencode_bak\노트\obsidian\04. Archive\attached\Pasted image 20250110144515.png
+이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 73, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
