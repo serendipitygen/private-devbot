@@ -33,13 +33,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 class SearchRequest(BaseModel):
     query: str
     k: int = 5
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in config.ALLOWED_EXTENSIONS
 
 @app.post("/upload")
 async def upload_file(
