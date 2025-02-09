@@ -137,14 +137,11 @@ class VectorStore:
         for file_path in file_paths:
             if file_path in self.indexed_files:
                 del self.indexed_files[file_path]
-        self.save_indexed_files()
-        self.vector_store.save_local(self.store_path)
+        
 
     def delete_all_documents(self):
         self.vector_store.delete_all()
         self.indexed_files = {}
-        self.save_indexed_files()
-        self.vector_store.save_local(self.store_path)
         
     def load_indexed_files_if_exist(self):
         indexed_files_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "store") + "/indexed_files.pickle" 

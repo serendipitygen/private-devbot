@@ -6025,3 +6025,27 @@ Traceback (most recent call last):
     raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
 ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
 2025-02-09 21:59:40,272 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 22:04:14,402 - private_devbot_logger - ERROR - 'VectorStore' object has no attribute 'save_indexed_files'
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\main.py", line 150, in delete_documents
+    vector_store.delete_documents(request.file_paths)
+  File "D:\dev\work\private-devbot\vector_store.py", line 140, in delete_documents
+    self.save_indexed_files()
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'VectorStore' object has no attribute 'save_indexed_files'
+2025-02-09 22:05:32,894 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 22:05:33,811 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 22:05:57,305 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 22:05:58,406 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 22:06:21,881 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 22:06:22,734 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 22:06:45,790 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 22:06:46,632 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 22:07:09,380 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 22:07:10,246 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 22:07:38,385 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 22:07:39,244 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 22:08:00,646 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 22:08:01,523 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 22:08:43,068 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 22:08:43,909 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.

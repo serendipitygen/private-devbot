@@ -152,6 +152,9 @@ async def delete_documents(request: DeleteRequest):
     except Exception as e:
         logger.exception(str(e))
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        vector_store.save_indexed_files_and_vector_db()
+
 
 @app.delete("/documents/all")
 async def delete_all_documents():
@@ -161,6 +164,8 @@ async def delete_all_documents():
     except Exception as e:
         logger.exception(str(e))
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        vector_store.save_indexed_files_and_vector_db()
 
 @app.get("/status")
 async def get_status():
@@ -190,6 +195,8 @@ async def reset_storage():
     except Exception as e:
         logger.exception(f"[ERROR] Reset failed: {str(e)}")
         raise HTTPException(500, detail=f"Reset failed: {str(e)}")
+    finally:
+        vector_store.save_indexed_files_and_vector_db()
 
 
 if __name__ == "__main__":
