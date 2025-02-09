@@ -22,7 +22,7 @@ logger = logger_util.get_logger()
 
 
 # FastAPI 앱 초기화
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 # CORS 설정
 app.add_middleware(
