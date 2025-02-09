@@ -5357,3 +5357,671 @@ ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하
 2025-02-09 19:43:27,389 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
 2025-02-09 19:43:28,395 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
 2025-02-09 19:44:25,382 - private_devbot_logger - INFO - [INFO] Saved vector store before shutdown
+2025-02-09 20:15:15,663 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 20:15:16,616 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 20:16:25,631 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 20:16:26,566 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 20:16:49,169 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 20:16:50,088 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 20:48:38,113 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 20:48:39,954 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 20:49:16,226 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 20:49:17,956 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 20:49:47,152 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 20:49:48,495 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-09 20:50:48,965 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 20:50:50,038 - private_devbot_logger - DEBUG - [DEBUG] 벡터 DB를 새로 생성합니다.
+2025-02-09 20:54:24,083 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 20:54:25,405 - private_devbot_logger - DEBUG - [DEBUG] 벡터 DB를 새로 생성합니다.
+2025-02-09 20:58:39,034 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 20:58:40,167 - private_devbot_logger - DEBUG - [DEBUG] 벡터 DB를 새로 생성합니다.
+2025-02-09 21:12:17,741 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-09 21:12:18,995 - private_devbot_logger - DEBUG - [DEBUG] 벡터 DB를 새로 생성합니다.
+2025-02-09 21:54:45,562 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload2\AI App Spec. 인증 - 코드 스니펫.md
+2025-02-09 21:54:46,479 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'success', 'message': 'File AI App Spec. 인증 - 코드 스니펫.md uploaded and indexed successfully'}
+2025-02-09 21:55:13,426 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload2\임백준 - 코딩의 종말.md
+2025-02-09 21:55:13,521 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'success', 'message': 'File 임백준 - 코딩의 종말.md uploaded and indexed successfully'}
+2025-02-09 21:55:14,740 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload2\임시 기록.md
+2025-02-09 21:55:16,664 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'success', 'message': 'File 임시 기록.md uploaded and indexed successfully'}
+2025-02-09 21:55:17,727 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload2\자주 사용하는 정보.md
+2025-02-09 21:55:17,827 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'success', 'message': 'File 자주 사용하는 정보.md uploaded and indexed successfully'}
+2025-02-09 21:56:04,327 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\1709163013663.jpg
+2025-02-09 21:56:19,290 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:56:19,299 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:56:24,914 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\20240923_213146.jpg
+2025-02-09 21:56:48,001 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'success', 'message': 'File 20240923_213146.jpg uploaded and indexed successfully'}
+2025-02-09 21:56:48,062 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\20240923_213628 1.jpg
+2025-02-09 21:57:04,524 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'success', 'message': 'File 20240923_213628 1.jpg uploaded and indexed successfully'}
+2025-02-09 21:57:04,573 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\20240923_213628.jpg
+2025-02-09 21:57:20,535 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'success', 'message': 'File 20240923_213628.jpg uploaded and indexed successfully'}
+2025-02-09 21:57:20,575 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\20240923_214200.jpg
+2025-02-09 21:57:32,714 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'success', 'message': 'File 20240923_214200.jpg uploaded and indexed successfully'}
+2025-02-09 21:57:32,761 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20240916150419.png
+2025-02-09 21:57:37,413 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'success', 'message': 'File Pasted image 20240916150419.png uploaded and indexed successfully'}
+2025-02-09 21:57:37,452 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20240917002101.png
+2025-02-09 21:57:37,964 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:57:37,969 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:57:38,000 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20240917002733.png
+2025-02-09 21:57:39,009 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:57:39,014 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:57:39,054 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20240919181225.png
+2025-02-09 21:57:45,551 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'success', 'message': 'File Pasted image 20240919181225.png uploaded and indexed successfully'}
+2025-02-09 21:57:45,583 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20240919181552.png
+2025-02-09 21:57:47,245 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:57:47,250 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:57:47,287 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20240919181817.png
+2025-02-09 21:57:49,131 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:57:49,136 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:57:49,173 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20240919215350.png
+2025-02-09 21:57:53,559 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'success', 'message': 'File Pasted image 20240919215350.png uploaded and indexed successfully'}
+2025-02-09 21:57:53,591 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250108151130.png
+2025-02-09 21:57:55,748 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:57:55,753 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:57:55,802 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250108151326.png
+2025-02-09 21:58:00,995 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:01,002 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:01,032 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250108153826.png
+2025-02-09 21:58:05,786 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:05,793 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:05,832 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250108160010.png
+2025-02-09 21:58:06,331 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'success', 'message': 'File Pasted image 20250108160010.png uploaded and indexed successfully'}
+2025-02-09 21:58:06,366 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250108160638.png
+2025-02-09 21:58:07,787 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:07,791 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:07,827 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250108160822.png
+2025-02-09 21:58:10,552 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:10,556 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:10,587 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250108161039.png
+2025-02-09 21:58:11,605 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:11,610 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:11,635 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250108161131.png
+2025-02-09 21:58:13,167 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:13,173 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:13,205 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250108161340.png
+2025-02-09 21:58:15,156 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:15,161 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:15,191 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250108164425.png
+2025-02-09 21:58:25,797 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:25,806 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:25,850 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250108165238.png
+2025-02-09 21:58:26,434 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:26,439 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:26,481 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250108165306.png
+2025-02-09 21:58:27,030 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:27,036 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:27,066 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250108170112.png
+2025-02-09 21:58:27,824 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:27,830 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:27,879 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250109090106.png
+2025-02-09 21:58:38,142 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:38,149 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:38,185 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250109094134.png
+2025-02-09 21:58:39,278 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:39,285 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:39,326 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250109095534.png
+2025-02-09 21:58:40,962 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:40,968 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:41,008 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250109095827.png
+2025-02-09 21:58:48,617 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:48,622 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:48,666 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250109100323.png
+2025-02-09 21:58:50,248 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:50,254 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:50,294 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250109104742.png
+2025-02-09 21:58:53,487 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:58:53,494 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:58:53,545 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250109133921.png
+2025-02-09 21:59:03,921 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:59:03,932 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:59:03,976 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250110094510.png
+2025-02-09 21:59:08,642 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'success', 'message': 'File Pasted image 20250110094510.png uploaded and indexed successfully'}
+2025-02-09 21:59:08,700 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250110094530.png
+2025-02-09 21:59:10,240 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:59:10,246 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:59:10,282 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250110104640.png
+2025-02-09 21:59:11,181 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:59:11,186 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:59:11,222 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250110104825.png
+2025-02-09 21:59:12,258 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'success', 'message': 'File Pasted image 20250110104825.png uploaded and indexed successfully'}
+2025-02-09 21:59:12,294 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250110104945.png
+2025-02-09 21:59:16,922 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:59:16,929 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:59:16,966 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250110105904.png
+2025-02-09 21:59:24,131 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:59:24,137 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:59:24,168 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250110124905.png
+2025-02-09 21:59:30,489 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:59:30,495 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:59:30,533 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250110125125.png
+2025-02-09 21:59:38,977 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:59:38,983 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
+2025-02-09 21:59:39,014 - private_devbot_logger - DEBUG - [DEBUG] Upload request - Path: D:\dev\work\test\upload\img\Pasted image 20250110144515.png
+2025-02-09 21:59:40,267 - private_devbot_logger - ERROR - Upload failed: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\document_splitter.py", line 83, in load
+    raise ValueError("추출된 텍스트가 유효하지 않습니다.")
+ValueError: 추출된 텍스트가 유효하지 않습니다.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\dev\work\private-devbot\vector_store.py", line 71, in upload
+    chunks = self.splitter.split_document(file_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 121, in split_document
+    documents = loader.load()
+                ^^^^^^^^^^^^^
+  File "D:\dev\work\private-devbot\document_splitter.py", line 94, in load
+    raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
+ValueError: 이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.
+2025-02-09 21:59:40,272 - private_devbot_logger - DEBUG - [DEBUG] Upload response - Content: {'status': 'fail', 'message': '이미지 처리 중 오류 발생: 추출된 텍스트가 유효하지 않습니다.'}
