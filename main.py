@@ -51,6 +51,7 @@ async def upload_file(
         file_contents = await file.read()
         content = await vector_store.upload(file_path=file_path, file_name=file.filename,
                             content=file_contents)
+        logger.debug(f"[DEBUG] Upload response - Content: {content}")
         return JSONResponse(content=content)
     except Exception as e:
         logger.exception(f"[ERROR] Upload failed: {str(e)}")
@@ -58,10 +59,11 @@ async def upload_file(
     finally:
         vector_store.save_indexed_files_and_vector_db()
 
+
 @app.post("/upload/batch")
 async def upload_files(
     files: List[UploadFile] = File(...),
-    file_paths: str = Form(...)  # JSON 문자열로 전달된 파일 경로 정보
+    file_paths: str = Form(...)
 ):
     try:
         file_paths_data = json.loads(file_paths)
@@ -74,37 +76,38 @@ async def upload_files(
             for fp in file_paths_data
         }
 
-        async def process_file(file: UploadFile):
-            try:
-                file_contents = await file.read()
-                file_path = path_mapping.get(file.filename)
-                content = await vector_store.upload(file_path=file_path, file_name=file.filename,
-                            content=file_contents)
-                if content['status'] != 'success':
-                    failed_files.append(file.filename)
-                    return False
-                
-                return True
-            except Exception as e:
-                print(f"Error processing {file.filename}: {str(e)}")
-                failed_files.append(file.filename)
-                return False
-
-        # 모든 파일 동시 처리
-        tasks = [process_file(file) for file in files]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-        
-        success_count = sum(1 for result in results if result is True)
+        for file in files:
+            result, failed_file = await _process_file(file, path_mapping)
+            if result:
+                success_count += 1
+            else:
+                failed_files.append(failed_file)
 
         return {
             "status": "success",
             "message": f"Processed {len(files)} files",
             "success_count": success_count,
             "failed_files": failed_files
-        }
-        
+        }     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        vector_store.save_indexed_files_and_vector_db()
+    
+
+async def _process_file(file: UploadFile, path_mapping: dict):
+    try:
+        file_contents = await file.read()
+        file_path = path_mapping.get(file.filename)
+        content = await vector_store.upload(file_path=file_path, file_name=file.filename,
+                    content=file_contents)
+        if content['status'] != 'success':
+            return False, file.filename
+        
+        return True, file.filename
+    except Exception as e:
+        print(f"Error processing {file.filename}: {str(e)}")
+        return False, file.filename
 
 @app.post("/search")
 async def search_documents(request: SearchRequest):

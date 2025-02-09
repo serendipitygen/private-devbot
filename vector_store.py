@@ -156,6 +156,12 @@ class VectorStore:
     def save_indexed_files_and_vector_db(self):
         indexed_files_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "store") + "/indexed_files.pickle"
 
+        # 벡터 스토어 기준으로 인덱싱된 파일의 목록이 맞는지 검증 : file_path 기준으로 검증
+        for file_path in self.indexed_files.keys():
+            if file_path not in self.vector_store.docstore.keys():
+                logger.warning(f"[WARNING] 벡터 스토어 기준으로 인덱싱된 파일의 목록이 맞지 않습니다: {file_path}")
+                del self.indexed_files[file_path]
+
         with open(indexed_files_path, 'wb') as f:
             pickle.dump(self.indexed_files, f)
 
