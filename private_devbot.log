@@ -6049,3 +6049,14 @@ AttributeError: 'VectorStore' object has no attribute 'save_indexed_files'
 2025-02-09 22:08:01,523 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
 2025-02-09 22:08:43,068 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
 2025-02-09 22:08:43,909 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-11 22:15:37,824 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-11 22:18:34,687 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-11 22:18:36,035 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-11 22:18:58,050 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-11 22:18:58,964 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-11 22:22:11,552 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-11 22:22:12,510 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-11 22:30:41,720 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-11 22:30:42,702 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.
+2025-02-11 22:31:05,983 - private_devbot_logger - INFO - [DEBUG] 저장된 임베딩 모델을 로딩: D:\dev\work\private-devbot\embedding_model\sentence-transformers\distiluse-base-multilingual-cased-v2
+2025-02-11 22:31:06,874 - private_devbot_logger - DEBUG - [DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.

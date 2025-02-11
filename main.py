@@ -141,6 +141,18 @@ async def get_documents():
         logger.exception(str(e))
         raise HTTPException(500, detail=str(e))
 
+@app.get("/document")
+async def get_document(file_path: str):
+    global vector_store
+
+    try:
+        chunks = vector_store.get_document_chunks(file_path)
+
+        return {"status": "success", "file_path": file_path, "chunks": chunks}
+    except Exception as e:
+        logger.exception(str(e))
+        raise HTTPException(status_code=500, detail=str(e))
+
 class DeleteRequest(BaseModel):
     file_paths: List[str]
 

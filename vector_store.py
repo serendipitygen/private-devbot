@@ -114,6 +114,15 @@ class VectorStore:
 
     def get_documents(self) -> List[Dict]:
         return list(self.indexed_files.values()) if len(self.indexed_files) > 0 else []
+    
+    def get_document_chunks(self, file_path: str) -> List[str]:
+        """
+        주어진 file_path에 대한 모든 문서 청크를 반환합니다.
+        
+        :param file_path: 문서의 파일 경로
+        :return: 문서 청크 리스트
+        """
+        return self.vector_store.get_document_chunks(file_path)
 
     def get_indexed_file_count(self) -> int:
         file_count = len(self.indexed_files)
