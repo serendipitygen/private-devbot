@@ -99,22 +99,22 @@ class DocumentSplitter:
         self.chunk_overlap = chunk_overlap
         self.chunk_separators = chunk_separators or ["\n\n", "\n", " ", ""]
 
-    def split_document(self, file_path: str) -> List[Document]:
+    def split_document(self, file_path: str, temp_file_path: str) -> List[Document]:
         _, file_extension = os.path.splitext(file_path)
         file_extension = file_extension.lower()
 
         if file_extension in ['.txt', '.py', '.java', '.cpp', '.md', '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart']:
-            loader = TextLoader(file_path)
+            loader = TextLoader(temp_file_path)
         elif file_extension == '.pdf':
-            loader = PDFMinerLoader(file_path)
+            loader = PDFMinerLoader(temp_file_path)
         elif file_extension in ['.docx', '.doc']:
-            loader = Docx2txtLoader(file_path)
+            loader = Docx2txtLoader(temp_file_path)
         elif file_extension in ['.pptx', '.ppt']:
-            loader = UnstructuredPowerPointLoader(file_path)
+            loader = UnstructuredPowerPointLoader(temp_file_path)
         elif file_extension in ['.msg', '.eml']:
-            loader = UnstructuredEmailLoader(file_path)
+            loader = UnstructuredEmailLoader(temp_file_path)
         elif file_extension in ['.png', '.jpg', '.jpeg', '.gif', '.bmp', 'webp']:
-            loader = ImageLoader(file_path)
+            loader = ImageLoader(temp_file_path)
         else:
             raise ValueError(f"Unsupported file type: {file_extension}")
 
@@ -125,17 +125,25 @@ class DocumentSplitter:
             separators=self.chunk_separators,
             length_function=len,
         )
-        return text_splitter.split_documents(documents)
+        for doc in documents:
+            doc.metadata['source'] = file_path
+
+        docs = text_splitter.split_documents(documents)
+
+        return docs
     
     def is_supported_file_type(self, file_path: str) -> bool:
         _, file_extension = os.path.splitext(file_path)
         file_extension = file_extension.lower()
 
-        supported_type = [
-            '.txt', '.py', '.java', '.cpp', '.md', '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart',
+        """ TODO: 사내 보안 문서 적용 가능하면 추가 필요
             '.docx', '.doc',
             '.pptx', '.ppt',
             '.msg', '.eml',
+            '.pst', '.ost',
+        """
+        supported_type = [
+            '.txt', '.py', '.java', '.cpp', '.md', '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart',
             '.png', '.jpg', '.jpeg', '.gif', '.bmp', 'webp'
         ]
         

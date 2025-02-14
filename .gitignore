@@ -6,4 +6,4 @@ __pycache__/
 embedding_model/
 **/__pycache__/
 store/
-private_devbot.log
+**/private_devbot.log

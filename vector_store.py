@@ -58,8 +58,7 @@ class VectorStore:
             
             # 동일 파일 존재 시 벡터스토어 및 파일 목록에서 삭제
             if file_path in self.indexed_files.keys():
-                self.vector_store.delete_files(list(file_path))
-                del self.indexed_files[file_path]
+                self.delete_documents(list(file_path))
 
             # 임시 파일 생성
             with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file_name)[1]) as temp_file:
@@ -68,7 +67,7 @@ class VectorStore:
                 creation_time = os.path.getctime(temp_file_path)
 
             # 문서 분할
-            chunks = self.splitter.split_document(file_path)
+            chunks = self.splitter.split_document(file_path, temp_file_path)
             
             # 분할된 청크를 벡터 스토어에 추가
             for chunk in chunks:
@@ -162,12 +161,6 @@ class VectorStore:
     def save_indexed_files_and_vector_db(self):
         os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), "store"), exist_ok=True)
         indexed_files_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "store") + "/indexed_files.pickle"
-
-        # 벡터 스토어 기준으로 인덱싱된 파일의 목록이 맞는지 검증 : file_path 기준으로 검증
-        for file_path in self.indexed_files.keys():
-            if file_path not in self.vector_store.get_unique_file_paths():
-                logger.warning(f"[WARNING] 벡터 스토어 기준으로 인덱싱된 파일의 목록이 맞지 않습니다: {file_path}")
-                del self.indexed_files[file_path]
 
         with open(indexed_files_path, 'wb') as f:
             pickle.dump(self.indexed_files, f)
