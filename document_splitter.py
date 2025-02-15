@@ -5,6 +5,7 @@ import easyocr
 from PIL import Image
 import cv2
 import numpy as np
+import chardet
 
 from langchain.docstore.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -104,7 +105,8 @@ class DocumentSplitter:
         file_extension = file_extension.lower()
 
         if file_extension in ['.txt', '.py', '.java', '.cpp', '.md', '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart']:
-            loader = TextLoader(temp_file_path)
+            encoding = self._detect_encoding(temp_file_path)
+            loader = TextLoader(temp_file_path, encoding=encoding)
         elif file_extension == '.pdf':
             loader = PDFMinerLoader(temp_file_path)
         elif file_extension in ['.docx', '.doc']:
@@ -131,6 +133,23 @@ class DocumentSplitter:
         docs = text_splitter.split_documents(documents)
 
         return docs
+    
+    def _detect_encoding(self, file_path: str) -> str:
+        """
+        파일의 인코딩을 감지합니다.
+        
+        :param file_path: 파일 경로
+        :return: 감지된 인코딩
+        """
+        with open(file_path, 'rb') as file:
+            raw = file.read()
+            result = chardet.detect(raw)
+            encoding = result['encoding']
+            
+            # CP949/EUC-KR 인코딩 처리
+            if encoding and encoding.lower() in ['cp949', 'euc-kr', 'ms949']:
+                return 'cp949'
+            return encoding or 'utf-8'
     
     def is_supported_file_type(self, file_path: str) -> bool:
         _, file_extension = os.path.splitext(file_path)

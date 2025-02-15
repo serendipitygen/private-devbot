@@ -185,6 +185,7 @@ async def get_status():
         document_count = vector_store.get_indexed_file_count()
         index_size = vector_store.get_db_size() / (1024 * 1024)  # MB로 변환
         return {
+            "status": "success",
             "document_count": document_count,
             "index_size_mb": round(index_size, 2),
             "index_path": vector_store.get_vector_db_path()
