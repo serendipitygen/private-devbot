@@ -6,3 +6,5 @@ __pycache__/
 embedding_model/
 **/__pycache__/
 store/
+nuitka-crash-report.xml
+build/
