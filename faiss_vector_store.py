@@ -83,6 +83,19 @@ class FAISS_VECTOR_STORE:
         """문서 여러 건(리스트)을 인덱싱합니다."""
         self.vectorstore.add_documents(docs)
 
+    def get_document_chunks(self, file_path: str) -> List[str]:
+        """
+        주어진 file_path에 대한 모든 문서 청크를 반환합니다.
+        
+        :param file_path: 문서의 파일 경로
+        :return: 문서 청크 리스트
+        """
+        chunks = []
+        for doc in self.vectorstore.docstore._dict.values():
+            if doc.metadata.get("source") == file_path:
+                chunks.append(self._decode_text(doc.page_content))
+        return chunks
+
     def delete_all(self):
         """벡터스토어 내의 모든 문서를 삭제합니다."""
         new_index = faiss.IndexFlatL2(self.dimension)
@@ -106,17 +119,6 @@ class FAISS_VECTOR_STORE:
         # 수집된 ID에 해당하는 문서들을 벡터스토어에서 삭제
         if ids_to_delete:
             self.vectorstore.delete(ids_to_delete)
-
-
-    def similarity_search(self, query: str, filter: dict = None, k: int = 4):
-        """
-        유사도 검색을 수행합니다.
-        :param query: 검색 쿼리 텍스트
-        :param filter: 메타데이터 필터 (선택사항)
-        :param k: 반환할 문서 최대 건수 (기본: 4)
-        :return: 검색 결과 Document 리스트
-        """
-        return self.vectorstore.similarity_search(query, filter=filter, k=k)
     
     def search(self, query: str, filter: dict = None, k: int = 4):
         """
@@ -217,6 +219,11 @@ class FAISS_VECTOR_STORE:
         # FAISS doesn't provide a direct way to get the size, so we'll estimate
         db_size = len(self.vectorstore.index_to_docstore_id) * 1536 * 4  # 4 bytes per float
         return db_size
+    
+    # 벡터 스토어에 저장된 unique한 file_path 목록 반환
+    def get_unique_file_paths(self) -> List[str]:
+        return list(set([doc.metadata.get("source", "") for doc in self.vectorstore.docstore._dict.values()]))
+
 
 
 class DummyEmbeddings(Embeddings):

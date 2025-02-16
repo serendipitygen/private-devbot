@@ -1,27 +1,11 @@
-import time
-import os
 import asyncio
 import json
-import numpy as np
-from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form
 from fastapi.responses import JSONResponse
 from fastapi.responses import Response
 from pydantic import BaseModel
-from typing import List, Optional
-from langchain_community.document_loaders import (
-    PyPDFLoader,
-    Docx2txtLoader,
-    TextLoader,  # 추가
-    CSVLoader,  # 추가
-    PythonLoader,
-)
-from langchain.docstore.document import Document
-
-
-from pptx import Presentation
+from typing import List
 
 import config
 import logger_util
@@ -35,37 +19,10 @@ vector_store = VectorStore()
 
 logger = logger_util.get_logger()
 
-class PPTXLoader:
-    def __init__(self, file_path: str):
-        self.file_path = file_path
-    
-    def load(self) -> list:
-        prs = Presentation(self.file_path)
-        text_content = []
-        for slide in prs.slides:
-            for shape in slide.shapes:
-                if hasattr(shape, "text"):
-                    text_content.append(shape.text)
-        return [Document(page_content="\n".join(text_content), metadata={"source": self.file_path})]
 
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    try:
-        yield  # FastAPI 애플리케이션 실행
-    except asyncio.CancelledError:
-        # 종료 시 CancelledError를 무시하도록 처리
-        pass
-    finally:
-        try:
-            if vector_store:
-                vector_store.save_vector_db()  # 저장 호출
-                logger.info("[INFO] Saved vector store before shutdown")
-        except Exception as e:
-            logger.error(f"[ERROR] Shutdown error: {e}")
 
 # FastAPI 앱 초기화
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 # CORS 설정
 app.add_middleware(
@@ -76,13 +33,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 class SearchRequest(BaseModel):
     query: str
     k: int = 5
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in config.ALLOWED_EXTENSIONS
 
 @app.post("/upload")
 async def upload_file(
@@ -92,21 +46,24 @@ async def upload_file(
     global vector_store
 
     try:
-        logger.debug(f"**********[DEBUG] Upload request - Path: {file_path}")
+        logger.debug(f"[DEBUG] Upload request - Path: {file_path}")
         
         file_contents = await file.read()
         content = await vector_store.upload(file_path=file_path, file_name=file.filename,
                             content=file_contents)
+        logger.debug(f"[DEBUG] Upload response - Content: {content}")
         return JSONResponse(content=content)
-
     except Exception as e:
         logger.exception(f"[ERROR] Upload failed: {str(e)}")
         raise HTTPException(500, detail=f"Upload failed: {str(e)}")
+    finally:
+        vector_store.save_indexed_files_and_vector_db()
+
 
 @app.post("/upload/batch")
 async def upload_files(
     files: List[UploadFile] = File(...),
-    file_paths: str = Form(...)  # JSON 문자열로 전달된 파일 경로 정보
+    file_paths: str = Form(...)
 ):
     try:
         file_paths_data = json.loads(file_paths)
@@ -119,37 +76,38 @@ async def upload_files(
             for fp in file_paths_data
         }
 
-        async def process_file(file: UploadFile):
-            try:
-                file_contents = await file.read()
-                file_path = path_mapping.get(file.filename)
-                content = await vector_store.upload(file_path=file_path, file_name=file.filename,
-                            content=file_contents)
-                if content['status'] != 'success':
-                    failed_files.append(file.filename)
-                    return False
-                
-                return True
-            except Exception as e:
-                print(f"Error processing {file.filename}: {str(e)}")
-                failed_files.append(file.filename)
-                return False
-
-        # 모든 파일 동시 처리
-        tasks = [process_file(file) for file in files]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-        
-        success_count = sum(1 for result in results if result is True)
+        for file in files:
+            result, failed_file = await _process_file(file, path_mapping)
+            if result:
+                success_count += 1
+            else:
+                failed_files.append(failed_file)
 
         return {
             "status": "success",
             "message": f"Processed {len(files)} files",
             "success_count": success_count,
             "failed_files": failed_files
-        }
-        
+        }     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        vector_store.save_indexed_files_and_vector_db()
+    
+
+async def _process_file(file: UploadFile, path_mapping: dict):
+    try:
+        file_contents = await file.read()
+        file_path = path_mapping.get(file.filename)
+        content = await vector_store.upload(file_path=file_path, file_name=file.filename,
+                    content=file_contents)
+        if content['status'] != 'success':
+            return False, file.filename
+        
+        return True, file.filename
+    except Exception as e:
+        print(f"Error processing {file.filename}: {str(e)}")
+        return False, file.filename
 
 @app.post("/search")
 async def search_documents(request: SearchRequest):
@@ -183,6 +141,18 @@ async def get_documents():
         logger.exception(str(e))
         raise HTTPException(500, detail=str(e))
 
+@app.get("/document")
+async def get_document(file_path: str):
+    global vector_store
+
+    try:
+        chunks = vector_store.get_document_chunks(file_path)
+
+        return {"status": "success", "file_path": file_path, "chunks": chunks}
+    except Exception as e:
+        logger.exception(str(e))
+        raise HTTPException(status_code=500, detail=str(e))
+
 class DeleteRequest(BaseModel):
     file_paths: List[str]
 
@@ -194,6 +164,9 @@ async def delete_documents(request: DeleteRequest):
     except Exception as e:
         logger.exception(str(e))
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        vector_store.save_indexed_files_and_vector_db()
+
 
 @app.delete("/documents/all")
 async def delete_all_documents():
@@ -203,6 +176,8 @@ async def delete_all_documents():
     except Exception as e:
         logger.exception(str(e))
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        vector_store.save_indexed_files_and_vector_db()
 
 @app.get("/status")
 async def get_status():
@@ -210,6 +185,7 @@ async def get_status():
         document_count = vector_store.get_indexed_file_count()
         index_size = vector_store.get_db_size() / (1024 * 1024)  # MB로 변환
         return {
+            "status": "success",
             "document_count": document_count,
             "index_size_mb": round(index_size, 2),
             "index_path": vector_store.get_vector_db_path()
@@ -232,23 +208,8 @@ async def reset_storage():
     except Exception as e:
         logger.exception(f"[ERROR] Reset failed: {str(e)}")
         raise HTTPException(500, detail=f"Reset failed: {str(e)}")
-
-def get_loader_class(file_name):
-    extension = file_name.split(".")[-1].lower()
-    loader_map = {
-        "tsv": CSVLoader,
-        "csv": CSVLoader,
-        "pdf": PyPDFLoader,
-        "txt": TextLoader,
-        "md": TextLoader,
-        "pptx": PPTXLoader,
-        "docx": Docx2txtLoader,
-        "py": PythonLoader,
-        "html": TextLoader,
-    }
-    if extension not in loader_map:
-        raise ValueError(f"Unsupported file extension: {extension}")
-    return loader_map.get(extension)
+    finally:
+        vector_store.save_indexed_files_and_vector_db()
 
 
 if __name__ == "__main__":

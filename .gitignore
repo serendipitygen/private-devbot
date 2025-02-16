@@ -8,3 +8,5 @@ embedding_model/
 store/
 nuitka-crash-report.xml
 build/
+private_devbot.log
+
