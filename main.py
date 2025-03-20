@@ -1,4 +1,3 @@
-import asyncio
 import json
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form
@@ -10,16 +9,19 @@ from typing import List
 import config
 import logger_util
 
-from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from vector_store import VectorStore
+from document_reader import DocumentReader
+import platform
+
 
 # 벡터 저장소 및 관련 변수 초기화
 vector_store = VectorStore()
+document_reader = DocumentReader()
 
 logger = logger_util.get_logger()
 
-
+os_name = platform.system() # Windows | Linux | Darwin
 
 # FastAPI 앱 초기화
 app = FastAPI()
@@ -47,12 +49,15 @@ async def upload_file(
 
     try:
         logger.debug(f"[DEBUG] Upload request - Path: {file_path}")
+
+        success, file_name = await _process_file(file, file_path)
+
+        result = {
+            "status": "success" if success else "failed",
+            "message": f"Processed {file_name}",
+        }
         
-        file_contents = await file.read()
-        content = await vector_store.upload(file_path=file_path, file_name=file.filename,
-                            content=file_contents)
-        logger.debug(f"[DEBUG] Upload response - Content: {content}")
-        return JSONResponse(content=content)
+        return JSONResponse(content=result)
     except Exception as e:
         logger.exception(f"[ERROR] Upload failed: {str(e)}")
         raise HTTPException(500, detail=f"Upload failed: {str(e)}")
@@ -77,14 +82,15 @@ async def upload_files(
         }
 
         for file in files:
-            result, failed_file = await _process_file(file, path_mapping)
+            file_path = path_mapping.get(file.filename)
+            result, failed_file = await _process_file(file, file_path)
             if result:
                 success_count += 1
             else:
                 failed_files.append(failed_file)
 
         return {
-            "status": "success",
+            "status": "success" if len(failed_files) == 0 else "failed",
             "message": f"Processed {len(files)} files",
             "success_count": success_count,
             "failed_files": failed_files
@@ -94,14 +100,13 @@ async def upload_files(
     finally:
         vector_store.save_indexed_files_and_vector_db()
     
-
-async def _process_file(file: UploadFile, path_mapping: dict):
+async def _process_file(file: UploadFile, file_path:str):
     try:
-        file_contents = await file.read()
-        file_path = path_mapping.get(file.filename)
-        content = await vector_store.upload(file_path=file_path, file_name=file.filename,
-                    content=file_contents)
-        if content['status'] != 'success':
+        file_contents = await document_reader.get_contents(file, file_path)
+
+        result = await vector_store.upload(file_path=file_path, file_name=file.filename,
+                    contents=file_contents)
+        if result['status'] != 'success':
             return False, file.filename
         
         return True, file.filename
@@ -188,7 +193,8 @@ async def get_status():
             "status": "success",
             "document_count": document_count,
             "index_size_mb": round(index_size, 2),
-            "index_path": vector_store.get_vector_db_path()
+            "index_path": vector_store.get_vector_db_path(),
+            "os_name": os_name
         }
     except Exception as e:
         logger.error(str(e))

@@ -1,0 +1,79 @@
+@startuml
+
+' 스타일 설정
+skinparam sequence {
+    ArrowColor Black
+    ActorBorderColor Black
+    LifeLineBorderColor Black
+    ParticipantBorderColor Black
+    ParticipantBackgroundColor White
+}
+
+actor 사용자
+participant "StreamlitUI" as UI
+participant "VectorStore" as VS
+participant "FAISS_VECTOR_STORE" as FAISS
+participant "HuggingFaceEmbeddings" as HFE
+
+' 문서 업로드 시나리오
+group 문서 업로드
+    사용자 -> UI: 파일 업로드
+    activate UI
+    UI -> VS: upload(file_path, file_name, content)
+    activate VS
+    VS -> VS: 파일 타입 검증
+    VS -> VS: 임시 파일 생성
+    VS -> VS: 문서 분할
+    VS -> FAISS: add_documents(chunks)
+    activate FAISS
+    FAISS -> FAISS: 벡터 인덱싱
+    FAISS --> VS: 완료
+    deactivate FAISS
+    VS -> VS: 인덱스 파일 정보 저장
+    VS --> UI: 업로드 결과
+    deactivate VS
+    UI --> 사용자: 업로드 완료 메시지
+    deactivate UI
+end
+
+' 문서 검색 시나리오
+group 문서 검색
+    사용자 -> UI: 검색어 입력
+    activate UI
+    UI -> VS: search(query, k)
+    activate VS
+    VS -> FAISS: search(query, k)
+    activate FAISS
+    FAISS -> HFE: embed_query(query)
+    activate HFE
+    HFE --> FAISS: 임베딩 벡터
+    deactivate HFE
+    FAISS -> FAISS: 유사도 검색
+    FAISS --> VS: 검색 결과
+    deactivate FAISS
+    VS -> VS: 메타데이터 추가
+    VS --> UI: 검색 결과
+    deactivate VS
+    UI --> 사용자: 검색 결과 표시
+    deactivate UI
+end
+
+' 문서 삭제 시나리오
+group 문서 삭제
+    사용자 -> UI: 초기화 버튼 클릭
+    activate UI
+    UI -> VS: delete_all_documents()
+    activate VS
+    VS -> FAISS: delete_all()
+    activate FAISS
+    FAISS -> FAISS: 벡터 인덱스 초기화
+    FAISS --> VS: 완료
+    deactivate FAISS
+    VS -> VS: indexed_files 초기화
+    VS --> UI: 삭제 완료
+    deactivate VS
+    UI --> 사용자: 초기화 완료 메시지
+    deactivate UI
+end
+
+@enduml

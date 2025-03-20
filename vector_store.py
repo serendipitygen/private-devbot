@@ -9,11 +9,12 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from sentence_transformers import SentenceTransformer
 import config
 import logger_util
+import datetime
 
 logger = logger_util.get_logger()
 
 class VectorStore:
-    def __init__(self, chunk_size=700, chunk_overlap=10):
+    def __init__(self, chunk_size=500, chunk_overlap=100):
         self.splitter = DocumentSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
         self.dimension = 1024
         #self.embedding = DummyEmbeddings(dim=1536)  # OpenAI 임베딩의 기본 차원
@@ -50,42 +51,55 @@ class VectorStore:
             raise
 
     # 파일 1건 업로드
-    async def upload(self, file_path: str, file_name: str, content: bytes) -> Dict:
+    async def upload(self, file_path: str, file_name: str, contents: dict) -> Dict:
         try:
+            print(f"컨텐츠 타입 : {type(contents['contents'])}")
+
             # 지원되지 않는 파일 타입은 제거
             if not self.splitter.is_supported_file_type(file_path):
                 return {"status": "fail", "message": f"File {file_name} is not supported file type"}
             
             # 동일 파일 존재 시 벡터스토어 및 파일 목록에서 삭제
             if file_path in self.indexed_files.keys():
-                self.delete_documents(list(file_path))
+                self.delete_documents([file_path])
 
-            # 임시 파일 생성
-            with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file_name)[1]) as temp_file:
-                temp_file.write(content)
-                temp_file_path = temp_file.name
-                creation_time = os.path.getctime(temp_file_path)
+            # # 임시 파일 생성
+            # temp_file_name = file_name
+            # if self.splitter.is_convertable_file_type(file_path=file_path):
+            #     temp_file_name += ".devbot"
 
-            # 문서 분할
-            chunks = self.splitter.split_document(file_path, temp_file_path)
+            # with tempfile.NamedTemporaryFile(delete=False, mode='w', encoding='utf-8', suffix=os.path.splitext(temp_file_name)[1]) as temp_file:
+            #     temp_file.write(contents['contents'])
+            #     temp_file_path = temp_file.name
+            #     creation_time = os.path.getctime(temp_file_path)
+
+            # # 문서 분할
+            # chunks = self.splitter.split_document(file_path, temp_file_path)
+
+            _, file_extension = os.path.splitext(file_path)
+            file_type = file_extension.lower()
+            chunks = self.splitter.split_document2(file_extension=file_type, contents=contents['contents'], file_path=file_path)
             
             # 분할된 청크를 벡터 스토어에 추가
             for chunk in chunks:
+                if contents['contents_type'] in ["EML", "MHT"]:
+                    if len(contents["to"]) > 50: # 수신자 목록이 너무 긴 경우 앞에 수신자를 중심으로만 남김
+                        contents["to"] = contents["to"]
+                    chunk.page_content = f"""이메일 제목: {contents['title']}\n보낸사람:{contents["from"]}\n받는사람:{contents["to"]}\n날짜:{contents['date']}\n{chunk.page_content}"""
+                elif contents['contents_type'] in ["MSWORD", "MSPOWERPOINT", "MSEXCEL", "PDF"] :
+                    chunk.page_content = f"""문서명: {file_name}\n{chunk.page_content}"""
+                
                 self.vector_store.add_document(chunk)
 
             # 임시 파일 삭제
-            os.unlink(temp_file_path)
-
-            # 파일 타입 추출
-            _, file_extension = os.path.splitext(file_path)
-            file_type = file_extension.replace(".", "").upper()
+            #os.unlink(temp_file_path)
 
             # 인덱싱된 파일 추가
             file_metadata = {
                 "file_name": file_name,
                 "file_type": file_type,
                 "file_path": file_path,
-                "last_updated": creation_time,
+                "last_updated": int(datetime.datetime.now().timestamp()),
                 "chunk_count": len(chunks)
             }
             self.indexed_files[file_path] = file_metadata
@@ -166,4 +180,3 @@ class VectorStore:
             pickle.dump(self.indexed_files, f)
 
         self.vector_store.save_local(self.store_path)
-

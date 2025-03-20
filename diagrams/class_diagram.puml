@@ -1,0 +1,70 @@
+@startuml
+
+' 스타일 설정
+skinparam class {
+    BackgroundColor White
+    ArrowColor Black
+    BorderColor Black
+}
+
+class VectorStore {
+    - splitter: DocumentSplitter
+    - dimension: int
+    - embeddings: HuggingFaceEmbeddings
+    - store_path: str
+    - vector_store: FAISS_VECTOR_STORE
+    - indexed_files: dict
+    + __init__(chunk_size: int, chunk_overlap: int)
+    + upload(file_path: str, file_name: str, content: bytes): Dict
+    + search(query: str, k: int): List[Dict]
+    + get_documents(): List[Dict]
+    + get_document_chunks(file_path: str): List[str]
+    + get_indexed_file_count(): int
+    + empty_vector_store()
+    + delete_documents(file_paths: List[str])
+    + delete_all_documents()
+    + save_indexed_files_and_vector_db()
+    - _get_embedding_model(): HuggingFaceEmbeddings
+}
+
+class FAISS_VECTOR_STORE {
+    - embedding: HuggingFaceEmbeddings
+    - dimension: int
+    - vectorstore: FAISS
+    + __init__(embedding: HuggingFaceEmbeddings, store_path: str, dimension: int)
+    + load_vectorstore(store_path: str)
+    + add_document(doc: Document)
+    + add_documents(docs: List[Document])
+    + get_document_chunks(file_path: str): List[str]
+    + delete_all()
+    + delete_files(file_paths: List[str])
+    + search(query: str, filter: dict, k: int): List[Dict]
+    + save_local(save_path: str)
+    - _decode_text(text: str): str
+}
+
+class StreamlitUI {
+    + title: str
+    + search_form()
+    + document_management()
+    + system_status()
+}
+
+class DummyEmbeddings {
+    - dim: int
+    + embed_query(text: str): List[float]
+    + embed_documents(texts: List[str]): List[List[float]]
+}
+
+class SearchUtil {
+    + extract_keywords(query: str): List[str]
+    + extract_simple_keywords(query: str): List[str]
+}
+
+VectorStore --> FAISS_VECTOR_STORE : uses
+VectorStore --> HuggingFaceEmbeddings : uses
+FAISS_VECTOR_STORE --> DummyEmbeddings : uses for testing
+StreamlitUI --> VectorStore : uses
+VectorStore --> SearchUtil : uses
+
+@enduml

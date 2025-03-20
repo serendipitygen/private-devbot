@@ -1,0 +1,6 @@
+beautifulsoup4
+chardet 
+textract==1.6.3
+pypdf2
+pandas
+tabulate

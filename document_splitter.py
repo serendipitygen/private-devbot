@@ -6,6 +6,7 @@ from PIL import Image
 import cv2
 import numpy as np
 import chardet
+from io import StringIO
 
 from langchain.docstore.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -13,8 +14,16 @@ from langchain_community.document_loaders import (
     TextLoader, PDFMinerLoader, Docx2txtLoader, UnstructuredPowerPointLoader,
     UnstructuredEmailLoader
 )
+from langchain_community.document_loaders.base import BaseLoader
 
 from search_util import extract_keywords
+
+class StringLoader(BaseLoader):
+    def __init__(self, content: str):
+        self.content = content
+
+    def load(self):
+        return [Document(page_content=self.content, metadata={'source':'string_data'})]
 
 class ImageLoader:
     def __init__(self, file_path: str):
@@ -95,16 +104,48 @@ class ImageLoader:
             raise ValueError(f"이미지 처리 중 오류 발생: {str(e)}")
 
 class DocumentSplitter:
-    def __init__(self, chunk_size: int = 1000, chunk_overlap: int = 200, chunk_separators: Optional[List[str]] = None):
+    def __init__(self, chunk_size: int = 500, chunk_overlap: int = 100, chunk_separators: Optional[List[str]] = None):
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
         self.chunk_separators = chunk_separators or ["\n\n", "\n", " ", ""]
 
+    def split_document2(self, file_extension: str, contents: str, file_path: str) -> List[Document]:
+        if file_extension in ['.txt', '.py', '.java', '.cpp', '.md', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.eml', '.mht',
+        '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart', '.devbot']:
+            #string_io = StringIO(contents)
+            loader = StringLoader(contents)
+        # elif file_extension == '.pdf':
+        #     loader = PDFMinerLoader(temp_file_path)
+        # elif file_extension in ['.docx', '.doc']:
+        #     loader = Docx2txtLoader(temp_file_path)
+        # elif file_extension in ['.pptx', '.ppt']:
+        #     loader = UnstructuredPowerPointLoader(temp_file_path)
+        # elif file_extension in ['.msg', '.eml']:
+        #     loader = UnstructuredEmailLoader(temp_file_path)
+        elif file_extension in ['.png', '.jpg', '.jpeg', '.gif', '.bmp', 'webp']:
+            loader = ImageLoader(temp_file_path)
+        else:
+            raise ValueError(f"Unsupported file type: {file_extension}")
+
+        documents = loader.load()
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=self.chunk_size,
+            chunk_overlap=self.chunk_overlap,
+            separators=self.chunk_separators,
+            length_function=len,
+        )
+        for doc in documents:
+            doc.metadata['source'] = file_path
+
+        docs = text_splitter.split_documents(documents)
+
+        return docs
+
     def split_document(self, file_path: str, temp_file_path: str) -> List[Document]:
-        _, file_extension = os.path.splitext(file_path)
+        _, file_extension = os.path.splitext(temp_file_path)
         file_extension = file_extension.lower()
 
-        if file_extension in ['.txt', '.py', '.java', '.cpp', '.md', '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart']:
+        if file_extension in ['.txt', '.py', '.java', '.cpp', '.md', '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart', '.devbot']:
             encoding = self._detect_encoding(temp_file_path)
             loader = TextLoader(temp_file_path, encoding=encoding)
         elif file_extension == '.pdf':
@@ -113,8 +154,8 @@ class DocumentSplitter:
             loader = Docx2txtLoader(temp_file_path)
         elif file_extension in ['.pptx', '.ppt']:
             loader = UnstructuredPowerPointLoader(temp_file_path)
-        elif file_extension in ['.msg', '.eml']:
-            loader = UnstructuredEmailLoader(temp_file_path)
+        # elif file_extension in ['.msg', '.eml']:
+        #     loader = UnstructuredEmailLoader(temp_file_path)
         elif file_extension in ['.png', '.jpg', '.jpeg', '.gif', '.bmp', 'webp']:
             loader = ImageLoader(temp_file_path)
         else:
@@ -143,14 +184,18 @@ class DocumentSplitter:
         """
         with open(file_path, 'rb') as file:
             raw = file.read()
-            result = chardet.detect(raw)
-            encoding = result['encoding']
-            
-            # CP949/EUC-KR 인코딩 처리
-            if encoding and encoding.lower() in ['cp949', 'euc-kr', 'ms949']:
+
+            detection = chardet.detect(raw)
+            encoding = detection.get('encoding')
+            confidence = detection.get('confidence')
+
+            if encoding == "utf-8" or (encoding == 'Windows-1254' and confidence <= 0.5):
+                return "utf-8"
+            elif encoding and encoding.lower() in ['cp949', 'euc-kr', 'ms949']:
                 return 'cp949'
-            return encoding or 'utf-8'
-    
+            else:
+                return encoding
+
     def is_supported_file_type(self, file_path: str) -> bool:
         _, file_extension = os.path.splitext(file_path)
         file_extension = file_extension.lower()
@@ -163,10 +208,21 @@ class DocumentSplitter:
         """
         supported_type = [
             '.txt', '.py', '.java', '.cpp', '.md', '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart',
-            '.png', '.jpg', '.jpeg', '.gif', '.bmp', 'webp'
+            '.png', '.jpg', '.jpeg', '.gif', '.bmp', 'webp', '.devbot', '.eml', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.pdf', '.mht'
         ]
         
         return file_extension in supported_type
+
+    def is_convertable_file_type(self, file_path: str) -> bool:
+        _, file_extension = os.path.splitext(file_path)
+        file_extension = file_extension.lower()
+
+        convertable_type = [
+            '.eml', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.pdf', '.mht'
+        ]
+        
+        return file_extension in convertable_type
+
 
 class TestDocumentSplitter(unittest.TestCase):
     def setUp(self):
