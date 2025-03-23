@@ -9,4 +9,5 @@ store/
 nuitka-crash-report.xml
 build/
 private_devbot.log
-
+document_extractor_for_remote_server.dist/
+document_extractor_for_remote_server.e*

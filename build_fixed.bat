@@ -1,14 +1,11 @@
 @echo off
-REM Python 스크립트로 모델과 메타데이터 준비
+REM Python script for model and metadata preparation
 python prepare_models.py
 
-REM Nuitka 빌드 실행
+REM Nuitka build execution
 python -m nuitka ^
     --standalone ^
     --follow-imports ^
-    --plugin-enable=numpy ^
-    --plugin-enable=torch ^
-    --plugin-enable=transformers ^
     --include-package=fastapi ^
     --include-package=uvicorn ^
     --include-package=langchain ^
@@ -44,6 +41,8 @@ python -m nuitka ^
     --include-package=kiwipiepy_model ^
     --include-package=transformers ^
     --include-package=transformers.models ^
+    --include-package=zstandard ^
+    --include-package=langsmith ^
     --nofollow-import-to=transformers.testing_utils ^
     --nofollow-import-to=transformers.models.dinov2_with_registers ^
     --include-module=sentence_transformers ^
@@ -55,28 +54,35 @@ python -m nuitka ^
     --output-dir=build ^
     main.py
 
-REM 빌드 후 필요한 모델 파일들 복사
-echo 필요한 모델 파일들을 복사합니다...
+REM Copy necessary model files after build
+echo Copying necessary model files...
 
-REM Kiwipiepy 모델 파일 복사
+REM Copy Kiwipiepy model files - FIXED PATH
+echo Copying Kiwipiepy model files...
 if not exist "build\main.dist\kiwipiepy_model" mkdir "build\main.dist\kiwipiepy_model"
-xcopy /E /I /Y "%CONDA_PREFIX%\Lib\site-packages\kiwipiepy_model\*" "build\main.dist\kiwipiepy_model\"
+for /F "tokens=*" %%G in ('python -c "import kiwipiepy_model; import os; print(os.path.dirname(kiwipiepy_model.__file__))"') do (
+    set KIWIPIEPY_PATH=%%G
+)
+xcopy /E /I /Y "%KIWIPIEPY_PATH%\*" "build\main.dist\kiwipiepy_model\"
 
-REM 임베딩 모델 파일 복사 (있는 경우)
+REM Copy embedding model files (if they exist)
+echo Copying embedding model files...
 if exist "embedding_model" (
     if not exist "build\main.dist\embedding_model" mkdir "build\main.dist\embedding_model"
     xcopy /E /I /Y "embedding_model\*" "build\main.dist\embedding_model\"
 )
 
-REM EasyOCR 모델 파일 복사 (있는 경우)
+REM Copy EasyOCR model files (if they exist)
+echo Copying EasyOCR model files...
 if exist "easyocr_model" (
     if not exist "build\main.dist\easyocr_model" mkdir "build\main.dist\easyocr_model"
     xcopy /E /I /Y "easyocr_model\*" "build\main.dist\easyocr_model\"
 )
 
-REM 기타 필요한 파일 복사 (설정 파일 등)
+REM Copy other necessary files (config files, etc.)
+echo Copying config files...
 if exist "config.yaml" copy /Y "config.yaml" "build\main.dist\"
 if exist "allowed_ips.json" copy /Y "allowed_ips.json" "build\main.dist\"
 if exist "devbot_config.yaml" copy /Y "devbot_config.yaml" "build\main.dist\"
 
-echo 빌드 완료! build\main.dist 폴더에 실행 파일이 생성되었습니다.
+echo Build complete! Executable file has been created in the build\main.dist folder.

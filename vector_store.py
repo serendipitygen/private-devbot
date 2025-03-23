@@ -63,25 +63,16 @@ class VectorStore:
             if file_path in self.indexed_files.keys():
                 self.delete_documents([file_path])
 
-            # # 임시 파일 생성
-            # temp_file_name = file_name
-            # if self.splitter.is_convertable_file_type(file_path=file_path):
-            #     temp_file_name += ".devbot"
-
-            # with tempfile.NamedTemporaryFile(delete=False, mode='w', encoding='utf-8', suffix=os.path.splitext(temp_file_name)[1]) as temp_file:
-            #     temp_file.write(contents['contents'])
-            #     temp_file_path = temp_file.name
-            #     creation_time = os.path.getctime(temp_file_path)
-
-            # # 문서 분할
-            # chunks = self.splitter.split_document(file_path, temp_file_path)
-
             _, file_extension = os.path.splitext(file_path)
             file_type = file_extension.lower()
-            chunks = self.splitter.split_document2(file_extension=file_type, contents=contents['contents'], file_path=file_path)
+            chunks = self.splitter.split_document(file_extension=file_type, contents=contents['contents'], file_path=file_path)
             
             # 분할된 청크를 벡터 스토어에 추가
             for chunk in chunks:
+                chunk.page_content = chunk.page_content.strip()
+                if len(chunk.page_content) == 0:
+                    continue
+
                 if contents['contents_type'] in ["EML", "MHT"]:
                     if len(contents["to"]) > 50: # 수신자 목록이 너무 긴 경우 앞에 수신자를 중심으로만 남김
                         contents["to"] = contents["to"]
@@ -90,9 +81,6 @@ class VectorStore:
                     chunk.page_content = f"""문서명: {file_name}\n{chunk.page_content}"""
                 
                 self.vector_store.add_document(chunk)
-
-            # 임시 파일 삭제
-            #os.unlink(temp_file_path)
 
             # 인덱싱된 파일 추가
             file_metadata = {

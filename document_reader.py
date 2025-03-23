@@ -26,7 +26,7 @@ class DocumentReader:
         elif filename.endswith("pdf"):
             return self.get_pdf_contents(filepath=file_path, contents_type="PDF")
         else:
-            return await self.get_text_contents(file)
+            return await self.get_text_contents(file=file, file_path=file_path)
 
     def get_msoffice_contents(self, filepath:str, contents_type:str):
         try:
@@ -109,35 +109,46 @@ class DocumentReader:
         contents['contents'] = body
         return contents
     
-    async def get_text_contents(self, file: UploadFile):
+    async def get_text_contents(self, file: UploadFile, file_path:str):
         contents = await file.read()
         detection = chardet.detect(contents)
         encoding = detection.get('encoding')
-        confidence = detection.get('confidence')
 
-        utf8_bom = b'\xef\xbb\xbf'
-        if contents.startswith(utf8_bom):
-            has_bom = True
-        else:
-            has_bom = False
+        if encoding is None or encoding == 'Windows-1254':
+            encoding = 'utf-8'
 
-        if encoding == "utf-8" or (encoding == 'Windows-1254' and confidence <= 0.5):
-            print(f"인코딩: {encoding}")
-            text_contents = contents.decode('utf-8', errors='replace')
-        else:
-            print(f"인코딩: {encoding}")
-            decoded_contents = contents.decode(encoding, errors='replace')
-            text_contents = decoded_contents.encode('utf-8') # 디코딩 에러 발생 시 UTF-8로 대체
-
-        if type(text_contents) == bytes:
-            text_contents = text_contents.decode('utf-8')
+        with open(file_path, 'r', encoding=encoding, errors='replace') as f:
+            text_contents = f.read()
 
         contents = {
             "contents_type":"TEXT",
             "contents": text_contents
         }
 
+        # utf8_bom = b'\xef\xbb\xbf'
+        # if contents.startswith(utf8_bom):
+        #     has_bom = True
+        # else:
+        #     has_bom = False
+
+        # if encoding == "utf-8" or encoding == 'Windows-1254':
+        #     print(f"인코딩: {encoding}")
+        #     text_contents = contents.decode('utf-8', errors='replace')
+        # else:
+        #     print(f"인코딩: {encoding}")
+        #     decoded_contents = contents.decode(encoding, errors='replace')
+        #     text_contents = decoded_contents.encode('utf-8')
+
+        # if type(text_contents) == bytes:
+        #     text_contents = text_contents.decode('utf-8')
+
+        # contents = {
+        #     "contents_type":"TEXT",
+        #     "contents": text_contents
+        # }
+
         return contents 
+
 
 if __name__ == "__main__":
     file_path = sys.argv[1]

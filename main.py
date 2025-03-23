@@ -1,10 +1,10 @@
 import json
 
-from fastapi import FastAPI, UploadFile, File, HTTPException, Form
+from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Body, Depends
 from fastapi.responses import JSONResponse
 from fastapi.responses import Response
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict, Any
 
 import config
 import logger_util
@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from vector_store import VectorStore
 from document_reader import DocumentReader
 import platform
+from ip_middleware import IPRestrictionMiddleware
 
 
 # 벡터 저장소 및 관련 변수 초기화
@@ -25,6 +26,10 @@ os_name = platform.system() # Windows | Linux | Darwin
 
 # FastAPI 앱 초기화
 app = FastAPI()
+
+# IP 제한 미들웨어 추가
+ip_middleware = IPRestrictionMiddleware(app)
+app.add_middleware(IPRestrictionMiddleware, config_path="devbot_config.yaml")
 
 # CORS 설정
 app.add_middleware(
@@ -39,6 +44,12 @@ class SearchRequest(BaseModel):
     query: str
     k: int = 5
 
+class FileContentsRequest(BaseModel):
+    file_path: str
+    file_name: str
+    file_size: int
+    content: str
+    extraction_time: str
 
 @app.post("/upload")
 async def upload_file(
@@ -61,6 +72,50 @@ async def upload_file(
     except Exception as e:
         logger.exception(f"[ERROR] Upload failed: {str(e)}")
         raise HTTPException(500, detail=f"Upload failed: {str(e)}")
+    finally:
+        vector_store.save_indexed_files_and_vector_db()
+
+@app.post("/upload_file_contents")
+async def upload_file_contents(request: FileContentsRequest):
+    global vector_store
+
+    try:
+        logger.debug(f"[DEBUG] Upload file contents request - Path: {request.file_path}")
+        
+        # Create a dictionary with the expected format for vector_store.upload
+        # The content from the client is already a string, but vector_store expects a dict with 'contents' key
+        file_contents = {
+            "contents_type": "TEXT",  # Default to TEXT type
+            "contents": request.content
+        }
+        
+        # Upload to vector store
+        result = await vector_store.upload(
+            file_path=request.file_path, 
+            file_name=request.file_name,
+            contents=file_contents
+        )
+
+        if result['status'] != 'success':
+            return JSONResponse(
+                content={
+                    "status": "failed",
+                    "message": f"Failed to process {request.file_name}",
+                    "details": result.get('message', 'Unknown error')
+                },
+                status_code=400
+            )
+            
+        return JSONResponse(
+            content={
+                "status": "success",
+                "message": f"Processed {request.file_name}",
+                "details": result.get('message', '')
+            }
+        )
+    except Exception as e:
+        logger.exception(f"[ERROR] Upload file contents failed: {str(e)}")
+        raise HTTPException(500, detail=f"Upload file contents failed: {str(e)}")
     finally:
         vector_store.save_indexed_files_and_vector_db()
 
@@ -217,7 +272,52 @@ async def reset_storage():
     finally:
         vector_store.save_indexed_files_and_vector_db()
 
+@app.post("/register_ips")
+async def register_ips(ips: List[str] = Body(...)):
+    """
+    허용된 IP 목록을 등록합니다.
+    빈 목록을 전달하면 모든 IP가 허용됩니다.
+    """
+    try:
+        result = ip_middleware.update_allowed_ips(ips)
+        return JSONResponse(content=result)
+    except Exception as e:
+        logger.exception(f"[ERROR] IP 등록 실패: {str(e)}")
+        raise HTTPException(500, detail=f"IP 등록 실패: {str(e)}")
+
+@app.get("/get_allowed_ips")
+async def get_allowed_ips():
+    """
+    현재 허용된 IP 목록을 반환합니다.
+    """
+    try:
+        allowed_ips = ip_middleware.get_allowed_ips()
+        print(f"허용된 IP 목록: {allowed_ips}")
+        return JSONResponse(content={
+            "status": "success",
+            "allowed_ips": allowed_ips,
+            "message": "현재 허용된 IP 목록입니다."
+        })
+    except Exception as e:
+        logger.exception(f"[ERROR] IP 목록 조회 실패: {str(e)}")
+        raise HTTPException(500, detail=f"IP 목록 조회 실패: {str(e)}")
+
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=config.server_port)
+    import argparse
+    
+    # 명령줄 인자 파서 생성
+    parser = argparse.ArgumentParser(description='DevBot 서버 실행')
+    parser.add_argument('--port', type=int, default=config.server_port,
+                        help=f'서버 실행 포트 (기본값: {config.server_port})')
+    
+    # 명령줄 인자 파싱
+    args = parser.parse_args()
+    
+    # 포트 설정
+    port = args.port
+    print(f"서버가 포트 {port}에서 실행됩니다...")
+    
+    # 서버 실행
+    uvicorn.run(app, host="0.0.0.0", port=port)

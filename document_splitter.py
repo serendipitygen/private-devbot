@@ -7,6 +7,7 @@ import cv2
 import numpy as np
 import chardet
 from io import StringIO
+import re
 
 from langchain.docstore.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -109,11 +110,53 @@ class DocumentSplitter:
         self.chunk_overlap = chunk_overlap
         self.chunk_separators = chunk_separators or ["\n\n", "\n", " ", ""]
 
-    def split_document2(self, file_extension: str, contents: str, file_path: str) -> List[Document]:
-        if file_extension in ['.txt', '.py', '.java', '.cpp', '.md', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.eml', '.mht',
+    def split_document(self, file_extension: str, contents: str, file_path: str) -> List[Document]:
+        if file_extension in ['.txt', '.py', '.java', '.cpp', '.md', '.pdf', '.doc', '.docx', '.ppt', '.pptx', '.eml', '.mht',
         '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart', '.devbot']:
-            #string_io = StringIO(contents)
             loader = StringLoader(contents)
+            
+            documents = loader.load()
+            text_splitter = RecursiveCharacterTextSplitter(
+                chunk_size=self.chunk_size,
+                chunk_overlap=self.chunk_overlap,
+                separators=self.chunk_separators,
+                length_function=len,
+            )
+            for doc in documents:
+                doc.metadata['source'] = file_path
+
+            docs = text_splitter.split_documents(documents)
+            
+        elif file_extension in ['.xls', '.xlsx']:
+            # 엑셀 파일의 경우 "## Sheet" 문자열을 기준으로 분할
+            docs = []
+            
+            # "## Sheet:" 문자열로 분할
+            sheets = re.split(r'## Sheet: ', contents)
+            
+            for i, sheet_content in enumerate(sheets):
+                if i == 0 and not sheet_content.strip():  # 첫 번째 항목이 비어있으면 건너뛰기
+                    continue
+                
+                # 시트 이름과 내용 추출
+                if i > 0 and '\n' in sheet_content:
+                    sheet_name = sheet_content.split('\n', 1)[0].strip()
+                    sheet_text = sheet_content.split('\n', 1)[1].strip()
+                else:
+                    sheet_name = f"Sheet{i}" if i > 0 else "Main"
+                    sheet_text = sheet_content.strip()
+                
+                # 각 시트를 하나의 Document 객체로 생성 (청크로 분할하지 않음)
+                doc = Document(
+                    page_content=sheet_text,
+                    metadata={
+                        'source': file_path,
+                        'sheet_name': sheet_name,
+                        'file_type': 'excel'
+                    }
+                )
+                docs.append(doc)
+            
         # elif file_extension == '.pdf':
         #     loader = PDFMinerLoader(temp_file_path)
         # elif file_extension in ['.docx', '.doc']:
@@ -123,55 +166,22 @@ class DocumentSplitter:
         # elif file_extension in ['.msg', '.eml']:
         #     loader = UnstructuredEmailLoader(temp_file_path)
         elif file_extension in ['.png', '.jpg', '.jpeg', '.gif', '.bmp', 'webp']:
-            loader = ImageLoader(temp_file_path)
+            loader = ImageLoader(file_path)
+            
+            documents = loader.load()
+            text_splitter = RecursiveCharacterTextSplitter(
+                chunk_size=self.chunk_size,
+                chunk_overlap=self.chunk_overlap,
+                separators=self.chunk_separators,
+                length_function=len,
+            )
+            for doc in documents:
+                doc.metadata['source'] = file_path
+
+            docs = text_splitter.split_documents(documents)
+            
         else:
             raise ValueError(f"Unsupported file type: {file_extension}")
-
-        documents = loader.load()
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=self.chunk_size,
-            chunk_overlap=self.chunk_overlap,
-            separators=self.chunk_separators,
-            length_function=len,
-        )
-        for doc in documents:
-            doc.metadata['source'] = file_path
-
-        docs = text_splitter.split_documents(documents)
-
-        return docs
-
-    def split_document(self, file_path: str, temp_file_path: str) -> List[Document]:
-        _, file_extension = os.path.splitext(temp_file_path)
-        file_extension = file_extension.lower()
-
-        if file_extension in ['.txt', '.py', '.java', '.cpp', '.md', '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart', '.devbot']:
-            encoding = self._detect_encoding(temp_file_path)
-            loader = TextLoader(temp_file_path, encoding=encoding)
-        elif file_extension == '.pdf':
-            loader = PDFMinerLoader(temp_file_path)
-        elif file_extension in ['.docx', '.doc']:
-            loader = Docx2txtLoader(temp_file_path)
-        elif file_extension in ['.pptx', '.ppt']:
-            loader = UnstructuredPowerPointLoader(temp_file_path)
-        # elif file_extension in ['.msg', '.eml']:
-        #     loader = UnstructuredEmailLoader(temp_file_path)
-        elif file_extension in ['.png', '.jpg', '.jpeg', '.gif', '.bmp', 'webp']:
-            loader = ImageLoader(temp_file_path)
-        else:
-            raise ValueError(f"Unsupported file type: {file_extension}")
-
-        documents = loader.load()
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=self.chunk_size,
-            chunk_overlap=self.chunk_overlap,
-            separators=self.chunk_separators,
-            length_function=len,
-        )
-        for doc in documents:
-            doc.metadata['source'] = file_path
-
-        docs = text_splitter.split_documents(documents)
 
         return docs
     

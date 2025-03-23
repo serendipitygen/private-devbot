@@ -1,8 +1,17 @@
+# 이 모듈은 private_devbot_admin에서 활용하기 위해 nuitka를 사용해 exe 파일을 만들때 사용됨
+# exe 파일 생성 방법
+# conda create -n doc_extract python=3.11
+# conda activate doc_extract
+# pip install -r requirements_doc.txt 
+# python -m nuitka --standalone --onefile --follow-imports --enable-plugin=numpy --include-package=bs4,chardet,textract,PyPDF2,pandas,tabulate,openpyxl document_extractor_for_remote_server.py
+# 생성된 document_extractor_for_remote_server.exe파일을 private_devbot_admin/assets 폴더 아래에 복사하가 flutter 재빌드
+
 from email import policy
 from email.parser import BytesParser
 import base64
 from bs4 import BeautifulSoup
 import chardet 
+import json
 
 import textract
 import io
@@ -141,7 +150,7 @@ class DocumentExtractor:
         if encoding is None or encoding == 'Windows-1254':
             encoding = 'utf-8'
 
-        with open(file_path, 'r', encoding=encoding, errors='replace') as f:
+        with open(filepath, 'r', encoding=encoding, errors='replace') as f:
             text_contents = f.read()
 
         contents = {
@@ -197,6 +206,21 @@ if __name__ == "__main__":
     #file_path = "D:\\4.Archive\\obsidian\\임시노트.md"
     file_name = os.path.basename(file_path)
     document_extractor = DocumentExtractor()
-    result = document_extractor.get_contents(file_path=file_path)
-    print(result)
-    #print(json.dumps({"text": result}))
+    
+    try:
+        result = document_extractor.get_contents(file_path=file_path)
+        # 모든 출력을 일관된 JSON 형식으로 변환
+        if isinstance(result, dict):
+            if "contents" in result:
+                print(json.dumps({"text": result["contents"]}, ensure_ascii=False))
+            elif "contents_type" in result and "contents" in result:
+                print(json.dumps({"text": result["contents"]}, ensure_ascii=False))
+            else:
+                # 다른 형태의 딕셔너리인 경우 전체를 JSON으로 변환
+                print(json.dumps({"text": json.dumps(result, ensure_ascii=False)}, ensure_ascii=False))
+        else:
+            # 딕셔너리가 아닌 경우 문자열로 변환하여 JSON으로 출력
+            print(json.dumps({"text": str(result)}, ensure_ascii=False))
+    except Exception as e:
+        # 에러가 발생한 경우도 JSON 형식으로 출력
+        print(json.dumps({"error": str(e)}, ensure_ascii=False))
