@@ -19,6 +19,7 @@ from ip_middleware import IPRestrictionMiddleware
 # 벡터 저장소 및 관련 변수 초기화
 vector_store = VectorStore()
 document_reader = DocumentReader()
+vector_store.sync_indexed_files_and_vector_db()
 
 logger = logger_util.get_logger()
 
@@ -292,7 +293,7 @@ async def get_allowed_ips():
     """
     try:
         allowed_ips = ip_middleware.get_allowed_ips()
-        print(f"허용된 IP 목록: {allowed_ips}")
+    
         return JSONResponse(content={
             "status": "success",
             "allowed_ips": allowed_ips,

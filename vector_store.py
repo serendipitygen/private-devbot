@@ -25,6 +25,20 @@ class VectorStore:
 
         self.indexed_files = dict()
         self.load_indexed_files_if_exist()
+
+    def sync_indexed_files_and_vector_db(self):
+        file_list = self.vector_store.get_unique_file_paths()
+        no_existing_file_list = []
+        for file_path in self.indexed_files.keys():
+            if file_path not in file_list:
+                no_existing_file_list.append(file_path)
+
+        for file_path in no_existing_file_list:
+            if file_path in self.indexed_files:
+                del self.indexed_files[file_path]
+                logger.error(f"deleted file_path in indexed_files : {file_path}")
+
+        self.save_indexed_files_and_vector_db
         
 
     def _get_embedding_model(self):
@@ -80,7 +94,7 @@ class VectorStore:
                 elif contents['contents_type'] in ["MSWORD", "MSPOWERPOINT", "MSEXCEL", "PDF"] :
                     chunk.page_content = f"""문서명: {file_name}\n{chunk.page_content}"""
                 
-                self.vector_store.add_document(chunk)
+            self.vector_store.add_documents(chunks)
 
             # 인덱싱된 파일 추가
             file_metadata = {
@@ -99,16 +113,16 @@ class VectorStore:
 
     def search(self, query: str, k: int = 5) -> List[Dict]:
         try:
-             result = self.vector_store.search(query, k=k)
+            result = self.vector_store.search(query, k=k)
 
-             added_result = []
-             for data in result:
+            added_result = []
+            for data in result:
                 info = self.indexed_files[data['file_path']]
-                for key, value in info.items():
-                    data['metadata'][key] = value
-                added_result.append(data)              
+            for key, value in info.items():
+                data['metadata'][key] = value
+            added_result.append(data)              
 
-             return added_result
+            return added_result
         except Exception as e:
             logger.exception(f"Search failed: {str(e)}")
             return []

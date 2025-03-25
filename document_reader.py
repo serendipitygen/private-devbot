@@ -7,7 +7,9 @@ import chardet
 
 import textract
 import io
+import codecs
 from PyPDF2 import PdfReader
+import pandas as pd
 
 # TODO: 다형성 적용 필요
 class DocumentReader:
@@ -21,8 +23,8 @@ class DocumentReader:
             return self.get_msoffice_contents(filepath=file_path, contents_type="MSWORD")
         elif filename.endswith("ppt") or filename.endswith("pptx"):
             return self.get_msoffice_contents(filepath=file_path, contents_type="MSPOWERPOINT")
-        elif filename.endswith("xls") or filename.endswith("xlsx"):
-            return self.get_msoffice_contents(filepath=file_path, contents_type="MSEXCEL")
+        elif file_path.endswith("xls") or file_path.endswith("xlsx"):
+            return self.get_excel_contents(filepath=file_path, contents_type="MSEXCEL")
         elif filename.endswith("pdf"):
             return self.get_pdf_contents(filepath=file_path, contents_type="PDF")
         else:
@@ -108,8 +110,8 @@ class DocumentReader:
 
         contents['contents'] = body
         return contents
-    
-    async def get_text_contents(self, file: UploadFile, file_path:str):
+
+    async def get_text_contents(self, file: UploadFile, file_path: str):
         contents = await file.read()
         detection = chardet.detect(contents)
         encoding = detection.get('encoding')
@@ -117,40 +119,52 @@ class DocumentReader:
         if encoding is None or encoding == 'Windows-1254':
             encoding = 'utf-8'
 
-        with open(file_path, 'r', encoding=encoding, errors='replace') as f:
-            text_contents = f.read()
+        # codecs.iterdecode를 사용하여 파일 읽기
+        try:
+            text_contents = ''.join(codecs.iterdecode(io.BytesIO(contents), encoding, errors='replace'))
+        except Exception as e:
+            print(f"Error decoding file: {e}")
+            text_contents = ""  # 에러 발생 시 빈 문자열 반환 또는 다른 에러 처리
 
         contents = {
-            "contents_type":"TEXT",
+            "contents_type": "TEXT",
             "contents": text_contents
         }
 
-        # utf8_bom = b'\xef\xbb\xbf'
-        # if contents.startswith(utf8_bom):
-        #     has_bom = True
-        # else:
-        #     has_bom = False
+        return contents
+    
+    def read_excel_file(self, file_path:str, sheet_name:str=None):
+        if sheet_name:
+            df = pd.read_excel(file_path, sheet_name=sheet_name)
+            return df
+        else:
+            excel_data = pd.ExcelFile(file_path)
+            sheet_names = excel_data.sheet_names
+            
+            dataframes = {sheet_name: excel_data.parse(sheet_name) for sheet_name in sheet_names}
+            return dataframes
 
-        # if encoding == "utf-8" or encoding == 'Windows-1254':
-        #     print(f"인코딩: {encoding}")
-        #     text_contents = contents.decode('utf-8', errors='replace')
-        # else:
-        #     print(f"인코딩: {encoding}")
-        #     decoded_contents = contents.decode(encoding, errors='replace')
-        #     text_contents = decoded_contents.encode('utf-8')
+    def dataframe_to_markdown(self, df):
+        markdown_table = df.to_markdown(index=False)
+        return markdown_table
 
-        # if type(text_contents) == bytes:
-        #     text_contents = text_contents.decode('utf-8')
+    def get_excel_contents(self, filepath: str, contents_type:str):
+        excel_data = self.read_excel_file(filepath)
 
-        # contents = {
-        #     "contents_type":"TEXT",
-        #     "contents": text_contents
-        # }
+        contents_text = ""
 
-        return contents 
+        if isinstance(excel_data, dict):
+            for sheet_name, df in excel_data.items():
+                markdown_table = self.dataframe_to_markdown(df)
+                contents_text += f"## Sheet: {sheet_name}\n"
+                contents_text += markdown_table + "\n\n"
+        else:
+            markdown_table = self.dataframe_to_markdown(excel_data)
+            contents_text += markdown_table
 
+        contents = {
+                "contents_type": contents_type,
+                "contents": contents_text
+            }
 
-if __name__ == "__main__":
-    file_path = sys.argv[1]
-    result = extract_text(file_path)
-    print(json.dumps({"text": result}))
+        return contents

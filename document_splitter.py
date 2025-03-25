@@ -112,16 +112,34 @@ class DocumentSplitter:
 
     def split_document(self, file_extension: str, contents: str, file_path: str) -> List[Document]:
         if file_extension in ['.txt', '.py', '.java', '.cpp', '.md', '.pdf', '.doc', '.docx', '.ppt', '.pptx', '.eml', '.mht',
-        '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart', '.devbot']:
+        '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart', '.devbot', '.json', '.jsonl', '.html', '.htm']:
             loader = StringLoader(contents)
             
             documents = loader.load()
-            text_splitter = RecursiveCharacterTextSplitter(
-                chunk_size=self.chunk_size,
-                chunk_overlap=self.chunk_overlap,
-                separators=self.chunk_separators,
-                length_function=len,
-            )
+            contents_size = len(contents)
+
+            if contents_size > (1024*150):
+                contents = contents[:(1024*150)]
+
+            if contents_size < (1024*100):
+                text_splitter = RecursiveCharacterTextSplitter(
+                    chunk_size=self.chunk_size,
+                    chunk_overlap=self.chunk_overlap,
+                    separators=self.chunk_separators,
+                    length_function=len,
+                )
+            else:
+                big_chunk_size = 2048 # 청크 개수가 1300개 이상이 되면 너무 느려짐
+                big_chunk_overlap = 0
+                big_chunk_separators = []
+
+                text_splitter = RecursiveCharacterTextSplitter(
+                    chunk_size=big_chunk_size,
+                    chunk_overlap=big_chunk_overlap,
+                    separators=big_chunk_separators,
+                    length_function=len,
+                )
+
             for doc in documents:
                 doc.metadata['source'] = file_path
 
@@ -211,13 +229,10 @@ class DocumentSplitter:
         file_extension = file_extension.lower()
 
         """ TODO: 사내 보안 문서 적용 가능하면 추가 필요
-            '.docx', '.doc',
-            '.pptx', '.ppt',
-            '.msg', '.eml',
             '.pst', '.ost',
         """
         supported_type = [
-            '.txt', '.py', '.java', '.cpp', '.md', '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart',
+            '.txt', '.py', '.java', '.cpp', '.md', '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart', '.json', '.jsonl', '.html', '.htm',
             '.png', '.jpg', '.jpeg', '.gif', '.bmp', 'webp', '.devbot', '.eml', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.pdf', '.mht'
         ]
         

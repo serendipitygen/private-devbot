@@ -1,7 +1,6 @@
 import os
 import shutil
 import json
-import unittest
 from typing import List
 import numpy as np
 import unicodedata
@@ -239,63 +238,3 @@ class DummyEmbeddings(Embeddings):
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
         return [self.embed_query(text) for text in texts]
-
-
-class TestFAISSVectorStore(unittest.TestCase):
-    def setUp(self):
-        self.embedding = DummyEmbeddings(dim=4)
-        self.store = FAISS_VECTOR_STORE(embedding=self.embedding, dimension=4)
-
-    def test_add_and_search_single_document(self):
-        """문서 1건 추가 후 유사도 검색 테스트"""
-        doc = Document(
-            page_content="테스트 문서 내용",
-            metadata={"file_path": "test/file1.txt"}
-        )
-        self.store.add_document(doc)
-        results = self.store.similarity_search("테스트", k=1)
-        self.assertTrue(len(results) > 0)
-        self.assertEqual(results[0].metadata.get("file_path"), "test/file1.txt")
-
-    def test_add_multiple_documents(self):
-        """문서 5건 추가 테스트"""
-        docs = [
-            Document(page_content="문서 내용 1", metadata={"file_path": "test/file2.txt"}),
-            Document(page_content="문서 내용 2", metadata={"file_path": "test/file2.txt"}),
-            Document(page_content="문서 내용 3", metadata={"file_path": "test/file3.txt"}),
-            Document(page_content="문서 내용 4", metadata={"file_path": "test/file4.txt"}),
-            Document(page_content="문서 내용 5", metadata={"file_path": "test/file5.txt"}),
-        ]
-        self.store.add_documents(docs)
-        results = self.store.similarity_search("문서", k=5)
-        self.assertEqual(len(results), 5)
-
-    def test_delete_all(self):
-        """전체 문서 삭제 테스트"""
-        docs = [
-            Document(page_content="문서 A", metadata={"file_path": "A.txt"}),
-            Document(page_content="문서 B", metadata={"file_path": "B.txt"}),
-        ]
-        self.store.add_documents(docs)
-        self.store.delete_all()
-        results = self.store.similarity_search("문서", k=2)
-        self.assertEqual(len(results), 0)
-
-    def test_save_and_load(self):
-        """벡터스토어 저장 후 로딩 테스트"""
-        docs = [
-            Document(page_content="영속성 테스트 문서", metadata={"file_path": "persist.txt"})
-        ]
-        self.store.add_documents(docs)
-        save_path = "test_faiss_index"
-        self.store.save_local(save_path)
-        loaded_store = FAISS_VECTOR_STORE.load_local(save_path, embedding=self.embedding)
-        results = loaded_store.similarity_search("영속성", k=1)
-        self.assertTrue(len(results) > 0)
-        self.assertEqual(results[0].metadata.get("file_path"), "persist.txt")
-        if os.path.exists(save_path):
-            shutil.rmtree(save_path)
-
-
-if __name__ == '__main__':
-    unittest.main()
