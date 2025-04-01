@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
+
+
 # 이 모듈은 private_devbot_admin에서 활용하기 위해 nuitka를 사용해 exe 파일을 만들때 사용됨
 # exe 파일 생성 방법
 # conda create -n doc_extract python=3.11
 # conda activate doc_extract
 # pip install -r requirements_doc.txt 
-# python -m nuitka --standalone --onefile --follow-imports --enable-plugin=numpy --include-package=bs4,chardet,textract,PyPDF2,pandas,tabulate,openpyxl document_extractor_for_remote_server.py
+# python -m nuitka --standalone --onefile --follow-imports --include-package=bs4,chardet,textract,PyPDF2,pandas,tabulate,openpyxl document_extractor_for_remote_server.py
 # 생성된 document_extractor_for_remote_server.exe파일을 private_devbot_admin/assets 폴더 아래에 복사하가 flutter 재빌드
 
 from email import policy
@@ -70,6 +73,25 @@ class DocumentExtractor:
             return contents
         except Exception as e:
             raise Exception(e)
+        
+    def decode_payload(self, payload, filepath):
+        if isinstance(payload, bytes):
+            encoding_result = chardet.detect(payload)
+            encoding = encoding_result['encoding']
+            try:
+                with open(filepath, "rb") as f:
+                    raw_data = f.read()
+                    detection = chardet.detect(raw_data)
+                    encoding = detection.get('encoding')
+                    
+                if encoding is None or encoding == 'Windows-1254':
+                    encoding = 'utf-8'
+
+                return payload.decode(encoding)
+            except:
+                return payload.decode('utf-8', errors='replace')
+        
+        return payload
 
     def get_eml_contents(self, filepath: str, type: str):
         with open(filepath, 'rb') as f:
@@ -89,9 +111,9 @@ class DocumentExtractor:
             for part in msg.iter_parts():
                 content_type = part.get_content_type()
                 if content_type == 'text/plain':
-                    body += part.get_payload(decode=True).decode()
+                    body += self.decode_payload(part.get_payload(decode=True), filepath)
                 elif content_type == "text/html":
-                    part_html = base64.b64decode(part.get_payload())
+                    part_html = base64.b64decode(self.decode_payload(part.get_payload(decode=True), filepath))
                     html_parser = BeautifulSoup(part_html, "html.parser")
                     for tag in html_parser.find_all(['style', 'script']):
                         tag.decompose()
@@ -106,7 +128,7 @@ class DocumentExtractor:
                         related_content_type = related_part.get_content_type()
                         if related_content_type == 'text/html':
                             try:
-                                related_part_html = related_part.get_payload(decode=True)
+                                related_part_html = self.decode_payload(related_part.get_payload(decode=True), filepath)
                                 if isinstance(related_part_html, bytes):
                                     related_part_html = related_part_html.decode()
                                 html_parser = BeautifulSoup(related_part_html, "html.parser")
@@ -117,7 +139,7 @@ class DocumentExtractor:
                                 print(f"HTML 파싱 오류: {e}")
                         elif related_content_type.startswith('image/'): # TODO 추후 이미지 처리 필요
                             # 이미지 처리 (예: 저장, base64 인코딩 후 HTML에 삽입)
-                            image_data = related_part.get_payload(decode=True)
+                            image_data = self.decode_payload(related_part.get_payload(decode=True), filepath)
                             image_name = related_part.get_filename() or 'image'  # 파일 이름이 없으면 기본 이름 사용
                             # 파일 이름이 없는 경우 Content-ID를 사용할 수도 있습니다.
                             content_id = related_part.get('Content-ID')
@@ -136,6 +158,9 @@ class DocumentExtractor:
                             pass
         else:
             body += msg.get_payload(decode=True).decode()
+
+        with open("d:/dev/work/body.txt", "w", encoding='utf-8', errors='ignore') as f:
+            f.write(body)
 
         contents['contents'] = body
         return contents

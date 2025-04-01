@@ -5,6 +5,7 @@ import ipaddress
 from fastapi import Request, HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 from typing import List, Dict, Any, Optional
+import ast
 
 class IPRestrictionMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, config_path: str = "devbot_config.yaml"):
@@ -113,15 +114,21 @@ class IPRestrictionMiddleware(BaseHTTPMiddleware):
         """요청을 처리하고 IP 제한을 적용합니다."""
         # 매 요청마다 설정 파일에서 최신 IP 목록을 로드
         self.load_config()
-        
-        client_ip = request.client.host
+
+        from fastapi import FastAPI, Request
+        client_ip = request.headers.get("X-Real-IP") or request.client.host
+
+        if client_ip.startswith("["):  
+            client_ip = ast.literal_eval(client_ip)
+        elif client_ip.startswith("::ffff:"):
+            client_ip = client_ip[7:]  # IPv4-mapped IPv6 address 형식인 경우 IPv4 부분만 추출
+        elif client_ip.startswith("fe80:"):
+            client_ip = client_ip.split("%")[0]  # 링크 로컬 IPv6 주소의 경우 인터페이스 식별자 제거
+        elif isinstance(client_ip, str):
+            client_ip = client_ip.strip()  # 공백 제거
         
         # 로컬 IP는 항상 허용
         if self.is_local_ip(client_ip):
-            return await call_next(request)
-        
-        # IP 등록 API는 항상 허용
-        if request.url.path == "/register_ips" or request.url.path == "/get_allowed_ips":
             return await call_next(request)
         
         # 허용된 IP 목록이 비어있으면 모든 요청 허용
@@ -129,8 +136,13 @@ class IPRestrictionMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
         
         # 허용된 IP 목록에 있는지 확인
-        if client_ip in self.allowed_ips:
-            return await call_next(request)
-        
+        if isinstance(client_ip, str):  # 문자열인 경우에만 검사
+            if client_ip in self.allowed_ips:
+                return await call_next(request)
+        elif isinstance(client_ip, list): # 리스트인 경우
+            for ip in client_ip:
+                if ip in self.allowed_ips:
+                    return await call_next(request)
+                
         # 접근 거부
         raise HTTPException(status_code=403, detail="접근이 거부되었습니다. 허용되지 않은 IP입니다.")
