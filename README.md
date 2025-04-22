@@ -13,14 +13,18 @@
 `pip install requirements.txt`
 또는
 ```bash
-# torch 설치 (CPU 버전)
-pip install torch torchvision torchaudio
+# 필요 패키지 설치
+## Conda로 설치 시 (배포본 생성을 할 경우 권장)
+conda install -c pytorch torchvision cpuonly -y
+conda install -c conda-forge -y fastapi uvicorn pydantic langchain langchain-community langchain-huggingface PyPDF2 docx2txt pandas openpyxl python-pptx faiss-cpu sentence-transformers transformers==4.47.1 watchdog requests chardet easyocr==1.7.0 beautifulsoup4 tabulate textract==1.6.3
 
-# 기본 필요 패키지
-pip install fastapi uvicorn python-multipart pydantic langchain langchain-community langchain-huggingface PyPDF2 docx2txt pandas openpyxl python-pptx faiss-cpu sentence-transformers transformers==4.47.1 fastapi watchdog requests chardet kiwipiepy easyocr opencv-python
 
-## exe 파일 생성에 필요한 패키지
-pip install nuitka ordered-set websockets httptools watchfiles
+## PIP로 설치 (그대로 배포해서 실행 시)
+### torch 설치 (CPU 버전)
+pip install torch==2.6.0 torchvision==2.6.0 torchaudio==0.21.0
+
+#### 기본 필요 패키지
+pip install fastapi uvicorn python-multipart pydantic langchain langchain-community langchain-huggingface PyPDF2 docx2txt pandas openpyxl python-pptx faiss-cpu sentence-transformers transformers==4.47.1 watchdog requests chardet kiwipiepy ninja easyocr==1.7.0 opencv-python beautifulsoup4 tabulate textract==1.6.3
 ```
 
 ### 임베딩 모델 다운로드
@@ -36,14 +40,13 @@ export HF_HUB_ETAG_TIMEOUT=1500000
 export HF_ENDPOINT="https://bart.sec.samsung.net/artifactory/api/huggingfaceml/huggingface-remote"
 ```
 #### 임베딩 모델 다운로드가 안될 경우
-207 Storage 서버에 올려둔 파일을 다운로드 받아야 함.
-168.219.24.207 서버에 aibgo 계정으로 로그인 후 , 
-/aib/home/aibgo/private_devbot_data/embedding_model.egg  파일을 다운로드 받아서
+[embedding_model.7z](https://github.sec.samsung.net/VD-AIB/private-devbot/releases/download/0.1/embedding_model.7z)  파일을 다운로드 받아서
 백엔드 프로젝트 폴더에 embedding_model이라는 폴더로 압축 해제 하면 됨
 
 ## 실행 방법
 - command prompt : `uvicorn main:app --host 0.0.0.0 --port 8123 --reload --log-level debug`
 - 또는 vs code에는 F5로 디버그 실행
+- 
 
 ## API DOC
 - http://localhost:8123/docs  (기본 실행 시, 8123 포트로 실행됨)

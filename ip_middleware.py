@@ -145,4 +145,5 @@ class IPRestrictionMiddleware(BaseHTTPMiddleware):
                     return await call_next(request)
                 
         # 접근 거부
-        raise HTTPException(status_code=403, detail="접근이 거부되었습니다. 허용되지 않은 IP입니다.")
+        print(f"차단된 IP: {client_ip}")
+        raise HTTPException(status_code=403, detail=f"접근이 거부되었습니다. 허용되지 않은 IP입니다: {client_ip}")

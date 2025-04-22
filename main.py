@@ -19,7 +19,6 @@ from ip_middleware import IPRestrictionMiddleware
 # 벡터 저장소 및 관련 변수 초기화
 vector_store = VectorStore()
 document_reader = DocumentReader()
-vector_store.sync_indexed_files_and_vector_db()
 
 logger = logger_util.get_logger()
 
@@ -68,13 +67,12 @@ async def upload_file(
             "status": "success" if success else "failed",
             "message": f"Processed {file_name}",
         }
-        
-        return JSONResponse(content=result)
     except Exception as e:
         logger.exception(f"[ERROR] Upload failed: {str(e)}")
         raise HTTPException(500, detail=f"Upload failed: {str(e)}")
     finally:
         vector_store.save_indexed_files_and_vector_db()
+        return JSONResponse(content=result)
 
 @app.post("/upload_file_contents")
 async def upload_file_contents(request: FileContentsRequest):
@@ -106,7 +104,11 @@ async def upload_file_contents(request: FileContentsRequest):
                 },
                 status_code=400
             )
-            
+    except Exception as e:
+        logger.exception(f"[ERROR] Upload file contents failed: {str(e)}")
+        raise HTTPException(500, detail=f"Upload file contents failed: {str(e)}")
+    finally:
+        vector_store.save_indexed_files_and_vector_db()
         return JSONResponse(
             content={
                 "status": "success",
@@ -114,11 +116,6 @@ async def upload_file_contents(request: FileContentsRequest):
                 "details": result.get('message', '')
             }
         )
-    except Exception as e:
-        logger.exception(f"[ERROR] Upload file contents failed: {str(e)}")
-        raise HTTPException(500, detail=f"Upload file contents failed: {str(e)}")
-    finally:
-        vector_store.save_indexed_files_and_vector_db()
 
 
 @app.post("/upload/batch")
@@ -144,17 +141,17 @@ async def upload_files(
                 success_count += 1
             else:
                 failed_files.append(failed_file)
-
+   
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        vector_store.save_indexed_files_and_vector_db()
         return {
             "status": "success" if len(failed_files) == 0 else "failed",
             "message": f"Processed {len(files)} files",
             "success_count": success_count,
             "failed_files": failed_files
-        }     
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        vector_store.save_indexed_files_and_vector_db()
+        }  
     
 async def _process_file(file: UploadFile, file_path:str):
     try:
@@ -190,11 +187,16 @@ async def search_documents(request: SearchRequest):
         raise HTTPException(500, detail=str(e))
 
 @app.get("/documents")
-async def get_documents():
+async def get_documents(response: Response):
     global vector_store
 
     try:
         documents = vector_store.get_documents()
+
+        # FastAPI 응답 헤더에 캐시 제어 설정
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+        response.headers["Pragma"] = "no-cache"  # HTTP/1.0 호환용
+        response.headers["Expires"] = "0"       # 프록시 서버 등에서 캐시하지 않도록
         
         result = {"documents": sorted(documents, key=lambda x: x["file_name"])}
         return result
@@ -221,24 +223,30 @@ class DeleteRequest(BaseModel):
 async def delete_documents(request: DeleteRequest):
     try:
         vector_store.delete_documents(request.file_paths)
-        return {"message": "Documents deleted successfully."}
     except Exception as e:
         logger.exception(str(e))
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         vector_store.save_indexed_files_and_vector_db()
+        return JSONResponse(content={
+                "status": "success", 
+                "message": "Documents deleted successfully."
+            }, status_code=200)
 
 
 @app.delete("/documents/all")
 async def delete_all_documents():
     try:
         vector_store.delete_all_documents()
-        return {"message": "All documents deleted successfully."}
     except Exception as e:
         logger.exception(str(e))
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         vector_store.save_indexed_files_and_vector_db()
+        return JSONResponse(content={
+            "status": "success", 
+            "message": "All documents deleted successfully."
+        }, status_code=200)
 
 @app.get("/status")
 async def get_status():
@@ -262,16 +270,15 @@ async def reset_storage():
 
     try:
         vector_store.empty_vector_store()
-
-        return JSONResponse(content={
-            "status": "success", 
-            "message": "Vector store and indexed files have been reset."
-        }, status_code=200) # 상태 코드 200으로 변경
     except Exception as e:
         logger.exception(f"[ERROR] Reset failed: {str(e)}")
         raise HTTPException(500, detail=f"Reset failed: {str(e)}")
     finally:
         vector_store.save_indexed_files_and_vector_db()
+        return JSONResponse(content={
+            "status": "success", 
+            "message": "Vector store and indexed files have been reset."
+        }, status_code=200)
 
 @app.post("/register_ips")
 async def register_ips(ips: List[str] = Body(...)):
@@ -293,7 +300,7 @@ async def get_allowed_ips():
     """
     try:
         allowed_ips = ip_middleware.get_allowed_ips()
-    
+        print(f"허용된 IP 목록: {allowed_ips}")
         return JSONResponse(content={
             "status": "success",
             "allowed_ips": allowed_ips,

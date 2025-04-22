@@ -25,20 +25,6 @@ class VectorStore:
 
         self.indexed_files = dict()
         self.load_indexed_files_if_exist()
-
-    def sync_indexed_files_and_vector_db(self):
-        file_list = self.vector_store.get_unique_file_paths()
-        no_existing_file_list = []
-        for file_path in self.indexed_files.keys():
-            if file_path not in file_list:
-                no_existing_file_list.append(file_path)
-
-        for file_path in no_existing_file_list:
-            if file_path in self.indexed_files:
-                del self.indexed_files[file_path]
-                logger.error(f"deleted file_path in indexed_files : {file_path}")
-
-        self.save_indexed_files_and_vector_db
         
 
     def _get_embedding_model(self):
@@ -67,8 +53,6 @@ class VectorStore:
     # 파일 1건 업로드
     async def upload(self, file_path: str, file_name: str, contents: dict) -> Dict:
         try:
-            print(f"컨텐츠 타입 : {type(contents['contents'])}")
-
             # 지원되지 않는 파일 타입은 제거
             if not self.splitter.is_supported_file_type(file_path):
                 return {"status": "fail", "message": f"File {file_name} is not supported file type"}
@@ -89,12 +73,18 @@ class VectorStore:
 
                 if contents['contents_type'] in ["EML", "MHT"]:
                     if len(contents["to"]) > 50: # 수신자 목록이 너무 긴 경우 앞에 수신자를 중심으로만 남김
-                        contents["to"] = contents["to"]
+                        contents["to"] = contents["to"][:50]
+
                     chunk.page_content = f"""이메일 제목: {contents['title']}\n보낸사람:{contents["from"]}\n받는사람:{contents["to"]}\n날짜:{contents['date']}\n{chunk.page_content}"""
-                elif contents['contents_type'] in ["MSWORD", "MSPOWERPOINT", "MSEXCEL", "PDF"] :
+                else:
                     chunk.page_content = f"""문서명: {file_name}\n{chunk.page_content}"""
+
+
+                if len(chunk.page_content) > 5000:
+                    logger.error("[ERROR] 청크의 길이가 너무 길어 검색 성능에 영향을 줄 수 있어서 5000자이내로 줄였습니다. : {file_path}")
+                    chunk.page_content = chunk.page_content[:4985] + "... (truncated)"
                 
-            self.vector_store.add_documents(chunks)
+                self.vector_store.add_document(chunk)
 
             # 인덱싱된 파일 추가
             file_metadata = {
@@ -113,16 +103,16 @@ class VectorStore:
 
     def search(self, query: str, k: int = 5) -> List[Dict]:
         try:
-            result = self.vector_store.search(query, k=k)
+             result = self.vector_store.search(query, k=k)
 
-            added_result = []
-            for data in result:
+             added_result = []
+             for data in result:
                 info = self.indexed_files[data['file_path']]
-            for key, value in info.items():
-                data['metadata'][key] = value
-            added_result.append(data)              
+                for key, value in info.items():
+                    data['metadata'][key] = value
+                added_result.append(data)              
 
-            return added_result
+             return added_result
         except Exception as e:
             logger.exception(f"Search failed: {str(e)}")
             return []

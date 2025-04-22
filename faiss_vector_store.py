@@ -14,7 +14,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.embeddings.base import Embeddings
 
-from search_util import extract_keywords
+#from search_util import extract_keywords
 from logger_util import get_logger
 
 logger = get_logger()
@@ -143,7 +143,7 @@ class FAISS_VECTOR_STORE:
         # 결과를 반환할 리스트
         enhanced_results = []
         
-        keywords = extract_keywords(query)
+        #keywords = extract_keywords(query)
 
         for doc, similarity in results:
             similarity = 1. / (1. + float(similarity))
@@ -156,7 +156,7 @@ class FAISS_VECTOR_STORE:
             enhanced_doc = {
                 "content": self._decode_text(doc.page_content),
                 "score": float(similarity),
-                "keywords": keywords,
+                "keywords": [],
                 "file_path": processed_metadata.get("source", ""),
                 "metadata": processed_metadata
             }

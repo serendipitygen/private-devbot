@@ -17,7 +17,7 @@ from langchain_community.document_loaders import (
 )
 from langchain_community.document_loaders.base import BaseLoader
 
-from search_util import extract_keywords
+#from search_util import extract_keywords
 
 class StringLoader(BaseLoader):
     def __init__(self, content: str):
@@ -59,10 +59,10 @@ class ImageLoader:
             if short_lines / len(lines) >= 0.5:  # 짧은 줄이 50% 이상이면 제외
                 return False
         # 키워드가 2개 이하인 라인이 많은 경우 제외
-        if lines:
-            short_lines = sum(1 for line in lines if len(extract_keywords(line)) <= 1)
-            if short_lines / len(lines) >= 0.5:  # 키워드가 2개 이하인 라인이 50% 이상이면 제외
-                return False
+        # if lines:
+        #     short_lines = sum(1 for line in lines if len(extract_keywords(line)) <= 1)
+        #     if short_lines / len(lines) >= 0.5:  # 키워드가 2개 이하인 라인이 50% 이상이면 제외
+        #         return False
 
         return True
 
@@ -112,34 +112,16 @@ class DocumentSplitter:
 
     def split_document(self, file_extension: str, contents: str, file_path: str) -> List[Document]:
         if file_extension in ['.txt', '.py', '.java', '.cpp', '.md', '.pdf', '.doc', '.docx', '.ppt', '.pptx', '.eml', '.mht',
-        '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart', '.devbot', '.json', '.jsonl', '.html', '.htm']:
+        '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart', '.devbot']:
             loader = StringLoader(contents)
             
             documents = loader.load()
-            contents_size = len(contents)
-
-            if contents_size > (1024*150):
-                contents = contents[:(1024*150)]
-
-            if contents_size < (1024*100):
-                text_splitter = RecursiveCharacterTextSplitter(
-                    chunk_size=self.chunk_size,
-                    chunk_overlap=self.chunk_overlap,
-                    separators=self.chunk_separators,
-                    length_function=len,
-                )
-            else:
-                big_chunk_size = 2048 # 청크 개수가 1300개 이상이 되면 너무 느려짐
-                big_chunk_overlap = 0
-                big_chunk_separators = []
-
-                text_splitter = RecursiveCharacterTextSplitter(
-                    chunk_size=big_chunk_size,
-                    chunk_overlap=big_chunk_overlap,
-                    separators=big_chunk_separators,
-                    length_function=len,
-                )
-
+            text_splitter = RecursiveCharacterTextSplitter(
+                chunk_size=self.chunk_size,
+                chunk_overlap=self.chunk_overlap,
+                separators=self.chunk_separators,
+                length_function=len,
+            )
             for doc in documents:
                 doc.metadata['source'] = file_path
 
@@ -175,14 +157,6 @@ class DocumentSplitter:
                 )
                 docs.append(doc)
             
-        # elif file_extension == '.pdf':
-        #     loader = PDFMinerLoader(temp_file_path)
-        # elif file_extension in ['.docx', '.doc']:
-        #     loader = Docx2txtLoader(temp_file_path)
-        # elif file_extension in ['.pptx', '.ppt']:
-        #     loader = UnstructuredPowerPointLoader(temp_file_path)
-        # elif file_extension in ['.msg', '.eml']:
-        #     loader = UnstructuredEmailLoader(temp_file_path)
         elif file_extension in ['.png', '.jpg', '.jpeg', '.gif', '.bmp', 'webp']:
             loader = ImageLoader(file_path)
             
@@ -229,10 +203,13 @@ class DocumentSplitter:
         file_extension = file_extension.lower()
 
         """ TODO: 사내 보안 문서 적용 가능하면 추가 필요
+            '.docx', '.doc',
+            '.pptx', '.ppt',
+            '.msg', '.eml',
             '.pst', '.ost',
         """
         supported_type = [
-            '.txt', '.py', '.java', '.cpp', '.md', '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart', '.json', '.jsonl', '.html', '.htm',
+            '.txt', '.py', '.java', '.cpp', '.md', '.c', 'cpp', '.h', '.hpp', '.cs', '.yaml', '.yml', '.java', 'js', 'ts', 'dart', '.dart',
             '.png', '.jpg', '.jpeg', '.gif', '.bmp', 'webp', '.devbot', '.eml', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.pdf', '.mht'
         ]
         
