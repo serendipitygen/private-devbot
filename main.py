@@ -248,18 +248,63 @@ async def delete_all_documents():
             "message": "All documents deleted successfully."
         }, status_code=200)
 
+import datetime  # 추가된 import 구문
+
+@app.get("/health")
+async def health_check():
+    """
+    간단한 헬스 체크 API - 서버가 실행 중인지만 확인합니다.
+    클라이언트는 이 API를 통해 서버 연결 상태를 확인할 수 있습니다.
+    """
+    try:
+        # datetime을 사용하여 현재 시간을 가져오도록 수정
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        # 응답 객체 생성
+        response = {
+            "status": "success",
+            "message": "서버가 정상 작동 중입니다.",
+            "timestamp": current_time
+        }
+        
+        # FastAPI의 JSONResponse를 반환하여 헤더 설정
+        from fastapi.responses import JSONResponse
+        resp = JSONResponse(content=response)
+        
+        # 캐시 방지 헤더 추가
+        resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        resp.headers["Pragma"] = "no-cache"  # HTTP/1.0 호환용
+        resp.headers["Expires"] = "0"        # 추가적인 캐시 방지
+        
+        return resp
+    except Exception as e:
+        logger.error(f"[ERROR] 헬스 체크 실패: {str(e)}")
+        raise HTTPException(500, detail=f"서버 오류: {str(e)}")
+
 @app.get("/status")
 async def get_status():
     try:
         document_count = vector_store.get_indexed_file_count()
         index_size = vector_store.get_db_size() / (1024 * 1024)  # MB로 변환
-        return {
+        # 응답 데이터 준비
+        response_data = {
             "status": "success",
             "document_count": document_count,
             "index_size_mb": round(index_size, 2),
             "index_path": vector_store.get_vector_db_path(),
             "os_name": os_name
         }
+        
+        # FastAPI의 JSONResponse를 반환하여 헤더 설정
+        from fastapi.responses import JSONResponse
+        resp = JSONResponse(content=response_data)
+        
+        # 캐시 방지 헤더 추가
+        resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        resp.headers["Pragma"] = "no-cache"  # HTTP/1.0 호환용
+        resp.headers["Expires"] = "0"        # 추가적인 캐시 방지
+        
+        return resp
     except Exception as e:
         logger.error(str(e))
         raise HTTPException(500, detail=str(e))
