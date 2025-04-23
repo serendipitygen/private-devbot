@@ -1,19 +1,15 @@
-@echo off
-setlocal
-rem Start to register PrivateDevBOT Server on to Windows Task Scheduler.
-set SCRIPT_DIR=%~dp0
+REM Run Private DevBOT RAG Server
 
-rem Task name is PrivateDevbotRAG 
-set TASK_NAME=PrivateDevbotRAG
+echo Activating Conda environment: private_devbot_conda...
+call .\private_devbot_conda\Scripts\activate.bat
 
-rem Register the task to run when windows os starts
-schtasks /Create /TN "%TASK_NAME%" /TR "cmd.exe /c \"cd /d %SCRIPT_DIR% && run.bat\"" /SC ONSTART /F
-
-if %ERRORLEVEL%==0 (
-    echo Task registration succeeded.
-) else (
-    echo Task registration failed.
+REM activate.bat 실행 중 오류가 발생했는지 간단히 확인 (선택 사항)
+if %ERRORLEVEL% NEQ 0 (
+    echo ERROR: Failed to execute activate.bat. Check the path and Conda environment.
+    pause
+    goto :eof
 )
+echo Conda environment activated successfully.
 
-endlocal
-pause
+echo Starting Private DevBOT RAG Server
+uvicorn.exe main:app --host 0.0.0.0 --port 8125

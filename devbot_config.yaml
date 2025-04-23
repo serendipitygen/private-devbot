@@ -1,1 +1,3 @@
-allowed_ips: []
+allowed_ips:
+- 210.99.244.213
+is_allowed_all_ips: false

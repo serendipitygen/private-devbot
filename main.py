@@ -314,6 +314,7 @@ async def get_allowed_ips():
 if __name__ == "__main__":
     import uvicorn
     import argparse
+    from ip_middleware import IPRestrictionMiddleware
     
     # 명령줄 인자 파서 생성
     parser = argparse.ArgumentParser(description='DevBot 서버 실행')
@@ -326,6 +327,11 @@ if __name__ == "__main__":
     # 포트 설정
     port = args.port
     print(f"서버가 포트 {port}에서 실행됩니다...")
+    
+    # IP 미들웨어 설정 업데이트 (모든 필요한 IP 등록)
+    print("IP 미들웨어 설정을 업데이트합니다...")
+    ip_middleware = IPRestrictionMiddleware(app, config_path="devbot_config.yaml")
+    ip_middleware.ensure_all_required_ips()
     
     # 서버 실행
     uvicorn.run(app, host="0.0.0.0", port=port)
