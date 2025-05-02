@@ -28,8 +28,9 @@ os_name = platform.system() # Windows | Linux | Darwin
 app = FastAPI()
 
 # IP 제한 미들웨어 추가
+private_devbot_version = config.private_devbot_version
 ip_middleware = IPRestrictionMiddleware(app)
-app.add_middleware(IPRestrictionMiddleware, config_path="devbot_config.yaml")
+app.add_middleware(IPRestrictionMiddleware, config_path=f"./store/devbot_config_{private_devbot_version}.yaml")
 
 # CORS 설정
 app.add_middleware(
@@ -375,7 +376,7 @@ if __name__ == "__main__":
     
     # IP 미들웨어 설정 업데이트 (모든 필요한 IP 등록)
     print("IP 미들웨어 설정을 업데이트합니다...")
-    ip_middleware = IPRestrictionMiddleware(app, config_path="devbot_config.yaml")
+    ip_middleware = IPRestrictionMiddleware(app, config_path=f"./store/devbot_config_{private_devbot_version}.yaml")
     ip_middleware.ensure_all_required_ips()
     
     # 서버 실행

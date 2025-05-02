@@ -1,4 +1,5 @@
 import os
+private_devbot_version = "v0.1.1"
 
 # 상수 정의
 server_port = 8123

@@ -8,16 +8,19 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from typing import List, Dict, Any, Optional
 import ast
 from typing import Set
+import config
 
 try:
     import netifaces
 except ImportError:
     netifaces = None
 
+private_devbot_version = config.private_devbot_version
 
 class IPRestrictionMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app, config_path: str = "devbot_config.yaml"):
+    def __init__(self, app, config_path: str = f"./store/devbot_config_{private_devbot_version}.yaml"):
         super().__init__(app)
+        os.makedirs(os.path.dirname(config_path), exist_ok=True)  # 디렉토리 생성
         self.is_allowed_all_ips = False
         self.config_path = config_path
         self.allowed_ips = set()
