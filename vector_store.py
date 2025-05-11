@@ -1,383 +1,188 @@
-import json
-
-from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Body, Depends
-from fastapi.responses import JSONResponse
-from fastapi.responses import Response
-from pydantic import BaseModel
-from typing import List, Dict, Any
-
+import os
+import pickle
+import tempfile
+from typing import List, Dict
+from langchain.docstore.document import Document
+from document_splitter import DocumentSplitter
+from faiss_vector_store import FAISS_VECTOR_STORE, DummyEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
+from sentence_transformers import SentenceTransformer
 import config
 import logger_util
-
-from fastapi.middleware.cors import CORSMiddleware
-from vector_store import VectorStore
-from document_reader import DocumentReader
-import platform
-from ip_middleware import IPRestrictionMiddleware
-
-
-# 벡터 저장소 및 관련 변수 초기화
-vector_store = VectorStore()
-document_reader = DocumentReader()
+import datetime
 
 logger = logger_util.get_logger()
 
-os_name = platform.system() # Windows | Linux | Darwin
+class VectorStore:
+    def __init__(self, chunk_size=500, chunk_overlap=100):
+        self.splitter = DocumentSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+        self.dimension = 1024
+        #self.embedding = DummyEmbeddings(dim=1536)  # OpenAI 임베딩의 기본 차원
+        self.embeddings = self._get_embedding_model()
 
-# FastAPI 앱 초기화
-app = FastAPI()
+        self.store_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "store")
+        self.vector_store = FAISS_VECTOR_STORE(embedding=self.embeddings, dimension=self.dimension, store_path=self.store_path)
 
-# IP 제한 미들웨어 추가
-private_devbot_version = config.private_devbot_version
-ip_middleware = IPRestrictionMiddleware(app)
-app.add_middleware(IPRestrictionMiddleware, config_path=f"./store/devbot_config_{private_devbot_version}.yaml")
+        self.indexed_files = dict()
+        self.load_indexed_files_if_exist()
 
-# CORS 설정
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+    def sync_indexed_files_and_vector_db(self):
+        file_list = self.vector_store.get_unique_file_paths()
+        no_existing_file_list = []
+        for file_path in self.indexed_files.keys():
+            if file_path not in file_list:
+                no_existing_file_list.append(file_path)
 
-class SearchRequest(BaseModel):
-    query: str
-    k: int = 5
+        for file_path in no_existing_file_list:
+            if file_path in self.indexed_files:
+                del self.indexed_files[file_path]
+                logger.error(f"deleted file_path in indexed_files : {file_path}")
 
-class FileContentsRequest(BaseModel):
-    file_path: str
-    file_name: str
-    file_size: int
-    content: str
-    extraction_time: str
-
-@app.post("/upload")
-async def upload_file(
-    file: UploadFile = File(...),
-    file_path: str = Form(...),
-):
-    global vector_store
-
-    try:
-        logger.debug(f"[DEBUG] Upload request - Path: {file_path}")
-
-        success, file_name = await _process_file(file, file_path)
-
-        result = {
-            "status": "success" if success else "failed",
-            "message": f"Processed {file_name}",
-        }
-    except Exception as e:
-        logger.exception(f"[ERROR] Upload failed: {str(e)}")
-        raise HTTPException(500, detail=f"Upload failed: {str(e)}")
-    finally:
-        vector_store.save_indexed_files_and_vector_db()
-        return JSONResponse(content=result)
-
-@app.post("/upload_file_contents")
-async def upload_file_contents(request: FileContentsRequest):
-    global vector_store
-
-    try:
-        logger.debug(f"[DEBUG] Upload file contents request - Path: {request.file_path}")
+        self.save_indexed_files_and_vector_db()
         
-        # Create a dictionary with the expected format for vector_store.upload
-        # The content from the client is already a string, but vector_store expects a dict with 'contents' key
-        file_contents = {
-            "contents_type": "TEXT",  # Default to TEXT type
-            "contents": request.content
-        }
-        
-        # Upload to vector store
-        result = await vector_store.upload(
-            file_path=request.file_path, 
-            file_name=request.file_name,
-            contents=file_contents
-        )
 
-        if result['status'] != 'success':
-            return JSONResponse(
-                content={
-                    "status": "failed",
-                    "message": f"Failed to process {request.file_name}",
-                    "details": result.get('message', 'Unknown error')
-                },
-                status_code=400
-            )
-    except Exception as e:
-        logger.exception(f"[ERROR] Upload file contents failed: {str(e)}")
-        raise HTTPException(500, detail=f"Upload file contents failed: {str(e)}")
-    finally:
-        vector_store.save_indexed_files_and_vector_db()
-        return JSONResponse(
-            content={
-                "status": "success",
-                "message": f"Processed {request.file_name}",
-                "details": result.get('message', '')
-            }
-        )
-
-
-@app.post("/upload/batch")
-async def upload_files(
-    files: List[UploadFile] = File(...),
-    file_paths: str = Form(...)
-):
-    try:
-        file_paths_data = json.loads(file_paths)
-        success_count = 0
-        failed_files = []
-        
-        # 파일 경로 매핑 생성
-        path_mapping = {
-            fp['filename']: fp['file_path'] 
-            for fp in file_paths_data
-        }
-
-        for file in files:
-            file_path = path_mapping.get(file.filename)
-            result, failed_file = await _process_file(file, file_path)
-            if result:
-                success_count += 1
+    def _get_embedding_model(self):
+        try:
+            if not os.path.exists(config.EMBEDDING_MODEL_PATH):
+                embeddings = HuggingFaceEmbeddings(model_name=config.MODEL_NAME)
+                os.makedirs(config.EMBEDDING_MODEL_PATH, exist_ok=True)
+                model = SentenceTransformer(config.MODEL_NAME)
+                model.save(config.EMBEDDING_MODEL_PATH)
             else:
-                failed_files.append(failed_file)
-   
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        vector_store.save_indexed_files_and_vector_db()
-        return {
-            "status": "success" if len(failed_files) == 0 else "failed",
-            "message": f"Processed {len(files)} files",
-            "success_count": success_count,
-            "failed_files": failed_files
-        }  
+                message = f"[DEBUG] 저장된 임베딩 모델을 로딩: {config.EMBEDDING_MODEL_PATH}"
+                logger.info(message)
+                embeddings = HuggingFaceEmbeddings(model_name=config.EMBEDDING_MODEL_PATH)
+
+            emb = embeddings.embed_query("Hello")
+            self.dimension = len(emb) if len(emb) <= 1536 else 1536
+
+            return embeddings
+            
+            if self.embeddings is None:
+                raise ValueError("Failed to initialize embeddings")
+        except Exception as e:
+            logger.error(f"Error initializing embedding model: {str(e)}")
+            raise
+
+    # 파일 1건 업로드
+    async def upload(self, file_path: str, file_name: str, contents: dict) -> Dict:
+        try:
+            # 지원되지 않는 파일 타입은 제거
+            if not self.splitter.is_supported_file_type(file_path):
+                return {"status": "fail", "message": f"File {file_name} is not supported file type"}
+            
+            # 동일 파일 존재 시 벡터스토어 및 파일 목록에서 삭제
+            if file_path in self.indexed_files.keys():
+                self.delete_documents([file_path])
+
+            _, file_extension = os.path.splitext(file_path)
+            file_type = file_extension.lower()
+            chunks = self.splitter.split_document(file_extension=file_type, contents=contents['contents'], file_path=file_path)
+            
+            # 분할된 청크를 벡터 스토어에 추가
+            for chunk in chunks:
+                chunk.page_content = chunk.page_content.strip()
+                if len(chunk.page_content) == 0:
+                    continue
+
+                if contents['contents_type'] in ["EML", "MHT"]:
+                    if len(contents["to"]) > 50: # 수신자 목록이 너무 긴 경우 앞에 수신자를 중심으로만 남김
+                        contents["to"] = contents["to"][:50]
+
+                    chunk.page_content = f"""이메일 제목: {contents['title']}\n보낸사람:{contents["from"]}\n받는사람:{contents["to"]}\n날짜:{contents['date']}\n{chunk.page_content}"""
+                else:
+                    chunk.page_content = f"""문서명: {file_name}\n{chunk.page_content}"""
+
+
+                if len(chunk.page_content) > 5000:
+                    logger.error("[ERROR] 청크의 길이가 너무 길어 검색 성능에 영향을 줄 수 있어서 5000자이내로 줄였습니다. : {file_path}")
+                    chunk.page_content = chunk.page_content[:4985] + "... (truncated)"
+                
+            self.vector_store.add_documents(chunks)
+
+            # 인덱싱된 파일 추가
+            file_metadata = {
+                "file_name": file_name,
+                "file_type": file_type,
+                "file_path": file_path,
+                "last_updated": int(datetime.datetime.now().timestamp()),
+                "chunk_count": len(chunks)
+            }
+            self.indexed_files[file_path] = file_metadata
+
+            return {"status": "success", "message": f"File {file_name} uploaded and indexed successfully"}
+        except Exception as e:
+            logger.exception(f"Upload failed: {str(e)}")
+            return {"status": "fail", "message": str(e)}
+
+    def search(self, query: str, k: int = 5) -> List[Dict]:
+        try:
+            result = self.vector_store.search(query, k=k)
+
+            added_result = []
+            for data in result:
+                info = self.indexed_files[data['file_path']]
+                for key, value in info.items():
+                    data['metadata'][key] = value
+                added_result.append(data)              
+
+            return added_result
+        except Exception as e:
+            logger.exception(f"Search failed: {str(e)}")
+            return []
+
+    def get_documents(self) -> List[Dict]:
+        return list(self.indexed_files.values()) if len(self.indexed_files) > 0 else []
     
-async def _process_file(file: UploadFile, file_path:str):
-    try:
-        file_contents = await document_reader.get_contents(file, file_path)
-
-        result = await vector_store.upload(file_path=file_path, file_name=file.filename,
-                    contents=file_contents)
-        if result['status'] != 'success':
-            return False, file.filename
+    def get_document_chunks(self, file_path: str) -> List[str]:
+        """
+        주어진 file_path에 대한 모든 문서 청크를 반환합니다.
         
-        return True, file.filename
-    except Exception as e:
-        print(f"Error processing {file.filename}: {str(e)}")
-        return False, file.filename
+        :param file_path: 문서의 파일 경로
+        :return: 문서 청크 리스트
+        """
+        return self.vector_store.get_document_chunks(file_path)
 
-@app.post("/search")
-async def search_documents(request: SearchRequest):
-    global vector_store
+    def get_indexed_file_count(self) -> int:
+        file_count = len(self.indexed_files)
+        return file_count
 
-    try:
-        print(f"[DEBUG] Searching with query: {request.query}, {request.k}")
+    def get_db_size(self) -> int:
+        return self.vector_store.get_db_size()
+
+    def get_vector_db_path(self) -> str:
+        return self.store_path
+
+    def save_vector_db(self):
+        self.vector_store.save_local(self.store_path)
+
+    def empty_vector_store(self):
+        self.vector_store.delete_all()
+        self.indexed_files = {}
+
+    def delete_documents(self, file_paths: List[str]):
+        self.vector_store.delete_files(file_paths)
+        for file_path in file_paths:
+            if file_path in self.indexed_files:
+                del self.indexed_files[file_path]
         
-        result = vector_store.search(request.query, request.k)
+
+    def delete_all_documents(self):
+        self.vector_store.delete_all()
+        self.indexed_files = {}
+        
+    def load_indexed_files_if_exist(self):
+        indexed_files_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "store") + "/indexed_files.pickle" 
+
+        if os.path.exists(indexed_files_path):
+            with open(indexed_files_path, 'rb') as f:
+                self.indexed_files = pickle.load(f)
     
-        # json.dumps를 사용하여 ensure_ascii=False로 한글이 깨지지 않도록 함.
-        json_data = json.dumps(result, ensure_ascii=False)
-        return Response(
-            content=json_data,
-            media_type="application/json; charset=utf-8"
-        )
-    except Exception as e:
-        logger.exception(f"[ERROR] Search failed: {str(e)}")
-        raise HTTPException(500, detail=str(e))
+    def save_indexed_files_and_vector_db(self):
+        os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), "store"), exist_ok=True)
+        indexed_files_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "store") + "/indexed_files.pickle"
 
-@app.get("/documents")
-async def get_documents(response: Response):
-    global vector_store
+        with open(indexed_files_path, 'wb') as f:
+            pickle.dump(self.indexed_files, f)
 
-    try:
-        documents = vector_store.get_documents()
-
-        # FastAPI 응답 헤더에 캐시 제어 설정
-        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
-        response.headers["Pragma"] = "no-cache"  # HTTP/1.0 호환용
-        response.headers["Expires"] = "0"       # 프록시 서버 등에서 캐시하지 않도록
-        
-        result = {"documents": sorted(documents, key=lambda x: x["file_name"])}
-        return result
-    except Exception as e:
-        logger.exception(str(e))
-        raise HTTPException(500, detail=str(e))
-
-@app.get("/document")
-async def get_document(file_path: str):
-    global vector_store
-
-    try:
-        chunks = vector_store.get_document_chunks(file_path)
-
-        return {"status": "success", "file_path": file_path, "chunks": chunks}
-    except Exception as e:
-        logger.exception(str(e))
-        raise HTTPException(status_code=500, detail=str(e))
-
-class DeleteRequest(BaseModel):
-    file_paths: List[str]
-
-@app.delete("/documents")
-async def delete_documents(request: DeleteRequest):
-    try:
-        vector_store.delete_documents(request.file_paths)
-    except Exception as e:
-        logger.exception(str(e))
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        vector_store.save_indexed_files_and_vector_db()
-        return JSONResponse(content={
-                "status": "success", 
-                "message": "Documents deleted successfully."
-            }, status_code=200)
-
-
-@app.delete("/documents/all")
-async def delete_all_documents():
-    try:
-        vector_store.delete_all_documents()
-    except Exception as e:
-        logger.exception(str(e))
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        vector_store.save_indexed_files_and_vector_db()
-        return JSONResponse(content={
-            "status": "success", 
-            "message": "All documents deleted successfully."
-        }, status_code=200)
-
-import datetime  # 추가된 import 구문
-
-@app.get("/health")
-async def health_check():
-    """
-    간단한 헬스 체크 API - 서버가 실행 중인지만 확인합니다.
-    클라이언트는 이 API를 통해 서버 연결 상태를 확인할 수 있습니다.
-    """
-    try:
-        # datetime을 사용하여 현재 시간을 가져오도록 수정
-        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        
-        # 응답 객체 생성
-        response = {
-            "status": "success",
-            "message": "서버가 정상 작동 중입니다.",
-            "timestamp": current_time
-        }
-        
-        # FastAPI의 JSONResponse를 반환하여 헤더 설정
-        from fastapi.responses import JSONResponse
-        resp = JSONResponse(content=response)
-        
-        # 캐시 방지 헤더 추가
-        resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-        resp.headers["Pragma"] = "no-cache"  # HTTP/1.0 호환용
-        resp.headers["Expires"] = "0"        # 추가적인 캐시 방지
-        
-        return resp
-    except Exception as e:
-        logger.error(f"[ERROR] 헬스 체크 실패: {str(e)}")
-        raise HTTPException(500, detail=f"서버 오류: {str(e)}")
-
-@app.get("/status")
-async def get_status():
-    try:
-        document_count = vector_store.get_indexed_file_count()
-        index_size = vector_store.get_db_size() / (1024 * 1024)  # MB로 변환
-        # 응답 데이터 준비
-        response_data = {
-            "status": "success",
-            "document_count": document_count,
-            "index_size_mb": round(index_size, 2),
-            "index_path": vector_store.get_vector_db_path(),
-            "os_name": os_name
-        }
-        
-        # FastAPI의 JSONResponse를 반환하여 헤더 설정
-        from fastapi.responses import JSONResponse
-        resp = JSONResponse(content=response_data)
-        
-        # 캐시 방지 헤더 추가
-        resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-        resp.headers["Pragma"] = "no-cache"  # HTTP/1.0 호환용
-        resp.headers["Expires"] = "0"        # 추가적인 캐시 방지
-        
-        return resp
-    except Exception as e:
-        logger.error(str(e))
-        raise HTTPException(500, detail=str(e))
-
-@app.post("/reset")
-async def reset_storage():
-    global vector_store
-
-    try:
-        vector_store.empty_vector_store()
-    except Exception as e:
-        logger.exception(f"[ERROR] Reset failed: {str(e)}")
-        raise HTTPException(500, detail=f"Reset failed: {str(e)}")
-    finally:
-        vector_store.save_indexed_files_and_vector_db()
-        return JSONResponse(content={
-            "status": "success", 
-            "message": "Vector store and indexed files have been reset."
-        }, status_code=200)
-
-@app.post("/register_ips")
-async def register_ips(ips: List[str] = Body(...)):
-    """
-    허용된 IP 목록을 등록합니다.
-    빈 목록을 전달하면 모든 IP가 허용됩니다.
-    """
-    try:
-        result = ip_middleware.update_allowed_ips(ips)
-        return JSONResponse(content=result)
-    except Exception as e:
-        logger.exception(f"[ERROR] IP 등록 실패: {str(e)}")
-        raise HTTPException(500, detail=f"IP 등록 실패: {str(e)}")
-
-@app.get("/get_allowed_ips")
-async def get_allowed_ips():
-    """
-    현재 허용된 IP 목록을 반환합니다.
-    """
-    try:
-        allowed_ips = ip_middleware.get_allowed_ips()
-        print(f"허용된 IP 목록: {allowed_ips}")
-        return JSONResponse(content={
-            "status": "success",
-            "allowed_ips": allowed_ips,
-            "message": "현재 허용된 IP 목록입니다."
-        })
-    except Exception as e:
-        logger.exception(f"[ERROR] IP 목록 조회 실패: {str(e)}")
-        raise HTTPException(500, detail=f"IP 목록 조회 실패: {str(e)}")
-
-
-if __name__ == "__main__":
-    import uvicorn
-    import argparse
-    from ip_middleware import IPRestrictionMiddleware
-    
-    # 명령줄 인자 파서 생성
-    parser = argparse.ArgumentParser(description='DevBot 서버 실행')
-    parser.add_argument('--port', type=int, default=config.server_port,
-                        help=f'서버 실행 포트 (기본값: {config.server_port})')
-    
-    # 명령줄 인자 파싱
-    args = parser.parse_args()
-    
-    # 포트 설정
-    port = args.port
-    print(f"서버가 포트 {port}에서 실행됩니다...")
-    
-    # IP 미들웨어 설정 업데이트 (모든 필요한 IP 등록)
-    print("IP 미들웨어 설정을 업데이트합니다...")
-    ip_middleware = IPRestrictionMiddleware(app, config_path=f"./store/devbot_config_{private_devbot_version}.yaml")
-    ip_middleware.ensure_all_required_ips()
-    
-    # 서버 실행
-    uvicorn.run(app, host="0.0.0.0", port=port)
+        self.vector_store.save_local(self.store_path)

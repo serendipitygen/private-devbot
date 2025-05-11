@@ -6,7 +6,7 @@
       "type": "python",
       "request": "launch",
       "module": "uvicorn",
-      "args": ["main:app", "--host", "0.0.0.0", "--port", "8123", "--reload"],
+      "args": ["main:app", "--host", "0.0.0.0", "--port", "8125", "--reload"],
       "jinja": true,
       "justMyCode": false,
       "env": {

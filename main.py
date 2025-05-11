@@ -188,21 +188,96 @@ async def search_documents(request: SearchRequest):
         raise HTTPException(500, detail=str(e))
 
 @app.get("/documents")
-async def get_documents(response: Response):
+async def get_documents(
+    response: Response, 
+    page: int = 1, 
+    page_size: int = 50, 
+    sort_by: str = "file_name", 
+    sort_desc: bool = False, 
+    file_type: str = None,
+    file_name: str = None,
+    file_path: str = None,
+    min_chunks: int = None,
+    max_chunks: int = None
+):
     global vector_store
 
     try:
-        documents = vector_store.get_documents()
+        # 요청 필터링 매개변수 로깅
+        logger.debug(f"[DEBUG] Document filter request - page: {page}, size: {page_size}, "
+                    f"file_type: {file_type}, file_name: {file_name}, file_path: {file_path}, "
+                    f"min_chunks: {min_chunks}, max_chunks: {max_chunks}")
+        
+        # 전체 문서 가져오기
+        all_documents = vector_store.get_documents()
+        
+        # 필터링 적용 - 변경된 부분
+        filtered_documents = all_documents
+        
+        # 1. 파일 타입 필터링
+        if file_type:
+            logger.debug(f"[DEBUG] Applying file_type filter: {file_type}")
+            filtered_documents = [doc for doc in filtered_documents 
+                              if doc.get("file_type", "").lower() == file_type.lower()]
+        
+        # 2. 파일명 필터링 (부분 일치)
+        if file_name:
+            logger.debug(f"[DEBUG] Applying file_name filter: {file_name}")
+            filtered_documents = [doc for doc in filtered_documents 
+                              if file_name.lower() in doc.get("file_name", "").lower()]
+        
+        # 3. 파일 경로 필터링 (부분 일치)
+        if file_path:
+            logger.debug(f"[DEBUG] Applying file_path filter: {file_path}")
+            filtered_documents = [doc for doc in filtered_documents 
+                              if file_path.lower() in doc.get("file_path", "").lower()]
+        
+        # 4. 최소 청크 수 필터링
+        if min_chunks is not None:
+            logger.debug(f"[DEBUG] Applying min_chunks filter: {min_chunks}")
+            filtered_documents = [doc for doc in filtered_documents 
+                              if doc.get("chunk_count", 0) >= min_chunks]
+        
+        # 5. 최대 청크 수 필터링
+        if max_chunks is not None:
+            logger.debug(f"[DEBUG] Applying max_chunks filter: {max_chunks}")
+            filtered_documents = [doc for doc in filtered_documents 
+                              if doc.get("chunk_count", 0) <= max_chunks]
 
+        # 필터링 결과 로그
+        logger.debug(f"[DEBUG] Filtering result: {len(filtered_documents)} documents (from {len(all_documents)})")
+        
+        # 정렬 방향 결정
+        reverse = sort_desc
+        
+        # 정렬 적용
+        if sort_by in ["file_name", "file_type", "last_updated", "chunk_count"]:
+            sorted_documents = sorted(filtered_documents, key=lambda x: x.get(sort_by, ""), reverse=reverse)
+        else:
+            # 기본 정렬은 파일명
+            sorted_documents = sorted(filtered_documents, key=lambda x: x.get("file_name", ""), reverse=reverse)
+
+        # 페이지네이션 적용
+        total_count = len(sorted_documents)
+        start_idx = (page - 1) * page_size
+        end_idx = min(start_idx + page_size, total_count)
+        paginated_documents = sorted_documents[start_idx:end_idx]
+        
         # FastAPI 응답 헤더에 캐시 제어 설정
         response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
         response.headers["Pragma"] = "no-cache"  # HTTP/1.0 호환용
         response.headers["Expires"] = "0"       # 프록시 서버 등에서 캐시하지 않도록
         
-        result = {"documents": sorted(documents, key=lambda x: x["file_name"])}
+        result = {
+            "documents": paginated_documents,
+            "total_count": total_count,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": (total_count + page_size - 1) // page_size
+        }
         return result
     except Exception as e:
-        logger.exception(str(e))
+        logger.exception(f"[ERROR] Failed to get documents: {str(e)}")
         raise HTTPException(500, detail=str(e))
 
 @app.get("/document")
