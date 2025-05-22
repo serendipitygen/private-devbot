@@ -326,6 +326,8 @@ async def delete_all_documents():
 
 import datetime  # 추가된 import 구문
 
+
+
 @app.get("/health")
 async def health_check():
     """
@@ -421,15 +423,15 @@ async def get_allowed_ips():
     """
     try:
         allowed_ips = ip_middleware.get_allowed_ips()
-        print(f"허용된 IP 목록: {allowed_ips}")
+        print(f"Allowed IP List: {allowed_ips}")
         return JSONResponse(content={
             "status": "success",
             "allowed_ips": allowed_ips,
-            "message": "현재 허용된 IP 목록입니다."
+            "message": "Allowed IP list"
         })
     except Exception as e:
-        logger.exception(f"[ERROR] IP 목록 조회 실패: {str(e)}")
-        raise HTTPException(500, detail=f"IP 목록 조회 실패: {str(e)}")
+        logger.exception(f"[ERROR] IP Searching failed: {str(e)}")
+        raise HTTPException(500, detail=f"IP Searching Failure: {str(e)}")
 
 
 if __name__ == "__main__":
@@ -447,10 +449,10 @@ if __name__ == "__main__":
     
     # 포트 설정
     port = args.port
-    print(f"서버가 포트 {port}에서 실행됩니다...")
+    print(f"Document Store is running on {port} port...")
     
     # IP 미들웨어 설정 업데이트 (모든 필요한 IP 등록)
-    print("IP 미들웨어 설정을 업데이트합니다...")
+    print("IP is updating...")
     ip_middleware = IPRestrictionMiddleware(app, config_path=f"./store/devbot_config_{private_devbot_version}.yaml")
     ip_middleware.ensure_all_required_ips()
     

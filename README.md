@@ -17,6 +17,8 @@
 ## Conda로 설치 시 (배포본 생성을 할 경우 권장)
 conda install -c pytorch torchvision cpuonly -y
 conda install -c conda-forge -y fastapi uvicorn pydantic langchain langchain-community langchain-huggingface PyPDF2 docx2txt pandas openpyxl python-pptx faiss-cpu sentence-transformers transformers==4.47.1 watchdog requests chardet easyocr==1.7.0 beautifulsoup4 tabulate textract==1.6.3
+conda install -c conda-forge wxpython
+conda install psutil
 
 
 ## PIP로 설치 (그대로 배포해서 실행 시)
@@ -46,7 +48,7 @@ export HF_ENDPOINT="https://bart.sec.samsung.net/artifactory/api/huggingfaceml/h
 ## 실행 방법
 - command prompt : `uvicorn main:app --host 0.0.0.0 --port 8123 --reload --log-level debug`
 - 또는 vs code에는 F5로 디버그 실행
-- 
+- UI 실행 : python private_devbot_ui.py
 
 ## API DOC
 - http://localhost:8123/docs  (기본 실행 시, 8123 포트로 실행됨)
@@ -86,3 +88,17 @@ streamlit run .\private_rag_ui\app.py
 ## 기타 참고 사항
 - 프론트엔드는 Flutter로 개발되어 있고 프로젝트 이름은 `private_devbot_admin`
 - 진행 중 또는 진행해야 하는 Task는 `DEV_DIARY.md` 파일 참고
+- 실행포트 확인 : netstat -ano | findstr ":8125"
+- 테스트용 API 호출 : curl http://localhost:8125/health
+
+## conda-pack으로 conda 환경 압축
+1. 명령 프롬프트 열기
+2. 압축 파일 저장할 폴더로 이동
+3. 가상환경 해제
+4. `conda-pack -n private_devbot_conda --format zip -o private_devbot_conda.zip`
+
+## conda 환결 설정 백업/복원
+conda env export > environment.yml
+conda env create -f environment.yml
+또는 conda env update --file environment.yml --prune
+

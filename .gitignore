@@ -11,3 +11,9 @@ build/
 private_devbot.log
 document_extractor_for_remote_server.dist/
 document_extractor_for_remote_server.e*
+.cursor/
+.cursorignore
+.windsurf/
+devbot_doc_extractor.zip
+monitoring_files_*.*
+private_devbot_conda/

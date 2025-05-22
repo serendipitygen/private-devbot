@@ -9,6 +9,7 @@ from typing import List, Dict, Any, Optional
 import ast
 from typing import Set
 import config
+from datetime import datetime
 
 try:
     import netifaces
@@ -16,6 +17,67 @@ except ImportError:
     netifaces = None
 
 private_devbot_version = config.private_devbot_version
+
+def get_local_ips() -> Set[str]:
+    """
+    모든 OS에서 현재 PC의 모든 IPv4 주소를 set 형태로 반환합니다.
+    - loopback(127.x.x.x)은 자동으로 제외
+    - Windows, Linux, macOS 모두 호환
+    - netifaces가 없어도 모든 IP를 추출
+    """
+    ips: Set[str] = set()
+
+    # 1) UDP 소켓 방식으로 기본 라우팅된 로컬 IP 얻기
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(("8.8.8.8", 80))
+            addr = s.getsockname()[0]
+            if not addr.startswith("127."):
+                ips.add(addr)
+    except Exception:
+        pass  # 네트워크 연결 불가 시 무시
+
+    # 2) netifaces가 설치되어 있으면 모든 인터페이스 순회 (가장 정확한 방법)
+    if netifaces:
+        for iface in netifaces.interfaces():
+            try:
+                addrs = netifaces.ifaddresses(iface)
+                for link in addrs.get(netifaces.AF_INET, []):
+                    addr = link.get("addr")
+                    # loopback 제외
+                    if addr and not addr.startswith("127."):
+                        ips.add(addr)
+            except Exception:
+                # 해당 인터페이스 처리 중 오류 발생 시 건너뜀
+                continue
+    # 3) netifaces가 없을 경우 socket.gethostbyname_ex 방식으로 모든 IP 추출
+    else:
+        try:
+            # 호스트명으로 모든 IP 주소 조회
+            hostname = socket.gethostname()
+            _, _, all_ips = socket.gethostbyname_ex(hostname)
+            for ip in all_ips:
+                if not ip.startswith("127."):
+                    ips.add(ip)
+            
+            # Windows에서 추가 IP 확인 (일부 가상 어댑터 IP가 누락될 수 있음)
+            if os.name == 'nt':
+                try:
+                    # ipconfig 명령어 실행하여 모든 IP 추출
+                    import subprocess
+                    output = subprocess.check_output('ipconfig', shell=True).decode('cp949')
+                    for line in output.split('\n'):
+                        line = line.strip()
+                        if 'IPv4' in line:
+                            ip_parts = line.split(':')[-1].strip()
+                            if ip_parts and not ip_parts.startswith('127.'):
+                                ips.add(ip_parts)
+                except Exception:
+                    pass  # ipconfig 명령 실패 시 무시
+        except Exception:
+            pass  # 호스트명 조회 실패 시 무시
+
+    return ips
 
 class IPRestrictionMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, config_path: str = f"./store/devbot_config_{private_devbot_version}.yaml"):
@@ -64,7 +126,7 @@ class IPRestrictionMiddleware(BaseHTTPMiddleware):
                 self.last_modified_time = os.path.getmtime(self.config_path)
             
             # 항상 Private RAG 서버의 IP는 추가한다.
-            self.allowed_ips = self.allowed_ips | self.get_local_ips()
+            self.allowed_ips = self.allowed_ips | get_local_ips()
             
             # 새 파일 생성 또는 기존 파일 업데이트 필요 시
             if not config_exists or force:
@@ -88,70 +150,9 @@ class IPRestrictionMiddleware(BaseHTTPMiddleware):
         except Exception as e:
             print(f"설정 파일 저장 중 오류 발생: {str(e)}")
     
-    def get_local_ips(self) -> Set[str]:
-        """
-        모든 OS에서 현재 PC의 모든 IPv4 주소를 set 형태로 반환합니다.
-        - loopback(127.x.x.x)은 자동으로 제외
-        - Windows, Linux, macOS 모두 호환
-        - netifaces가 없어도 모든 IP를 추출
-        """
-        ips: Set[str] = set()
-
-        # 1) UDP 소켓 방식으로 기본 라우팅된 로컬 IP 얻기
-        try:
-            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-                s.connect(("8.8.8.8", 80))
-                addr = s.getsockname()[0]
-                if not addr.startswith("127."):
-                    ips.add(addr)
-        except Exception:
-            pass  # 네트워크 연결 불가 시 무시
-
-        # 2) netifaces가 설치되어 있으면 모든 인터페이스 순회 (가장 정확한 방법)
-        if netifaces:
-            for iface in netifaces.interfaces():
-                try:
-                    addrs = netifaces.ifaddresses(iface)
-                    for link in addrs.get(netifaces.AF_INET, []):
-                        addr = link.get("addr")
-                        # loopback 제외
-                        if addr and not addr.startswith("127."):
-                            ips.add(addr)
-                except Exception:
-                    # 해당 인터페이스 처리 중 오류 발생 시 건너뜀
-                    continue
-        # 3) netifaces가 없을 경우 socket.gethostbyname_ex 방식으로 모든 IP 추출
-        else:
-            try:
-                # 호스트명으로 모든 IP 주소 조회
-                hostname = socket.gethostname()
-                _, _, all_ips = socket.gethostbyname_ex(hostname)
-                for ip in all_ips:
-                    if not ip.startswith("127."):
-                        ips.add(ip)
-                
-                # Windows에서 추가 IP 확인 (일부 가상 어댑터 IP가 누락될 수 있음)
-                if os.name == 'nt':
-                    try:
-                        # ipconfig 명령어 실행하여 모든 IP 추출
-                        import subprocess
-                        output = subprocess.check_output('ipconfig', shell=True).decode('cp949')
-                        for line in output.split('\n'):
-                            line = line.strip()
-                            if 'IPv4' in line:
-                                ip_parts = line.split(':')[-1].strip()
-                                if ip_parts and not ip_parts.startswith('127.'):
-                                    ips.add(ip_parts)
-                    except Exception:
-                        pass  # ipconfig 명령 실패 시 무시
-            except Exception:
-                pass  # 호스트명 조회 실패 시 무시
-
-        return ips
-    
     def is_local_ip(self, ip) -> bool:
         """주어진 IP가 로컬 IP인지 확인합니다."""
-        local_ips = self.get_local_ips()
+        local_ips = get_local_ips()
         localhost_ips = list({"127.0.0.1", "::1"} | local_ips)
         if isinstance(ip, list):
             return any(ip in localhost_ips for ip in ip)
@@ -172,7 +173,7 @@ class IPRestrictionMiddleware(BaseHTTPMiddleware):
         
         # 빈 리스트가 넘어오면 모든 IP 허용 (허용 IP 목록 초기화)
         if len(ips) == 0:
-            self.allowed_ips = self.get_local_ips()
+            self.allowed_ips = get_local_ips()
             self.is_allowed_all_ips = True
             self.save_config()
             return {
@@ -256,3 +257,126 @@ class IPRestrictionMiddleware(BaseHTTPMiddleware):
         # 접근 거부
         print(f"차단된 IP: {client_ip}")
         raise HTTPException(status_code=403, detail=f"접근이 거부되었습니다. 허용되지 않은 IP입니다: {client_ip}")
+
+def get_monitoring_yaml_path():
+    """
+    현재 사용 중인 IP와 포트를 기반으로 monitoring yaml 파일 경로를 생성합니다.
+    형식: monitoring_files_[IP]_[PORT].yaml
+    """
+    info = {}
+    default_file = os.path.join(os.getcwd(), 'monitoring_files_ip_port.yaml')
+    
+    # 기존 파일이 있으면 정보 로드
+    if os.path.exists(default_file):
+        try:
+            with open(default_file, 'r', encoding='utf-8') as f:
+                info = yaml.safe_load(f) or {}
+        except Exception:
+            pass
+    
+    # IP와 포트 정보 가져오기
+    ip = info.get('ip')
+    if not ip:
+        # IP가 없으면 현재 시스템의 첫 번째 IP 사용
+        ips = get_local_ips()
+        ip = list(ips)[0] if ips else '127.0.0.1'
+    
+    port = info.get('port') or 8125
+    
+    # 파일명 생성
+    filename = f'monitoring_files_{ip}_{port}.yaml'
+    return os.path.join(os.getcwd(), filename)
+
+def load_monitoring_info():
+    path = get_monitoring_yaml_path()
+    
+    # 새 형식 파일이 없으면 기존 파일에서 마이그레이션
+    old_path = os.path.join(os.getcwd(), 'monitoring_files_ip_port.yaml')
+    if not os.path.exists(path) and os.path.exists(old_path):
+        try:
+            # 기존 파일 읽기
+            with open(old_path, 'r', encoding='utf-8') as f:
+                data = yaml.safe_load(f) or {'ip': None, 'port': None, 'files': []}
+            
+            # 새 파일에 저장
+            with open(path, 'w', encoding='utf-8') as f:
+                yaml.safe_dump(data, f, allow_unicode=True)
+                
+            print(f"[ip_middleware] 모니터링 파일을 {os.path.basename(old_path)}에서 {os.path.basename(path)}로 마이그레이션했습니다")
+            
+            # 기존 파일 삭제
+            try:
+                os.remove(old_path)
+                print(f"[ip_middleware] 기존 {os.path.basename(old_path)} 파일을 삭제했습니다")
+            except:
+                pass
+        except Exception as e:
+            print(f"[ip_middleware] 파일 마이그레이션 중 오류 발생: {e}")
+    
+    if not os.path.exists(path):
+        return {'ip': None, 'port': None, 'files': []}
+    
+    with open(path, 'r', encoding='utf-8') as f:
+        return yaml.safe_load(f) or {'ip': None, 'port': None, 'files': []}
+
+def save_monitoring_info(ip, port, files):
+    path = get_monitoring_yaml_path()
+    data = {'ip': ip, 'port': port, 'files': files}
+    with open(path, 'w', encoding='utf-8') as f:
+        yaml.safe_dump(data, f, allow_unicode=True)
+
+def append_monitoring_file(file_path):
+    from ip_middleware import get_local_ips
+    info = load_monitoring_info()
+    ip = list(get_local_ips())[0] if get_local_ips() else '127.0.0.1'
+    port = info.get('port') or 8125
+    files = info.get('files', [])
+    name = os.path.basename(file_path)
+    now = datetime.now().isoformat()
+    files.append({'name': name, 'path': file_path, 'registered_at': now})
+    save_monitoring_info(ip, port, files)
+
+def append_monitoring_files(file_paths):
+    from ip_middleware import get_local_ips
+    info = load_monitoring_info()
+    ip = list(get_local_ips())[0] if get_local_ips() else '127.0.0.1'
+    port = info.get('port') or 8125
+    files = info.get('files', [])
+    now = datetime.now().isoformat()
+    for file_path in file_paths:
+        name = os.path.basename(file_path)
+        files.append({'name': name, 'path': file_path, 'registered_at': now})
+    save_monitoring_info(ip, port, files)
+
+def clear_monitoring_files():
+    """모든 문서 삭제 시 monitoring_files_ip_port.yaml 파일 초기화"""
+    info = load_monitoring_info()
+    ip = info.get('ip') or (list(get_local_ips())[0] if get_local_ips() else '127.0.0.1')
+    port = info.get('port') or 8125
+    # 파일 목록만 비우고 IP와 포트는 유지
+    save_monitoring_info(ip, port, [])
+    print(f"[ip_middleware] monitoring_files_ip_port.yaml 파일 초기화 완료")
+
+def delete_monitoring_file(file_path):
+    """yaml 파일에서 특정 파일을 삭제합니다."""
+    info = load_monitoring_info()
+    ip = info.get('ip') or (list(get_local_ips())[0] if get_local_ips() else '127.0.0.1')
+    port = info.get('port') or 8125
+    files = info.get('files', [])
+    
+    # 파일 경로가 일치하는 항목 제거
+    files = [f for f in files if f.get('path') != file_path]
+    save_monitoring_info(ip, port, files)
+    print(f"[ip_middleware] {os.path.basename(file_path)} yaml 파일에서 삭제됨")
+
+def delete_monitoring_files(file_paths):
+    """yaml 파일에서 여러 파일을 삭제합니다."""
+    info = load_monitoring_info()
+    ip = info.get('ip') or (list(get_local_ips())[0] if get_local_ips() else '127.0.0.1')
+    port = info.get('port') or 8125
+    files = info.get('files', [])
+    
+    # 파일 경로가 일치하지 않는 항목만 유지
+    files = [f for f in files if f.get('path') not in file_paths]
+    save_monitoring_info(ip, port, files)
+    print(f"[ip_middleware] {len(file_paths)}개 파일 yaml 파일에서 삭제됨")
