@@ -14,13 +14,18 @@ import datetime
 logger = logger_util.get_logger()
 
 class VectorStore:
-    def __init__(self, chunk_size=500, chunk_overlap=100):
+    def __init__(self, rag_name: str | None = None, chunk_size=500, chunk_overlap=100):
         self.splitter = DocumentSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
         self.dimension = 1024
         #self.embedding = DummyEmbeddings(dim=1536)  # OpenAI 임베딩의 기본 차원
         self.embeddings = self._get_embedding_model()
 
-        self.store_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "store")
+        # RAG 별로 독립적인 벡터 스토어 디렉터리를 구성
+        base_store_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "store")
+        rag_name = rag_name or "default"
+        self.store_path = os.path.join(base_store_path, rag_name)
+        os.makedirs(self.store_path, exist_ok=True)
+
         self.vector_store = FAISS_VECTOR_STORE(embedding=self.embeddings, dimension=self.dimension, store_path=self.store_path)
 
         self.indexed_files = dict()
@@ -172,15 +177,15 @@ class VectorStore:
         self.indexed_files = {}
         
     def load_indexed_files_if_exist(self):
-        indexed_files_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "store") + "/indexed_files.pickle" 
+        indexed_files_path = os.path.join(self.store_path, "indexed_files.pickle")
 
         if os.path.exists(indexed_files_path):
             with open(indexed_files_path, 'rb') as f:
                 self.indexed_files = pickle.load(f)
     
     def save_indexed_files_and_vector_db(self):
-        os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), "store"), exist_ok=True)
-        indexed_files_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "store") + "/indexed_files.pickle"
+        os.makedirs(self.store_path, exist_ok=True)
+        indexed_files_path = os.path.join(self.store_path, "indexed_files.pickle")
 
         with open(indexed_files_path, 'wb') as f:
             pickle.dump(self.indexed_files, f)

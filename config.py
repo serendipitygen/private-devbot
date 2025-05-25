@@ -1,25 +1,18 @@
 import os
 private_devbot_version = "v0.1.1"
 
-# 상수 정의
-server_port = 8123
-
-# sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
-# sentence-transformers/distiluse-base-multilingual-cased-v2
-# sentence-transformers/xlm-r-100langs-bert-base-nli-stsb-mean-tokens
-# jhgan/ko-sroberta-multilingual
-
-# MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2" # 성능이 별로임
-# EMBEDDING_MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
-#                         "embedding_model", "sentence-transformers","all-MiniLM-L6-v2")
-
-# MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2" # all-MiniLM-L6-v2보다 나음
-# EMBEDDING_MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
-#                         "embedding_model", "sentence-transformers","paraphrase-multilingual-MiniLM-L12-v2")
-
-MODEL_NAME = "sentence-transformers/distiluse-base-multilingual-cased-v2" # 성능 괜찮음
+MODEL_NAME = "nlpai-lab/KURE-v1" # 성능 아주 괜찮음
 EMBEDDING_MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
-                        "embedding_model", "sentence-transformers","distiluse-base-multilingual-cased-v2")
+                        "embedding_model", "nlpai-lab","KURE-v1")
+
+
+# MODEL_NAME = "sentence-transformers/distiluse-base-multilingual-cased-v2" # 성능 괜찮음
+# EMBEDDING_MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+#                         "embedding_model", "sentence-transformers","distiluse-base-multilingual-cased-v2")
+
+# MODEL_NAME = "intfloat/multilingual-e5-large-instruct" # 성능 아주 괜찮음
+# EMBEDDING_MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+#                         "embedding_model", "intfloat","multilingual-e5-large-instruct")
 
 # MODEL_NAME = "jhgan/ko-sbert-multitask"
 # EMBEDDING_MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 

@@ -18,7 +18,7 @@ class DocManagementPanel(wx.Panel):
         self.main_frame_ref = main_frame_ref # MainFrame 참조 저장
         
         # config에서 page_size 불러오기
-        config = load_json_config(get_config_file(), {})
+        config = load_json_config(get_config_file())
         self.page_size = int(config.get('page_size', 50))
         self._config = config
         
@@ -69,6 +69,24 @@ class DocManagementPanel(wx.Panel):
         filter_sizer = wx.StaticBoxSizer(filter_box, wx.VERTICAL)
         
         filter_controls_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        
+        # RAG 선택 필터
+        rag_sizer = wx.BoxSizer(wx.VERTICAL)
+        rag_label = wx.StaticText(self, label="RAG")
+        # 기존 store 하위 폴더명을 읽어 RAG 목록 생성
+        store_root = os.path.join(os.getcwd(), 'store')
+        rag_choices = ['default']
+        if os.path.isdir(store_root):
+            rag_choices += [d for d in os.listdir(store_root) if os.path.isdir(os.path.join(store_root, d)) and d not in rag_choices]
+        self.rag_choice = wx.Choice(self, choices=rag_choices)
+        self.rag_choice.SetSelection(0)
+        rag_sizer.Add(rag_label, 0, wx.BOTTOM, 3)
+        rag_choice_line = wx.BoxSizer(wx.HORIZONTAL)
+        rag_choice_line.Add(self.rag_choice, 1, wx.RIGHT, 3)
+        self.btn_add_rag = wx.Button(self, label="추가")
+        rag_choice_line.Add(self.btn_add_rag, 0)
+        rag_sizer.Add(rag_choice_line, 0, wx.EXPAND)
+        filter_controls_sizer.Add(rag_sizer, 1, wx.RIGHT, 5)
         
         # 파일명 필터
         filename_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -163,6 +181,8 @@ class DocManagementPanel(wx.Panel):
         self.btn_next_page.Bind(wx.EVT_BUTTON, self.on_next_page)
         self.page_size_ctrl.Bind(wx.EVT_TEXT_ENTER, self.on_page_size_changed)
         self.page_size_ctrl.Bind(wx.EVT_KILL_FOCUS, self.on_page_size_changed)
+        self.rag_choice.Bind(wx.EVT_CHOICE, self.on_rag_changed)
+        self.btn_add_rag.Bind(wx.EVT_BUTTON, self.on_add_rag)
         
         # 문서 목록 항목 클릭 이벤트
         self.list_ctrl_docs.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_item_activated)
@@ -170,11 +190,15 @@ class DocManagementPanel(wx.Panel):
         self.SetSizer(main_sizer)
         self.Layout()
 
+        # API 클라이언트에 초기 RAG 설정
+        self.api_client.set_rag('default')
+
     def fetch_documents(self, page=1, page_size=10, file_name=None, file_path=None, file_type=None, min_chunks=None, max_chunks=None):
         """API에서 문서 목록을 가져옵니다."""
         params = {
             'page': page,
-            'page_size': page_size
+            'page_size': page_size,
+            'rag_name': self.api_client.get_rag()
         }
         
         # 필터 파라미터 추가
@@ -375,21 +399,70 @@ class DocManagementPanel(wx.Panel):
     
     def on_upload_file(self, event):
         """파일 업로드 다이얼로그를 열고 선택한 파일을 업로드합니다."""
+        from monitoring_daemon import monitoring_daemon
+        monitoring_daemon.pause_monitoring()
         with wx.FileDialog(
             self, "업로드할 파일 선택", wildcard="모든 파일 (*.*)|*.*",
-            style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST | wx.FD_MULTIPLE # 다중 파일 선택 가능
+            style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST | wx.FD_MULTIPLE
         ) as file_dialog:
-            
             if file_dialog.ShowModal() == wx.ID_CANCEL:
-                return  # 사용자가 취소함
-                
-            # 선택한 파일 경로 목록 가져오기
+                return
             file_paths = file_dialog.GetPaths()
-            
-            # 각 파일을 순회하며 업로드
-            for file_path in file_paths:
-                self.upload_file(file_path)
-            
+            if not file_paths:
+                return
+            # 업로드 중 오버레이 및 버튼 비활성화
+            self.disable_action_buttons()
+            progress = wx.ProgressDialog(
+                "파일 업로드 진행", "업로드 준비 중...", maximum=len(file_paths), parent=self,
+                style=wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_ELAPSED_TIME | wx.PD_REMAINING_TIME
+            )
+            def upload_files_task():
+                try:
+                    total = len(file_paths)
+                    for idx, file_path in enumerate(file_paths):
+                        file_name = os.path.basename(file_path)
+                        msg = f"[{idx+1}/{total}] 업로드 중: {file_name}"
+                        wx.CallAfter(progress.Update, idx, msg)
+                        self.upload_file_blocking(file_path)
+                    wx.CallAfter(progress.Update, total, "서버 인덱스 저장 중... (최대 수십초 소요)")
+                finally:
+                    wx.CallAfter(progress.Destroy)
+                    wx.CallAfter(self.enable_action_buttons)
+                    monitoring_daemon.resume_monitoring(10)
+            threading.Thread(target=upload_files_task, daemon=True).start()
+
+    def upload_file_blocking(self, file_path):
+        # upload_file과 동일하지만 동기적으로 동작
+        file_name = os.path.basename(file_path)
+        if hasattr(self.main_frame_ref, 'SetStatusText'):
+            self.main_frame_ref.SetStatusText(f"파일 업로드 중: {file_name}")
+        result = self.api_client.upload_file(file_path)
+        self.process_upload_result(result, file_name, None)
+
+    def disable_action_buttons(self):
+        self.btn_upload_file.Disable()
+        self.btn_upload_folder.Disable()
+        self.btn_delete_selected.Disable()
+        self.btn_delete_all.Disable()
+        self.btn_refresh_status.Disable()
+        self.btn_filter.Disable()
+        self.btn_prev_page.Disable()
+        self.btn_next_page.Disable()
+        self.rag_choice.Disable()
+        self.btn_add_rag.Disable()
+
+    def enable_action_buttons(self):
+        self.btn_upload_file.Enable()
+        self.btn_upload_folder.Enable()
+        self.btn_delete_selected.Enable()
+        self.btn_delete_all.Enable()
+        self.btn_refresh_status.Enable()
+        self.btn_filter.Enable()
+        self.btn_prev_page.Enable()
+        self.btn_next_page.Enable()
+        self.rag_choice.Enable()
+        self.btn_add_rag.Enable()
+
     def on_upload_folder(self, event):
         """폴더를 선택하고 모든 파일을 업로드합니다."""
         with wx.DirDialog(
@@ -541,108 +614,33 @@ class DocManagementPanel(wx.Panel):
                 self.GetTopLevelParent().SetStatusText("문서 삭제 실패")
         finally:
             self.on_refresh_documents(None)    
-    def upload_file(self, file_path):
-        """파일을 업로드합니다."""
-        # self.overlay.show(f"파일 업로드 중: {os.path.basename(file_path)}")  # 오버레이 제거
-        
-        file_name = os.path.basename(file_path)
-        if hasattr(self.main_frame_ref, 'SetStatusText'):
-            self.main_frame_ref.SetStatusText(f"파일 업로드 중: {file_name}")
-            
-        # monitoring 파일 기록
-        # append_monitoring_file(file_path) # 모니터링 데몬에서 처리하므로 여기서 제거
-        
-        # 진행 다이얼로그 표시 (제거)
-        # progress_dialog = wx.ProgressDialog(
-        #     "파일 업로드",
-        #     f"파일을 업로드하는 중: {os.path.basename(file_path)}",
-        #     maximum=100,
-        #     parent=self,
-        #     style=wx.PD_APP_MODAL | wx.PD_AUTO_HIDE
-        # )
-        # progress_dialog.Update(10) # 시작 진행 표시
-        
-        # 비동기로 파일 업로드 (메인 스레드를 블록하지 않도록)
-        def upload_task():
-            try:
-                result = self.api_client.upload_file(file_path)
-                # progress_dialog.Update(90) # 거의 완료
-                
-                # UI 스레드에서 결과 처리
-                # progress_dialog 대신 None 전달
-                wx.CallAfter(self.process_upload_result, result, file_name, None)
-                # 업로드 후 오버레이 숨김
-                # wx.CallAfter(self.overlay.hide)
-            except Exception as e:
-                wx.LogError(f"파일 업로드 실패: {e}")
-                # wx.CallAfter(progress_dialog.Destroy)
-                # wx.CallAfter(wx.MessageBox, f"파일 업로드 중 오류 발생: {e}", "오류", wx.OK | wx.ICON_ERROR)
-                if hasattr(self.main_frame_ref, 'SetStatusText'):
-                     wx.CallAfter(self.main_frame_ref.SetStatusText, f"파일 업로드 오류: {file_name} - {e}")
-                # 오류 발생시에도 오버레이 숨김
-                # wx.CallAfter(self.overlay.hide)
-        
-        threading.Thread(target=upload_task, daemon=True).start()
-    
-    def upload_folder(self, folder_path):
-        """폴더의 모든 파일을 업로드합니다."""
-        # self.overlay.show(f"폴더 업로드 중: {os.path.basename(folder_path)}")  # 오버레이 제거
-        
-        folder_name = os.path.basename(folder_path)
-        if hasattr(self.main_frame_ref, 'SetStatusText'):
-            self.main_frame_ref.SetStatusText(f"폴더 업로드 중: {folder_name} (파일 검색 중)")
-            
-        # 폴더 내 모든 파일 경로 수집
-        file_paths = []
-        for root, _, filenames in os.walk(folder_path):
-            for filename in filenames:
-                if filename.startswith('.') or filename.startswith('~$'):
-                    continue
-                full_path = os.path.join(root, filename)
-                file_paths.append(full_path)
-                
-        # monitoring 파일 기록 (폴더 업로드 시 전체 경로 목록을 넘기도록 변경)
-        if file_paths:
-             # append_monitoring_files(file_paths) # 모니터링 데몬에서 처리하므로 여기서 제거
-             pass # monitoring 파일 기록은 모니터링 데몬에서 일괄 처리
-        
-        if not file_paths:
-             if hasattr(self.main_frame_ref, 'SetStatusText'):
-                self.main_frame_ref.SetStatusText(f"폴더 업로드 완료: {folder_name} (업로드할 파일 없음)")
-             return {"status": "warning", "message": "업로드할 파일이 없습니다."}
+    def on_page_size_changed(self, event):
+        """조회 개수를 변경합니다."""
+        new_page_size = self.page_size_ctrl.GetValue().strip()
+        if new_page_size.isdigit():
+            self.page_size = int(new_page_size)
+            self._config['page_size'] = self.page_size
+            save_json_config(get_config_file(), self._config)
+            self.update_document_list()
 
-        # 진행 다이얼로그 표시 (제거)
-        # progress_dialog = wx.ProgressDialog(
-        #     "폴더 업로드",
-        #     f"폴더를 업로드하는 중: {os.path.basename(folder_path)}",
-        #     maximum=100,
-        #     parent=self,
-        #     style=wx.PD_APP_MODAL | wx.PD_AUTO_HIDE
-        # )
-        # progress_dialog.Update(10) # 시작 진행 표시
-        
-        # 비동기로 폴더 업로드 (메인 스레드를 블록하지 않도록)
-        def upload_task():
-            try:
-                # upload_folder API는 각 파일 업로드 결과를 반환
-                result = self.api_client.upload_folder(folder_path)
-                # progress_dialog.Update(90) # 거의 완료
-                
-                # UI 스레드에서 결과 처리 (폴더 업로드 결과는 별도로 처리)
-                # progress_dialog 대신 None 전달
-                wx.CallAfter(self.process_folder_upload_result, result, folder_name, None)
-                # 업로드 후 오버레이 숨김
-                # wx.CallAfter(self.overlay.hide)
-            except Exception as e:
-                wx.LogError(f"폴더 업로드 실패: {e}")
-                # wx.CallAfter(progress_dialog.Destroy)
-                # wx.CallAfter(wx.MessageBox, f"폴더 업로드 중 오류 발생: {e}", "오류", wx.OK | wx.ICON_ERROR)
-                if hasattr(self.main_frame_ref, 'SetStatusText'):
-                     wx.CallAfter(self.main_frame_ref.SetStatusText, f"폴더 업로드 오류: {folder_name} - {e}")
-                # 오류 발생시에도 오버레이 숨김
-                # wx.CallAfter(self.overlay.hide)
-        
-        threading.Thread(target=upload_task, daemon=True).start()
+    # ----------------------------- RAG 이벤트 ---------------------------
+    def on_rag_changed(self, event):
+        rag_name = self.rag_choice.GetStringSelection()
+        self.api_client.set_rag(rag_name)
+        # 문서 목록 및 상태 새로고침
+        self.on_refresh_status(None)
+
+    def on_add_rag(self, event):
+        dlg = wx.TextEntryDialog(self, "새 RAG 이름 입력", "RAG 추가")
+        if dlg.ShowModal() == wx.ID_OK:
+            rag_name = dlg.GetValue().strip()
+            if rag_name:
+                # store/<rag_name> 디렉터리 생성
+                if rag_name not in [self.rag_choice.GetString(i) for i in range(self.rag_choice.GetCount())]:
+                    self.rag_choice.Append(rag_name)
+                self.rag_choice.SetStringSelection(rag_name)
+                self.on_rag_changed(None)
+        dlg.Destroy()
 
     def process_upload_result(self, result, name, progress_dialog):
         """개별 파일 업로드 결과를 처리합니다. (대화 상자 대신 상태 표시줄 사용)"""
@@ -742,11 +740,3 @@ class DocManagementPanel(wx.Panel):
                 self.GetTopLevelParent().SetStatusText("문서 삭제 실패")
         finally:
             self.on_refresh_documents(None)    
-    def on_page_size_changed(self, event):
-        """조회 개수를 변경합니다."""
-        new_page_size = self.page_size_ctrl.GetValue().strip()
-        if new_page_size.isdigit():
-            self.page_size = int(new_page_size)
-            self._config['page_size'] = self.page_size
-            save_json_config(get_config_file(), self._config)
-            self.update_document_list()

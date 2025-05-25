@@ -5,19 +5,20 @@ from fastapi.responses import JSONResponse
 from fastapi.responses import Response
 from pydantic import BaseModel
 from typing import List, Dict, Any
+import sys
 
 import config
 import logger_util
 
 from fastapi.middleware.cors import CORSMiddleware
-from vector_store import VectorStore
 from document_reader import DocumentReader
 import platform
 from ip_middleware import IPRestrictionMiddleware
+from rag_manager import rag_manager
 
 
-# 벡터 저장소 및 관련 변수 초기화
-vector_store = VectorStore()
+# VectorStore 인스턴스는 rag_manager에서 필요 시 가져온다.
+default_vector_store = rag_manager.get_store(None)
 document_reader = DocumentReader()
 
 logger = logger_util.get_logger()
@@ -44,6 +45,7 @@ app.add_middleware(
 class SearchRequest(BaseModel):
     query: str
     k: int = 5
+    rag_name: str | None = None
 
 class FileContentsRequest(BaseModel):
     file_path: str
@@ -51,18 +53,20 @@ class FileContentsRequest(BaseModel):
     file_size: int
     content: str
     extraction_time: str
+    rag_name: str | None = None
 
 @app.post("/upload")
 async def upload_file(
     file: UploadFile = File(...),
     file_path: str = Form(...),
+    rag_name: str | None = Form(None)
 ):
-    global vector_store
+    vector_store = rag_manager.get_store(rag_name)
 
     try:
         logger.debug(f"[DEBUG] Upload request - Path: {file_path}")
 
-        success, file_name = await _process_file(file, file_path)
+        success, file_name = await _process_file(file, file_path, vector_store)
 
         result = {
             "status": "success" if success else "failed",
@@ -77,7 +81,7 @@ async def upload_file(
 
 @app.post("/upload_file_contents")
 async def upload_file_contents(request: FileContentsRequest):
-    global vector_store
+    vector_store = rag_manager.get_store(request.rag_name)
 
     try:
         logger.debug(f"[DEBUG] Upload file contents request - Path: {request.file_path}")
@@ -122,8 +126,11 @@ async def upload_file_contents(request: FileContentsRequest):
 @app.post("/upload/batch")
 async def upload_files(
     files: List[UploadFile] = File(...),
-    file_paths: str = Form(...)
+    file_paths: str = Form(...),
+    rag_name: str | None = Form(None)
 ):
+    vector_store = rag_manager.get_store(rag_name)
+
     try:
         file_paths_data = json.loads(file_paths)
         success_count = 0
@@ -137,7 +144,7 @@ async def upload_files(
 
         for file in files:
             file_path = path_mapping.get(file.filename)
-            result, failed_file = await _process_file(file, file_path)
+            result, failed_file = await _process_file(file, file_path, vector_store)
             if result:
                 success_count += 1
             else:
@@ -154,7 +161,7 @@ async def upload_files(
             "failed_files": failed_files
         }  
     
-async def _process_file(file: UploadFile, file_path:str):
+async def _process_file(file: UploadFile, file_path:str, vector_store):
     try:
         file_contents = await document_reader.get_contents(file, file_path)
 
@@ -170,7 +177,7 @@ async def _process_file(file: UploadFile, file_path:str):
 
 @app.post("/search")
 async def search_documents(request: SearchRequest):
-    global vector_store
+    vector_store = rag_manager.get_store(request.rag_name)
 
     try:
         print(f"[DEBUG] Searching with query: {request.query}, {request.k}")
@@ -198,9 +205,10 @@ async def get_documents(
     file_name: str = None,
     file_path: str = None,
     min_chunks: int = None,
-    max_chunks: int = None
+    max_chunks: int = None,
+    rag_name: str | None = None
 ):
-    global vector_store
+    vector_store = rag_manager.get_store(rag_name)
 
     try:
         # 요청 필터링 매개변수 로깅
@@ -281,8 +289,8 @@ async def get_documents(
         raise HTTPException(500, detail=str(e))
 
 @app.get("/document")
-async def get_document(file_path: str):
-    global vector_store
+async def get_document(file_path: str, rag_name: str | None = None):
+    vector_store = rag_manager.get_store(rag_name)
 
     try:
         chunks = vector_store.get_document_chunks(file_path)
@@ -296,7 +304,9 @@ class DeleteRequest(BaseModel):
     file_paths: List[str]
 
 @app.delete("/documents")
-async def delete_documents(request: DeleteRequest):
+async def delete_documents(request: DeleteRequest, rag_name: str | None = None):
+    vector_store = rag_manager.get_store(rag_name)
+
     try:
         vector_store.delete_documents(request.file_paths)
     except Exception as e:
@@ -311,7 +321,9 @@ async def delete_documents(request: DeleteRequest):
 
 
 @app.delete("/documents/all")
-async def delete_all_documents():
+async def delete_all_documents(rag_name: str | None = None):
+    vector_store = rag_manager.get_store(rag_name)
+
     try:
         vector_store.delete_all_documents()
     except Exception as e:
@@ -360,7 +372,9 @@ async def health_check():
         raise HTTPException(500, detail=f"서버 오류: {str(e)}")
 
 @app.get("/status")
-async def get_status():
+async def get_status(rag_name: str | None = None):
+    vector_store = rag_manager.get_store(rag_name)
+
     try:
         document_count = vector_store.get_indexed_file_count()
         index_size = vector_store.get_db_size() / (1024 * 1024)  # MB로 변환
@@ -388,8 +402,8 @@ async def get_status():
         raise HTTPException(500, detail=str(e))
 
 @app.post("/reset")
-async def reset_storage():
-    global vector_store
+async def reset_storage(rag_name: str | None = None):
+    vector_store = rag_manager.get_store(rag_name)
 
     try:
         vector_store.empty_vector_store()
@@ -433,28 +447,41 @@ async def get_allowed_ips():
         logger.exception(f"[ERROR] IP Searching failed: {str(e)}")
         raise HTTPException(500, detail=f"IP Searching Failure: {str(e)}")
 
-
-if __name__ == "__main__":
+def run(port: int):
     import uvicorn
-    import argparse
     from ip_middleware import IPRestrictionMiddleware
-    
-    # 명령줄 인자 파서 생성
-    parser = argparse.ArgumentParser(description='DevBot 서버 실행')
-    parser.add_argument('--port', type=int, default=config.server_port,
-                        help=f'서버 실행 포트 (기본값: {config.server_port})')
-    
-    # 명령줄 인자 파싱
-    args = parser.parse_args()
-    
-    # 포트 설정
-    port = args.port
-    print(f"Document Store is running on {port} port...")
-    
+        
     # IP 미들웨어 설정 업데이트 (모든 필요한 IP 등록)
     print("IP is updating...")
-    ip_middleware = IPRestrictionMiddleware(app, config_path=f"./store/devbot_config_{private_devbot_version}.yaml")
-    ip_middleware.ensure_all_required_ips()
+    # IPRestrictionMiddleware(app, config_path=f"./store/devbot_config_{private_devbot_version}.yaml") # Removed redundant call
     
     # 서버 실행
+    if port is None:
+        print(f"[ERROR] Port is not set. Please set the port in the devbot_config.json file.")
+        sys.exit(1)
+
     uvicorn.run(app, host="0.0.0.0", port=port)
+
+
+if __name__ == "__main__":
+    # devbot_config.json 파일에서 포트 번호를 가져옵니다.
+    import os
+    config_file_path = os.path.join(os.path.dirname(__file__), 'devbot_config.json') 
+    try:
+        with open(config_file_path, 'r', encoding='utf-8') as f:
+            app_config = json.load(f)
+    except FileNotFoundError:
+        print(f"[ERROR] Configuration file devbot_config.json not found at {config_file_path}")
+        sys.exit(1)
+    except json.JSONDecodeError:
+        print(f"[ERROR] Error decoding JSON from devbot_config.json")
+        sys.exit(1)
+    
+    port_to_run = app_config.get('port')
+
+    if port_to_run is None:
+        print(f"[ERROR] Port not specified in devbot_config.json. Defaulting to 8123 or exiting.")
+        # Decide whether to default or exit, e.g., sys.exit(1) or port_to_run = 8123
+        sys.exit(1) # Exiting if port is not in config
+
+    run(port=port_to_run)

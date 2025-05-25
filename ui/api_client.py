@@ -8,15 +8,16 @@ class ApiClient:
         self.get_config = get_config_func
         self.get_upload_config = get_upload_config_func
         self.session = self._create_session()
+        self.current_rag = 'default'
 
     def _create_session(self):
         return None 
 
     def _get_base_url(self):
         config = self.get_config()
-        return config.get('api_base_url', 'http://localhost:8125').rstrip('/')
+        return config.get('api_base_url')
 
-    def _make_request(self, method, endpoint, params=None, data=None, files=None, json_data=None, headers=None, timeout=10):
+    def _make_request(self, method, endpoint, params=None, data=None, files=None, json_data=None, headers=None, timeout=600):
         """모든 API 요청을 처리하는 공통 메서드"""
         base_url = self._get_base_url()
         url = f"{base_url}/{endpoint.lstrip('/')}"
@@ -30,6 +31,23 @@ class ApiClient:
             print(f'[ApiClient] 헤더: {headers}')
         
         try:
+            # rag_name은 쿼리나 form/json에 함께 보낸다 (우선순위: params -> data -> json)
+            rag_name = self.current_rag
+            if rag_name and rag_name != 'default':
+                # GET 방식 등 URL 파라미터
+                if params is not None:
+                    params = dict(params)  # copy
+                    params['rag_name'] = rag_name
+                # POST JSON
+                if json_data is not None:
+                    json_data = dict(json_data)
+                    json_data['rag_name'] = rag_name
+                # multipart/form-data
+                if data is not None:
+                    data = dict(data)
+                    if 'rag_name' not in data:
+                        data['rag_name'] = rag_name
+            
             response = requests.request(
                 method=method,
                 url=url,
@@ -68,11 +86,15 @@ class ApiClient:
 
     def get_documents(self, params=None):
         """문서 목록을 가져옵니다."""
+        if params is None:
+            params = {}
+        if 'rag_name' not in params:
+            params['rag_name'] = self.current_rag
         return self._make_request('get', '/documents', params=params)
 
     def get_store_info(self):
         """문서 저장소 정보를 가져옵니다."""
-        response = self._make_request('get', '/status')
+        response = self._make_request('get', '/status', params={'rag_name': self.current_rag})
         
         # status API의 응답에서 필요한 값만 추출하여 변환
         if isinstance(response, dict):
@@ -106,18 +128,25 @@ class ApiClient:
             return {"error": "file_not_found", "details": f"파일을 찾을 수 없습니다: {file_path}"}
             
         try:
+            # 모니터링 일시 중지
+            try:
+                from monitoring_daemon import monitoring_daemon
+                monitoring_daemon.pause_monitoring()
+            except Exception as e:
+                print(f"[ApiClient] 모니터링 일시중지 실패: {e}")
+            
             # 파일과 파일 경로를 모두 폼 데이터로 전송
             with open(file_path, 'rb') as f:
                 files = {'file': (os.path.basename(file_path), f, 'application/octet-stream')}
-                data = {'file_path': file_path}  # 서버에서 요구하는 file_path 매개변수 추가
+                data = {'file_path': file_path, 'rag_name': self.current_rag}
                 
-                result = self._make_request('post', '/upload', files=files, data=data, timeout=60)
+                result = self._make_request('post', '/upload', files=files, data=data, timeout=600)
                 
                 # 파일 업로드 성공 시 monitoring_files_ip_port.yaml 파일 업데이트
                 if result and not (isinstance(result, dict) and "error" in result):
                     try:
                         from ip_middleware import append_monitoring_file
-                        append_monitoring_file(file_path)
+                        append_monitoring_file(file_path, self.current_rag)
                         print(f"[ApiClient] {os.path.basename(file_path)} yaml 파일에 추가됨")
                     except Exception as e:
                         print(f"[ApiClient] yaml 파일 업데이트 오류: {e}")
@@ -126,7 +155,14 @@ class ApiClient:
         except Exception as e:
             print(f"[ApiClient] 파일 업로드 오류: {e}")
             return {"error": "file_upload_error", "details": str(e)}
-    
+        finally:
+            # 업로드 완료 후 10초 뒤 모니터링 재개
+            try:
+                from monitoring_daemon import monitoring_daemon
+                monitoring_daemon.resume_monitoring(10)
+            except Exception as e:
+                print(f"[ApiClient] 모니터링 재개 실패: {e}")
+
     def upload_folder(self, folder_path):
         """폴더 내 모든 파일을 업로드합니다."""
         if not os.path.isdir(folder_path):
@@ -174,7 +210,7 @@ class ApiClient:
                         if not isinstance(result, dict) or "error" not in result:
                             successful_files.append(files_to_upload[i])
                     if successful_files:
-                        append_monitoring_files(successful_files)
+                        append_monitoring_files(successful_files, self.current_rag)
                         print(f"[ApiClient] {len(successful_files)}개 파일 yaml에 추가됨")
                 except Exception as e:
                     print(f"[ApiClient] yaml 파일 업데이트 오류: {e}")
@@ -205,13 +241,13 @@ class ApiClient:
         }
         
         print(f"[ApiClient] 문서 삭제 요청: {file_paths}")
-        result = self._make_request('delete', '/documents', json_data=data, headers=headers)
+        result = self._make_request('delete', '/documents', json_data=data, headers=headers, params={'rag_name': self.current_rag})
         
         # 문서 삭제 성공 시 monitoring_files_ip_port.yaml 파일 업데이트
         if result and not (isinstance(result, dict) and "error" in result):
             try:
                 from ip_middleware import delete_monitoring_files
-                delete_monitoring_files(file_paths)
+                delete_monitoring_files(file_paths, self.current_rag)
             except Exception as e:
                 print(f"[ApiClient] yaml 파일 업데이트 오류: {e}")
                 
@@ -232,12 +268,12 @@ class ApiClient:
         }
         
         print(f"[ApiClient] 모든 문서 삭제 요청")
-        result = self._make_request('delete', '/documents/all', headers=headers)
+        result = self._make_request('delete', '/documents/all', headers=headers, params={'rag_name': self.current_rag})
         
         # 모든 문서 삭제 시 monitoring_files_ip_port.yaml 파일도 초기화
         try:
             from ip_middleware import clear_monitoring_files
-            clear_monitoring_files()
+            clear_monitoring_files(self.current_rag)
         except Exception as e:
             print(f"[ApiClient] yaml 파일 초기화 오류: {e}")
             
@@ -252,3 +288,21 @@ class ApiClient:
             return True
         except Exception:
             return False
+
+    # --------------------------------------------------
+    # RAG 관리
+    def set_rag(self, rag_name: str | None):
+        self.current_rag = rag_name or 'default'
+
+    def get_rag(self) -> str:
+        return self.current_rag
+
+    # ----------------------------- SEARCH -----------------------------
+    def search(self, query: str, k: int = 5):
+        """질문(query)으로 검색 결과 반환"""
+        json_data = {
+            "query": query,
+            "k": k,
+            "rag_name": self.current_rag
+        }
+        return self._make_request('post', '/search', json_data=json_data)

@@ -32,7 +32,7 @@ def get_local_ips() -> Set[str]:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             s.connect(("8.8.8.8", 80))
             addr = s.getsockname()[0]
-            if not addr.startswith("127."):
+            if not addr.startswith("127.") and not addr.endswith(".1"):
                 ips.add(addr)
     except Exception:
         pass  # 네트워크 연결 불가 시 무시
@@ -45,7 +45,7 @@ def get_local_ips() -> Set[str]:
                 for link in addrs.get(netifaces.AF_INET, []):
                     addr = link.get("addr")
                     # loopback 제외
-                    if addr and not addr.startswith("127."):
+                    if addr and not addr.startswith("127.") and not addr.endswith(".1"):
                         ips.add(addr)
             except Exception:
                 # 해당 인터페이스 처리 중 오류 발생 시 건너뜀
@@ -57,7 +57,7 @@ def get_local_ips() -> Set[str]:
             hostname = socket.gethostname()
             _, _, all_ips = socket.gethostbyname_ex(hostname)
             for ip in all_ips:
-                if not ip.startswith("127."):
+                if not ip.startswith("127.") and not ip.endswith(".1"):
                     ips.add(ip)
             
             # Windows에서 추가 IP 확인 (일부 가상 어댑터 IP가 누락될 수 있음)
@@ -70,7 +70,7 @@ def get_local_ips() -> Set[str]:
                         line = line.strip()
                         if 'IPv4' in line:
                             ip_parts = line.split(':')[-1].strip()
-                            if ip_parts and not ip_parts.startswith('127.'):
+                            if ip_parts and not ip_parts.startswith('127.') and not ip_parts.endswith('.1'):
                                 ips.add(ip_parts)
                 except Exception:
                     pass  # ipconfig 명령 실패 시 무시
@@ -258,60 +258,26 @@ class IPRestrictionMiddleware(BaseHTTPMiddleware):
         print(f"차단된 IP: {client_ip}")
         raise HTTPException(status_code=403, detail=f"접근이 거부되었습니다. 허용되지 않은 IP입니다: {client_ip}")
 
-def get_monitoring_yaml_path():
+def get_monitoring_yaml_path(rag_name: str | None = None, port: str | None = None):
     """
     현재 사용 중인 IP와 포트를 기반으로 monitoring yaml 파일 경로를 생성합니다.
     형식: monitoring_files_[IP]_[PORT].yaml
     """
     info = {}
-    default_file = os.path.join(os.getcwd(), 'monitoring_files_ip_port.yaml')
+    rag_name = rag_name or 'default'
     
-    # 기존 파일이 있으면 정보 로드
-    if os.path.exists(default_file):
-        try:
-            with open(default_file, 'r', encoding='utf-8') as f:
-                info = yaml.safe_load(f) or {}
-        except Exception:
-            pass
+    if port is None:
+        # config나 환경변수에서 포트 추출 로직 필요시 추가
+        raise ValueError("Port is not set. Please set the port in the devbot_config.json file.")
     
-    # IP와 포트 정보 가져오기
-    ip = info.get('ip')
-    if not ip:
-        # IP가 없으면 현재 시스템의 첫 번째 IP 사용
-        ips = get_local_ips()
-        ip = list(ips)[0] if ips else '127.0.0.1'
-    
-    port = info.get('port') or 8125
-    
-    # 파일명 생성
-    filename = f'monitoring_files_{ip}_{port}.yaml'
-    return os.path.join(os.getcwd(), filename)
+    # store 폴더 하위에 저장
+    store_dir = os.path.join(os.getcwd(), 'store')
+    os.makedirs(store_dir, exist_ok=True)
+    filename = f'monitoring_files_{rag_name}_{port}.yaml'
+    return os.path.join(store_dir, filename)
 
-def load_monitoring_info():
-    path = get_monitoring_yaml_path()
-    
-    # 새 형식 파일이 없으면 기존 파일에서 마이그레이션
-    old_path = os.path.join(os.getcwd(), 'monitoring_files_ip_port.yaml')
-    if not os.path.exists(path) and os.path.exists(old_path):
-        try:
-            # 기존 파일 읽기
-            with open(old_path, 'r', encoding='utf-8') as f:
-                data = yaml.safe_load(f) or {'ip': None, 'port': None, 'files': []}
-            
-            # 새 파일에 저장
-            with open(path, 'w', encoding='utf-8') as f:
-                yaml.safe_dump(data, f, allow_unicode=True)
-                
-            print(f"[ip_middleware] 모니터링 파일을 {os.path.basename(old_path)}에서 {os.path.basename(path)}로 마이그레이션했습니다")
-            
-            # 기존 파일 삭제
-            try:
-                os.remove(old_path)
-                print(f"[ip_middleware] 기존 {os.path.basename(old_path)} 파일을 삭제했습니다")
-            except:
-                pass
-        except Exception as e:
-            print(f"[ip_middleware] 파일 마이그레이션 중 오류 발생: {e}")
+def load_monitoring_info(rag_name: str | None = None, port: str | None = None):
+    path = get_monitoring_yaml_path(rag_name, port)
     
     if not os.path.exists(path):
         return {'ip': None, 'port': None, 'files': []}
@@ -319,64 +285,82 @@ def load_monitoring_info():
     with open(path, 'r', encoding='utf-8') as f:
         return yaml.safe_load(f) or {'ip': None, 'port': None, 'files': []}
 
-def save_monitoring_info(ip, port, files):
-    path = get_monitoring_yaml_path()
+def save_monitoring_info(ip, port, files, rag_name: str | None = None):
+    path = get_monitoring_yaml_path(rag_name, port)
     data = {'ip': ip, 'port': port, 'files': files}
     with open(path, 'w', encoding='utf-8') as f:
         yaml.safe_dump(data, f, allow_unicode=True)
 
-def append_monitoring_file(file_path):
-    from ip_middleware import get_local_ips
-    info = load_monitoring_info()
+def append_monitoring_file(file_path, rag_name: str | None = None):
+    info = load_monitoring_info(rag_name)
     ip = list(get_local_ips())[0] if get_local_ips() else '127.0.0.1'
-    port = info.get('port') or 8125
+    port = info.get('port')
+    if port is None:
+        raise ValueError("Port is not set. Please set the port in the devbot_config.json file.")
+
+    port = info.get('port')
     files = info.get('files', [])
     name = os.path.basename(file_path)
     now = datetime.now().isoformat()
     files.append({'name': name, 'path': file_path, 'registered_at': now})
-    save_monitoring_info(ip, port, files)
+    save_monitoring_info(ip, port, files, rag_name)
 
-def append_monitoring_files(file_paths):
-    from ip_middleware import get_local_ips
-    info = load_monitoring_info()
+def append_monitoring_files(file_paths, rag_name: str | None = None):
+    info = load_monitoring_info(rag_name)
     ip = list(get_local_ips())[0] if get_local_ips() else '127.0.0.1'
-    port = info.get('port') or 8125
+    port = info.get('port')
+
+    if port is None:
+        raise ValueError("Port is not set. Please set the port in the devbot_config.json file.")
+
     files = info.get('files', [])
     now = datetime.now().isoformat()
     for file_path in file_paths:
         name = os.path.basename(file_path)
         files.append({'name': name, 'path': file_path, 'registered_at': now})
-    save_monitoring_info(ip, port, files)
+    save_monitoring_info(ip, port, files, rag_name)
 
-def clear_monitoring_files():
+def clear_monitoring_files(rag_name: str | None = None):
     """모든 문서 삭제 시 monitoring_files_ip_port.yaml 파일 초기화"""
-    info = load_monitoring_info()
+    info = load_monitoring_info(rag_name)
     ip = info.get('ip') or (list(get_local_ips())[0] if get_local_ips() else '127.0.0.1')
-    port = info.get('port') or 8125
+    port = info.get('port')
+
+    if port is None:
+        raise ValueError("Port is not set. Please set the port in the devbot_config.json file.")
+
     # 파일 목록만 비우고 IP와 포트는 유지
-    save_monitoring_info(ip, port, [])
+    save_monitoring_info(ip, port, [], rag_name)
     print(f"[ip_middleware] monitoring_files_ip_port.yaml 파일 초기화 완료")
 
-def delete_monitoring_file(file_path):
+def delete_monitoring_file(file_path, rag_name: str | None = None):
     """yaml 파일에서 특정 파일을 삭제합니다."""
-    info = load_monitoring_info()
+    info = load_monitoring_info(rag_name)
     ip = info.get('ip') or (list(get_local_ips())[0] if get_local_ips() else '127.0.0.1')
-    port = info.get('port') or 8125
+    port = info.get('port')
+
+    if port is None:
+        raise ValueError("Port is not set. Please set the port in the devbot_config.json file.")
+
     files = info.get('files', [])
     
     # 파일 경로가 일치하는 항목 제거
     files = [f for f in files if f.get('path') != file_path]
-    save_monitoring_info(ip, port, files)
+    save_monitoring_info(ip, port, files, rag_name)
     print(f"[ip_middleware] {os.path.basename(file_path)} yaml 파일에서 삭제됨")
 
-def delete_monitoring_files(file_paths):
+def delete_monitoring_files(file_paths, rag_name: str | None = None):
     """yaml 파일에서 여러 파일을 삭제합니다."""
-    info = load_monitoring_info()
+    info = load_monitoring_info(rag_name)
     ip = info.get('ip') or (list(get_local_ips())[0] if get_local_ips() else '127.0.0.1')
-    port = info.get('port') or 8125
+    port = info.get('port')
+
+    if port is None:
+        raise ValueError("Port is not set. Please set the port in the devbot_config.json file.")
+
     files = info.get('files', [])
     
     # 파일 경로가 일치하지 않는 항목만 유지
     files = [f for f in files if f.get('path') not in file_paths]
-    save_monitoring_info(ip, port, files)
+    save_monitoring_info(ip, port, files, rag_name)
     print(f"[ip_middleware] {len(file_paths)}개 파일 yaml 파일에서 삭제됨")

@@ -10,6 +10,8 @@ import traceback
 from typing import Dict, List, Optional
 from ui.api_client import ApiClient
 from ip_middleware import load_monitoring_info, save_monitoring_info
+from ui.config_util import load_json_config, get_config_file
+import fnmatch
 
 class MonitoringDaemon:
     def __init__(self, config_path: str = "monitoring_config.yaml"):
@@ -39,8 +41,14 @@ class MonitoringDaemon:
         
         self.max_metrics_history = 1000  # 최대 메트릭 저장 개수
         self.monitoring_interval = 10  # 모니터링 간격 (초)
-        self.api_client = ApiClient(lambda: {"api_base_url": "http://localhost:8125"}, lambda: {})
+
+        config = load_json_config(get_config_file())
+        api_base_url = "http://" + config.get("ip") + ":" + str(config.get("port"))
+
+        self.api_client = ApiClient(lambda: {"api_base_url": api_base_url}, lambda: {})
         self.load_config()
+        self._pause_event = threading.Event()
+        self._pause_event.clear()
 
     def load_config(self):
         """설정 파일을 로드합니다."""
@@ -92,8 +100,16 @@ class MonitoringDaemon:
             
             # 모니터링 시작 전 현재 파일 목록 로드
             try:
-                info = load_monitoring_info()
-                files = info.get('files', [])
+                # 모든 monitoring_files_*_*.yaml 파일을 읽어 합산
+                files = []
+                for fname in os.listdir(os.getcwd()):
+                    if fnmatch.fnmatch(fname, 'monitoring_files_*_*.yaml'):
+                        try:
+                            rag_part = fname.split('_')[2] if len(fname.split('_')) > 2 else None
+                            info = load_monitoring_info(rag_part)
+                            files.extend(info.get('files', []))
+                        except Exception as e:
+                            print(f"[모니터링] {fname} 로드 오류: {e}")
                 self.previous_file_paths = set(file['path'] for file in files if 'path' in file)
                 print(f"[모니터링] 초기 파일 목록 로드: {len(self.previous_file_paths)}개 파일")
                 self.initialized_file_tracking = True  # 초기화 완료 표시
@@ -130,6 +146,9 @@ class MonitoringDaemon:
         check_count = 0
         
         while self.running:
+            if self._pause_event.is_set():
+                time.sleep(1)
+                continue
             try:
                 check_count += 1
                 # 각 모니터링 주기마다 시작 시간 기록
@@ -222,9 +241,10 @@ class MonitoringDaemon:
     def _check_server_status(self):
         """서버 상태를 확인합니다."""
         try:
-            # 서버 포트 확인 (기본 포트: 8125)
+            config = load_json_config(get_config_file())
+
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            result = sock.connect_ex(('127.0.0.1', 8125))
+            result = sock.connect_ex((config.get("ip"), config.get("port")))
             sock.close()
             
             self.metrics["server_status"] = "running" if result == 0 else "stopped"
@@ -275,8 +295,15 @@ class MonitoringDaemon:
             # print(f"[모니터링] 파일 변경 확인 시작: {datetime.now().strftime('%H:%M:%S')}")
             
             # 모니터링 파일 정보 로드
-            info = load_monitoring_info()
-            files = info.get('files', [])
+            files = []
+            for fname in os.listdir(os.getcwd()):
+                if fnmatch.fnmatch(fname, 'monitoring_files_*_*.yaml'):
+                    rag_part = fname.split('_')[2] if len(fname.split('_')) > 2 else None
+                    try:
+                        info = load_monitoring_info(rag_part)
+                        files.extend(info.get('files', []))
+                    except Exception as e:
+                        print(f"[모니터링] {fname} 로드 오류: {e}")
             
             if not files:
                 print("[모니터링] 모니터링할 파일이 없습니다.")
@@ -389,4 +416,13 @@ class MonitoringDaemon:
         if seconds < 1:
             seconds = 1
         self.monitoring_interval = seconds
-        print(f"[모니터링] 모니터링 간격이 {seconds}초로 변경되었습니다.") 
+        print(f"[모니터링] 모니터링 간격이 {seconds}초로 변경되었습니다.")
+
+    def pause_monitoring(self):
+        self._pause_event.set()
+
+    def resume_monitoring(self, delay_sec=10):
+        def delayed_resume():
+            time.sleep(delay_sec)
+            self._pause_event.clear()
+        threading.Thread(target=delayed_resume, daemon=True).start() 

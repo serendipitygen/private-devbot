@@ -18,9 +18,10 @@ from monitoring_daemon import MonitoringDaemon
 from ui.config_util import save_json_config, get_config_file
 # 로딩 스플래시 화면
 from ui.loading_splash import LoadingSplash
+from ui.config_util import load_json_config
+from ui.process_util import write_pid_to_file, is_process_running, is_port_in_use, get_process_using_port, kill_process
 
 MAX_LOG_LINES = 3000
-
 
 class AdminPanel(wx.Panel):
     def __init__(self, parent, api_client, main_frame_ref):
@@ -34,12 +35,8 @@ class AdminPanel(wx.Panel):
         self.server_pid_file = "server_pid.txt"
         self.server_pid_temp_for_status = None 
         self.server_pid = None  # 현재 서버 PID 저장
-        self.current_port = 8125  # 기본 포트 초기화
-        
-        # 모니터링 데몬 초기화
-        self.monitoring_daemon = MonitoringDaemon()
-        self.monitoring_thread = None
-        self.monitoring_interval = 10  # 초기 모니터링 간격 (초)
+        self.current_port = 8123  # 기본 포트 초기화
+    
         
         # 프로세스 종료 후 서버 자동 시작 관련 변수
         self._start_server_after_kill = False
@@ -78,7 +75,7 @@ class AdminPanel(wx.Panel):
         server_control_sizer.Add(port_title, 0, wx.ALL, 5)
         
         port_conflict_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.port_input = wx.TextCtrl(self, value="8125", size=(60, -1))
+        self.port_input = wx.TextCtrl(self, value="8123", size=(60, -1))
         self.btn_check_port = wx.Button(self, label='포트 확인')
         self.btn_kill_process = wx.Button(self, label='프로세스 종료')
         self.btn_kill_process.Disable()  # 처음에는 비활성화
@@ -108,6 +105,8 @@ class AdminPanel(wx.Panel):
         self.btn_stop_monitoring = wx.Button(self, label='모니터링 중지')
         self.btn_stop_monitoring.Disable()
         
+        self.monitoring_thread = None
+        self.monitoring_interval = 10  # 초기 모니터링 간격 (초)
         monitoring_interval_label = wx.StaticText(self, label="모니터링 간격(초):")
         self.monitoring_interval_input = wx.TextCtrl(self, value=str(self.monitoring_interval), style=wx.TE_PROCESS_ENTER)
         
@@ -122,12 +121,12 @@ class AdminPanel(wx.Panel):
         result_sizer = wx.BoxSizer(wx.VERTICAL)
         
         # 실행 결과 제목
-        result_title = wx.StaticText(self, label="# 실행 결과")
-        result_title.SetFont(wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD))
-        result_sizer.Add(result_title, 0, wx.ALL, 5)
+        # result_title = wx.StaticText(self, label="# 실행 결과")
+        # result_title.SetFont(wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD))
+        # result_sizer.Add(result_title, 0, wx.ALL, 5)
         
         # 시작 ~ 종료 시간
-        self.txt_time_period = wx.StaticText(self, label="- 시작 ~ 종료 시간: 아직 시작되지 않음")
+        self.txt_time_period = wx.StaticText(self, label="- 시작 - 종료 시간: 아직 시작되지 않음")
         result_sizer.Add(self.txt_time_period, 0, wx.ALL, 5)
         
         # 걸린 시간
@@ -166,167 +165,18 @@ class AdminPanel(wx.Panel):
         # 모니터링 타이머
         self.monitoring_timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.on_monitoring_timer, self.monitoring_timer)
-        
-    def _write_pid_to_file(self, pid):
-        """Write the server process PID to a file for persistence between UI restarts."""
-        try:
-            with open(self.server_pid_file, 'w') as f:
-                f.write(str(pid))
-            print(f"[AdminPanel] Wrote PID {pid} to {self.server_pid_file}")
-            return True
-        except Exception as e:
-            print(f"[AdminPanel] Error writing PID to file: {e}")
-            return False
 
-    def _read_pid_from_file(self):
-        """Read the server process PID from file."""
-        if not os.path.exists(self.server_pid_file):
-            return None
-        try:
-            with open(self.server_pid_file, 'r') as f:
-                pid_str = f.read().strip()
-                if pid_str and pid_str.isdigit():
-                    return int(pid_str)
-        except Exception as e:
-            print(f"[AdminPanel] Error reading PID from file: {e}")
-        return None
-
-    def _is_process_running(self, pid):
-        """Check if a process with the given PID is running."""
-        if pid is None:
-            return False
-        try:
-            # psutil.pid_exists is cross-platform
-            if psutil.pid_exists(pid):
-                return True
-        except Exception as e:
-            print(f"[AdminPanel] Error checking if process {pid} is running: {e}")
-        return False
-        
-    def _is_port_in_use(self, port):
-        """Check if the specified port is already in use."""
-        print(f"[AdminPanel] Checking if port {port} is in use...")
-        sock = None
-        try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            # Set shorter timeout
-            sock.settimeout(1)
-            # Try connecting to the port (different from binding)
-            result = sock.connect_ex(("127.0.0.1", port))
-            is_used = result == 0
-            print(f"[AdminPanel] Port {port} is {'IN USE' if is_used else 'FREE'} (connect_ex result: {result})")
-            return is_used
-        except Exception as e:
-            print(f"[AdminPanel] Error checking port {port}: {e}")
-            # If we can't check, assume it's not in use
-            return False
-        finally:
-            if sock:
-                sock.close()
-                
-    def _get_process_using_port(self, port):
-        """Get information about the process using the specified port."""
-        print(f"[AdminPanel] Attempting to find process using port {port}...")
-        try:
-            # 방법1: netstat로 포트 사용 프로세스 PID 확인
-            netstat_result = subprocess.run(
-                ['netstat', '-ano'], 
-                capture_output=True, 
-                text=True, 
-                creationflags=subprocess.CREATE_NO_WINDOW
-            )
-            
-            print(f"[AdminPanel] Searching netstat output for port :{port}")
-            # 포트 사용 PID 추출
-            for line in netstat_result.stdout.splitlines():
-                # 정확하게 포트를 확인하기 위해 두 가지 형태를 확인
-                # IPv4 형태: 127.0.0.1:8125
-                # 또는 단순 포트 확인: :8125
-                if (f":{port}" in line or f"127.0.0.1:{port}" in line or f"0.0.0.0:{port}" in line) and \
-                   ("LISTENING" in line or "ESTABLISHED" in line):
-                    print(f"[AdminPanel] Found matching port in line: {line}")
-                    parts = line.split()
-                    if len(parts) >= 5:
-                        pid = parts[-1].strip()
-                        print(f"[AdminPanel] Extracted PID: {pid}")
-                        try:
-                            pid = int(pid)
-                            # PID로 프로세스 정보 가져오기
-                            try:
-                                process = psutil.Process(pid)
-                                process_info = {
-                                    'pid': pid,
-                                    'name': process.name(),
-                                    'create_time': datetime.fromtimestamp(process.create_time()).strftime('%Y-%m-%d %H:%M:%S'),
-                                    'cmd': ' '.join(process.cmdline()) if len(' '.join(process.cmdline())) < 100 else ' '.join(process.cmdline())[:100] + '...'
-                                }
-                                print(f"[AdminPanel] Found process info: {process_info}")
-                                return process_info
-                            except psutil.NoSuchProcess:
-                                print(f"[AdminPanel] Process with PID {pid} no longer exists")
-                                return {'pid': pid, 'name': '알 수 없음', 'create_time': '알 수 없음', 'cmd': '알 수 없음'}
-                        except ValueError:
-                            print(f"[AdminPanel] Could not convert PID to integer: {pid}")
-                            pass
-            
-            # 방법2: 더 확실한 방법으로 커스텀 커맨드 실행
-            try:
-                print(f"[AdminPanel] Trying alternative method to find process using port {port}")
-                # netstat에서 좀 더 구체적인 추출
-                alt_cmd = f"netstat -ano | findstr :{port} | findstr LISTENING"
-                alt_result = subprocess.run(alt_cmd, capture_output=True, text=True, shell=True, creationflags=subprocess.CREATE_NO_WINDOW)
-                print(f"[AdminPanel] Alternative command result: {alt_result.stdout}")
-                
-                # 출력에서 PID 추출
-                for line in alt_result.stdout.splitlines():
-                    if line.strip():
-                        parts = line.strip().split()
-                        if len(parts) >= 5:
-                            pid = parts[-1]
-                            try:
-                                pid = int(pid)
-                                process = psutil.Process(pid)
-                                process_info = {
-                                    'pid': pid,
-                                    'name': process.name(),
-                                    'create_time': datetime.fromtimestamp(process.create_time()).strftime('%Y-%m-%d %H:%M:%S'),
-                                    'cmd': ' '.join(process.cmdline()) if len(' '.join(process.cmdline())) < 100 else ' '.join(process.cmdline())[:100] + '...'
-                                }
-                                print(f"[AdminPanel] Found process info (alt method): {process_info}")
-                                return process_info
-                            except (ValueError, psutil.NoSuchProcess) as e:
-                                print(f"[AdminPanel] Error in alternative method: {e}")
-            except Exception as alt_e:
-                print(f"[AdminPanel] Alternative method failed: {alt_e}")
-            
-            print(f"[AdminPanel] No process found using port {port}")
-            return None
-        except Exception as e:
-            print(f"[AdminPanel] Error getting process using port {port}: {e}")
-            return None
-            
-    def _kill_process(self, pid):
-        """Kill the process with the specified PID."""
-        try:
-            # Windows에서는 taskkill 명령어가 더 확실함
-            subprocess.run(
-                ['taskkill', '/F', '/PID', str(pid)], 
-                check=True, 
-                creationflags=subprocess.CREATE_NO_WINDOW
-            )
-            return True
-        except Exception as e:
-            print(f"[AdminPanel] Error killing process {pid}: {e}")
-            return False
+        # 모니터링 데몬 초기화
+        self.monitoring_daemon = None
             
     def _show_port_change_dialog(self):
         """포트 충돌 시 프로세스 종료 또는 다른 포트 선택 옵션을 제공하는 대화상자를 표시합니다."""
         # 기본 포트 정보
-        default_port = 8125
-        default_next_port = 8126
+        default_port = 8123
+        default_next_port = 8124
         
         # 현재 포트를 사용 중인 프로세스 정보 가져오기
-        process_info = self._get_process_using_port(default_port)
+        process_info = get_process_using_port(default_port)
         
         # 커스텀 대화상자 생성
         dlg = wx.Dialog(self, title="포트 충돌", size=(450, 320))
@@ -418,7 +268,7 @@ class AdminPanel(wx.Panel):
                 if port <= 0 or port > 65535:
                     wx.MessageBox("유효한 포트 번호는 1에서 65535 사이입니다.", "오류", wx.OK | wx.ICON_ERROR)
                     return self._show_port_change_dialog()  # 재귀적으로 다시 대화상자 표시
-                if self._is_port_in_use(port):
+                if is_port_in_use(port):
                     wx.MessageBox(f"포트 {port}도 이미 사용 중입니다. 다른 포트를 선택해주세요.", "오류", wx.OK | wx.ICON_ERROR)
                     return self._show_port_change_dialog()  # 재귀적으로 다시 대화상자 표시
                 return port
@@ -520,7 +370,7 @@ class AdminPanel(wx.Panel):
             time.sleep(2)
             
             # 포트 사용 여부 다시 확인
-            port_available = not self._is_port_in_use(port)
+            port_available = not is_port_in_use(port)
             if port_available:
                 print(f"[AdminPanel] Port {port} is now available after kill attempts.")
                 wx.MessageBox(f"포트 {port}를 사용하던 프로세스가 종료되었습니다.", "정보", wx.OK | wx.ICON_INFORMATION)
@@ -543,14 +393,14 @@ class AdminPanel(wx.Panel):
     def _on_kill_process_from_dialog(self, dlg, process_info, port):
         """포트 변경 대화상자에서 프로세스 종료 후 계속 옵션 처리"""
         # 프로세스 종료
-        if self._kill_process(process_info['pid']):
+        if kill_process(process_info['pid']):
             wx.MessageBox(f"프로세스(PID: {process_info['pid']})가 성공적으로 종료되었습니다.", "정보", wx.OK | wx.ICON_INFORMATION)
             
             # 포트가 실제로 해제될 때까지 약간 대기
             time.sleep(1)
             
             # 포트 상태 다시 확인
-            port_available = not self._is_port_in_use(port)
+            port_available = not is_port_in_use(port)
             if port_available:
                 wx.MessageBox(f"프로세스는 종료되었지만, 포트 {port}가 여전히 사용 중입니다.", "정보", wx.OK | wx.ICON_INFORMATION)
             else:
@@ -764,13 +614,16 @@ class AdminPanel(wx.Panel):
         Args:
             ready_callback: 서버가 완전히 준비된 후 호출될 콜백 함수
         """
+
+        import json
+
         print("[AdminPanel] auto_start_server called.")
         self.initial_server_ready_signal_sent = False  # Reset flag for this attempt
         self.server_ready_callback_for_auto_start = ready_callback
-        
-        # 먼저 기본 포트(8125)가 사용 중인지 확인
-        default_port = 8125
-        if self._is_port_in_use(default_port):
+
+        config = load_json_config(get_config_file())
+        default_port = config.get("port")
+        if is_port_in_use(default_port):
             print(f"[AdminPanel] Auto-start: Default port {default_port} is already in use.")
             
         # Check if our managed server process is already running
@@ -796,6 +649,8 @@ class AdminPanel(wx.Panel):
     
     def on_start_server_internal(self, auto_start_mode=False):
         """서버 시작 로직을 처리하는 내부 메서드"""
+        import json
+        
         # 프로세스 종료 후 서버 시작이 요청된 경우를 위한 변수 초기화
         if not hasattr(self, '_start_server_after_kill'):
             self._start_server_after_kill = False
@@ -819,9 +674,10 @@ class AdminPanel(wx.Panel):
 
         try:
             self.stop_event.clear()
-            # For Windows, use CREATE_NEW_PROCESS_GROUP to allow killing the whole process tree
-            # 포트 확인 로직 개선 - 항상 실행되도록 함
-            default_port = 8125
+            
+            config = load_json_config(get_config_file())
+
+            default_port = config.get("port")
             port_in_use = False
             socket_port_in_use = False
             
@@ -839,7 +695,7 @@ class AdminPanel(wx.Panel):
                 print(f"[AdminPanel] Error checking port with netstat: {e}")
                 
             # 소켓 확인 방법도 시도 (두 개의 방법으로 이중 확인)
-            socket_port_in_use = self._is_port_in_use(default_port)
+            socket_port_in_use = is_port_in_use(default_port)
                 
             # 둘 중 하나라도 포트가 사용 중이라면 포트 변경 작업 진행
             if port_in_use or socket_port_in_use:
@@ -866,7 +722,7 @@ class AdminPanel(wx.Panel):
             print(f"[AdminPanel] Server process created with PID: {self.server_process.pid}")
             
             self.server_pid = self.server_process.pid
-            self._write_pid_to_file(self.server_pid)
+            write_pid_to_file(self.server_pid, self.server_pid_file)
             self.server_pid_temp_for_status = self.server_pid
             
             self.log_thread = threading.Thread(target=self._read_server_log, daemon=True)
@@ -901,7 +757,7 @@ class AdminPanel(wx.Panel):
         
         # 최대 3회까지 프로세스 정보 가져오기 시도
         while retry_count < max_retries:
-            process_info = self._get_process_using_port(default_port)
+            process_info = get_process_using_port(default_port)
             if process_info:
                 print(f"[AdminPanel] Successfully found process using port {default_port} on attempt {retry_count+1}")
                 break
@@ -935,21 +791,21 @@ class AdminPanel(wx.Panel):
                 
                 if result == wx.ID_YES:  # 프로세스 종료 선택
                     print(f"[AdminPanel] User chose to kill the process {process_info['pid']}")
-                    if self._kill_process(process_info['pid']):
+                    if kill_process(process_info['pid']):
                         print(f"[AdminPanel] Successfully killed process {process_info['pid']}")
                         wx.MessageBox(f"프로세스(PID: {process_info['pid']})가 종료되었습니다. 기본 포트로 재시작합니다.", "정보", wx.OK | wx.ICON_INFORMATION)
                         # 포트가 실제로 해제될 때까지 약간 대기
                         time.sleep(1)  # 1초 대기
                         
                         # 포트가 이제 사용 가능한지 다시 확인
-                        port_available = not self._is_port_in_use(default_port)
+                        port_available = not is_port_in_use(default_port)
                         retry_count = 0
                         max_retries = 5  # 최대 5회 시도
                         
                         while not port_available and retry_count < max_retries:
                             print(f"[AdminPanel] Waiting for port {default_port} to be released... (Attempt {retry_count+1}/{max_retries})")
                             time.sleep(1)  # 1초 더 대기
-                            port_available = not self._is_port_in_use(default_port)
+                            port_available = not is_port_in_use(default_port)
                             retry_count += 1
                             
                         if port_available:
@@ -1007,9 +863,10 @@ class AdminPanel(wx.Panel):
         modified_script_path = os.path.join(os.path.dirname(script_path), "temp_run.bat")
         with open(script_path, 'r', encoding='utf-8') as f:
             content = f.read()
-        
-        # uvicorn 실행 명령 부분을 새 포트로 대체
-        content = content.replace("--port 8125", f"--port {new_port}")
+
+        config = load_json_config(get_config_file())
+
+        content = content.replace(f"--port {config['port']}", f"--port {new_port}")
         
         with open(modified_script_path, 'w', encoding='utf-8') as f:
             f.write(content)
@@ -1193,7 +1050,7 @@ class AdminPanel(wx.Panel):
                 return
                 
             # 포트 사용 중인지 확인
-            port_in_use = self._is_port_in_use(port)
+            port_in_use = is_port_in_use(port)
             
             if not port_in_use:
                 wx.MessageBox(f"포트 {port}는 현재 사용 중이 아닙니다.", "정보", wx.OK | wx.ICON_INFORMATION)
@@ -1201,7 +1058,7 @@ class AdminPanel(wx.Panel):
                 return
                 
             # 프로세스 정보 가져오기
-            process_info = self._get_process_using_port(port)
+            process_info = get_process_using_port(port)
             
             if not process_info:
                 wx.MessageBox(f"포트 {port}는 사용 중이지만, 사용 중인 프로세스 정보를 찾을 수 없습니다.", "정보", wx.OK | wx.ICON_INFORMATION)
@@ -1273,14 +1130,14 @@ class AdminPanel(wx.Panel):
         """대화상자에서 직접 프로세스를 종료합니다."""
         try:
             # 프로세스 종료
-            if self._kill_process(process_info['pid']):
+            if kill_process(process_info['pid']):
                 wx.MessageBox(f"프로세스(PID: {process_info['pid']})가 성공적으로 종료되었습니다.", "정보", wx.OK | wx.ICON_INFORMATION)
                 
                 # 포트가 실제로 해제될 때까지 약간 대기
                 time.sleep(1)
                 
                 # 포트 상태 다시 확인
-                port_available = not self._is_port_in_use(port)
+                port_available = not is_port_in_use(port)
                 if port_available:
                     wx.MessageBox(f"프로세스는 종료되었지만, 포트 {port}가 여전히 사용 중입니다.", "정보", wx.OK | wx.ICON_INFORMATION)
                 else:
@@ -1321,6 +1178,9 @@ class AdminPanel(wx.Panel):
     def on_start_monitoring(self, event):
         """모니터링 시작 버튼 클릭 처리"""
         print("[AdminPanel] 모니터링 시작 버튼 클릭됨")
+        if self.monitoring_daemon is None:
+            self.monitoring_daemon = MonitoringDaemon()
+            
         self.monitoring_daemon.start()
         self.btn_start_monitoring.Disable()
         self.btn_stop_monitoring.Enable()

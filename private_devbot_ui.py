@@ -4,16 +4,13 @@ import wx.html2
 import wx.aui
 import os
 import subprocess
-import sys
-import threading
 import time
 
 from ui.api_client import ApiClient
-from ui.setting_dialog import SettingsDialog
 from ui.document_management_panel import DocManagementPanel
 from ui.admin_panel import AdminPanel
-from ui.config_util import load_json_config, save_json_config, get_config_file
-from ip_middleware import get_local_ips
+from ui.search_panel import SearchPanel
+from ui.config_util import load_json_config, get_config_file, load_initial_json_config
 from ui.loading_splash import LoadingSplash
 
 # 모던한 색상 테마 정의
@@ -28,17 +25,6 @@ MODERN_COLORS = {
     'selected': '#BBDEFB'
 }
 
-class SearchPanel(wx.Panel):
-    def __init__(self, parent, api_client):
-        super().__init__(parent)
-        self.api_client = api_client
-        self.SetBackgroundColour(MODERN_COLORS['background'])
-        lbl = wx.StaticText(self, label="Search Panel - Placeholder")
-        lbl.SetForegroundColour(MODERN_COLORS['text'])
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(lbl, 0, wx.ALL | wx.CENTER, 5)
-        self.SetSizer(sizer)
-
 class MainFrame(wx.Frame):
     def __init__(self, parent, title, show_ui: bool = True, loading_splash: LoadingSplash | None = None):
         super(MainFrame, self).__init__(parent, title=title, size=(900, 700))
@@ -46,7 +32,8 @@ class MainFrame(wx.Frame):
         icon_path = os.path.join(os.getcwd(), "private_devbot.ico")
         if os.path.exists(icon_path):
             self.SetIcon(wx.Icon(icon_path, wx.BITMAP_TYPE_ICO))
-        self.config = load_json_config(get_config_file(), default_config={'api_base_url': 'http://192.168.0.100:8125'})
+
+        self.config = load_json_config(get_config_file())
         self.api_client = ApiClient(self.get_current_config, self.get_current_upload_config)
 
         # 모던한 색상 테마 적용
@@ -99,23 +86,6 @@ class MainFrame(wx.Frame):
             # 진행 대화상자를 사용하지 않고 상태표시줄만 사용하여 이벤트 루프 충돌 방지
             wx.CallAfter(self.auto_start_server)
             
-        # config 로드 후 IP 자동 반영
-        ips = list(get_local_ips())
-        if ips:
-            ip = ips[0]
-            port = self.config.get('api_base_url', 'http://127.0.0.1:8125').split(':')[-1]
-            self.config['api_base_url'] = f"http://{ip}:{port}"
-            
-            # yaml 파일에도 현재 IP와 포트 반영
-            try:
-                from ip_middleware import load_monitoring_info, save_monitoring_info
-                info = load_monitoring_info()
-                # 파일 목록은 유지하고 IP와 포트만 업데이트
-                save_monitoring_info(ip, port, info.get('files', []))
-                print(f"[MainFrame] 모니터링 파일의 IP와 포트 업데이트됨: {ip}:{port}")
-            except Exception as e:
-                print(f"[MainFrame] 모니터링 파일 업데이트 중 오류: {e}")
-            
         # 서버 준비 상태를 주기적으로 확인하여 스플래시를 닫고 UI 표시
         if not show_ui:
             wx.CallLater(500, self._check_server_ready)
@@ -131,13 +101,13 @@ class MainFrame(wx.Frame):
                 # 서버 시작
                 self.admin_panel.auto_start_server(self.on_server_fully_ready_for_docs)
                 
-                # 서버 시작 진행 상황을 간단히 5초 동안 상태바에 표시
-                for i in range(5):
-                    self.SetStatusText(f"문서 저장소 서버를 시작하는 중... ({i+1}/5)")
-                    time.sleep(1.0)
+                # # 서버 시작 진행 상황을 간단히 5초 동안 상태바에 표시
+                # for i in range(5):
+                #     self.SetStatusText(f"문서 저장소 서버를 시작하는 중... ({i+1}/5)")
+                #     time.sleep(1.0)
 
                 # 서버 시작 완료 후 상태 텍스트 업데이트 (모니터링 자동 시작은 AdminPanel에서 10초 후 실행)
-                self.SetStatusText("문서 저장소 서버가 시작되었습니다. 서버 로그를 확인하세요.")
+                self.SetStatusText("문서 저장소 서버가 시작되었습니다.")
                 
         except Exception as e:
             wx.LogError(f"서버 자동 시작 중 오류: {e}")
@@ -161,46 +131,13 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_quit, exit_item)
 
     def on_settings(self, event):
+        from ui.setting_dialog import SettingsDialog
+        from ui.config_util import save_json_config, get_config_file
         dlg = SettingsDialog(self, "Application Settings", self.config)
         if dlg.ShowModal() == wx.ID_OK:
-            old_api_url = self.config.get('api_base_url', '')
             self.config = dlg.get_configuration()
-            new_api_url = self.config.get('api_base_url', '')
-            
-            # API URL이 변경되었으면 yaml 파일 마이그레이션
-            if old_api_url != new_api_url:
-                try:
-                    from ip_middleware import load_monitoring_info, save_monitoring_info, get_monitoring_yaml_path
-                    
-                    # 현재 정보 로드
-                    info = load_monitoring_info()
-                    
-                    # 새 IP와 포트 추출
-                    if new_api_url:
-                        parts = new_api_url.replace('http://', '').replace('https://', '').split(':')
-                        if len(parts) >= 2:
-                            ip = parts[0]
-                            port = parts[1].split('/')[0]  # 포트 뒤에 경로가 있을 경우 제거
-                            
-                            # 기존 정보에 반영
-                            info['ip'] = ip
-                            info['port'] = port
-                            
-                            # 새 파일에 저장
-                            save_monitoring_info(ip, port, info.get('files', []))
-                            
-                            self.SetStatusText(f"설정 및 모니터링 파일 업데이트 완료: {get_monitoring_yaml_path()}")
-                        else:
-                            self.SetStatusText("설정이 업데이트되었습니다. API URL 형식이 올바르지 않아 모니터링 파일은 업데이트되지 않았습니다.")
-                    else:
-                        self.SetStatusText("설정이 업데이트되었습니다.")
-                except Exception as e:
-                    print(f"[MainFrame] 모니터링 파일 업데이트 중 오류: {e}")
-                    self.SetStatusText("설정이 업데이트되었습니다.")
-            else:
-                self.SetStatusText("설정이 업데이트되었습니다.")
-                
             save_json_config(get_config_file(), self.config)
+            self.SetStatusText("설정이 업데이트되었습니다.")
         dlg.Destroy()
 
     def on_server_fully_ready_for_docs(self, success, message=""):
@@ -283,7 +220,7 @@ class MainFrame(wx.Frame):
                 if not self.IsShown():
                     self.Show(True)
                 self.Raise()
-                self.SetStatusText("문서 저장소 서버가 시작되었습니다. 서버 로그를 확인하세요.")
+                self.SetStatusText("문서 저장소 서버가 시작되었습니다.")
             else:
                 # 아직 준비되지 않았으면 500ms 후 재확인
                 wx.CallLater(500, self._check_server_ready)
@@ -292,6 +229,36 @@ class MainFrame(wx.Frame):
 
 class App(wx.App):
     def OnInit(self):
+        from ui.config_util import get_config_file, load_json_config, save_json_config
+        from ui.setting_dialog import SettingsDialog
+        from ip_middleware import get_local_ips
+        config_path = get_config_file()
+        print(config_path)
+        config = load_initial_json_config(config_path)
+        
+        need_input = False
+        if not config.get('knox_id'):
+            need_input = True
+        if not config.get('client_ip'):
+            ips = list(get_local_ips())
+            config['client_ip'] = ips[0] if ips else ''
+            need_input = True
+        if not config.get('port'):
+            config['port'] = '8123'
+            need_input = True
+        if need_input:
+            dlg = SettingsDialog(None, "Application Settings", config)
+            if dlg.ShowModal() == wx.ID_OK:
+                config = dlg.get_configuration()
+                # api_base_url 동적 생성
+                config['api_base_url'] = f"http://{config['client_ip']}:{config['port']}"
+                save_json_config(config_path, config)
+            dlg.Destroy()
+        # config 값이 있더라도 api_base_url을 항상 동적으로 생성
+        if config.get('client_ip') and config.get('port'):
+            config['api_base_url'] = f"http://{config['client_ip']}:{config['port']}"
+            save_json_config(config_path, config)
+
         # 1) 스플래시 먼저 표시
         gif_path = os.path.join(os.getcwd(), "loading.gif")
         self.splash = LoadingSplash(None, gif_path)
