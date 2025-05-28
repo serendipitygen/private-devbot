@@ -1,3 +1,11 @@
+import socket
+import os
+import psutil
+import subprocess
+from datetime import datetime
+import json
+from .config_util import load_json_config, get_config_file
+
 def write_pid_to_file(pid, server_pid_file):
     """Write the server process PID to a file for persistence between UI restarts."""
     try:
@@ -22,7 +30,7 @@ def read_pid_from_file(server_pid_file):
         print(f"[AdminPanel] Error reading PID from file: {e}")
     return None
 
-def is_process_running(self, pid):
+def is_process_running(pid):
     """Check if a process with the given PID is running."""
     if pid is None:
         return False
@@ -57,8 +65,6 @@ def is_port_in_use(port):
 
 def get_process_using_port(port):
     """Get information about the process using the specified port."""
-
-    import json 
 
     print(f"[AdminPanel] Attempting to find process using port {port}...")
     try:

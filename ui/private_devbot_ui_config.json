@@ -1,7 +1,7 @@
 {
     "page_size": 30,
     "monitoring_interval": 10,
-    "client_ip": "172.25.128.1",
+    "client_ip": "172.30.1.44",
     "port": "8123",
     "knox_id": "min.ho.kim",
     "api_base_url": "http://172.30.1.44:8123"

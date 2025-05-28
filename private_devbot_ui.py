@@ -12,6 +12,7 @@ from ui.admin_panel import AdminPanel
 from ui.search_panel import SearchPanel
 from ui.config_util import load_json_config, get_config_file, load_initial_json_config
 from ui.loading_splash import LoadingSplash
+from monitoring_daemon import MonitoringDaemon
 
 # 모던한 색상 테마 정의
 MODERN_COLORS = {
@@ -54,9 +55,10 @@ class MainFrame(wx.Frame):
         self.notebook.SetBackgroundColour(MODERN_COLORS['background'])
         
         # 문서 관리 탭
-        self.doc_panel = DocManagementPanel(self.notebook, self.api_client, main_frame_ref=self)
+        self.monitoring_daemon = MonitoringDaemon()
+        self.doc_panel = DocManagementPanel(self.notebook, self.api_client, main_frame_ref=self, monitoring_daemon=self.monitoring_daemon)
         self.search_panel = SearchPanel(self.notebook, self.api_client)
-        self.admin_panel = AdminPanel(self.notebook, self.api_client, main_frame_ref=self)
+        self.admin_panel = AdminPanel(self.notebook, self.api_client, main_frame_ref=self, monitoring_daemon=self.monitoring_daemon)
 
         self.notebook.AddPage(self.doc_panel, "Documents")
         self.notebook.AddPage(self.search_panel, "Search")
@@ -108,6 +110,7 @@ class MainFrame(wx.Frame):
 
                 # 서버 시작 완료 후 상태 텍스트 업데이트 (모니터링 자동 시작은 AdminPanel에서 10초 후 실행)
                 self.SetStatusText("문서 저장소 서버가 시작되었습니다.")
+                self.monitoring_daemon.start()
                 
         except Exception as e:
             wx.LogError(f"서버 자동 시작 중 오류: {e}")
@@ -138,6 +141,30 @@ class MainFrame(wx.Frame):
             self.config = dlg.get_configuration()
             save_json_config(get_config_file(), self.config)
             self.SetStatusText("설정이 업데이트되었습니다.")
+
+            # AdminPanel이 존재하고, 모니터링 데몬이 활성 상태인지 확인
+            if hasattr(self, 'admin_panel') and self.admin_panel and \
+                hasattr(self.admin_panel, 'monitoring_daemon') and \
+                self.admin_panel.monitoring_daemon is not None and \
+                hasattr(self.admin_panel.monitoring_daemon, 'is_active') and \
+                self.admin_panel.monitoring_daemon.is_active():
+                
+                self.doc_panel.set_monitoring_daemon(self.admin_panel.monitoring_daemon)
+                
+                print("[MainFrame] 설정 변경 감지: 모니터링 데몬 재시작 시도")
+                # 현재 모니터링 중지
+                self.admin_panel.on_stop_monitoring(None)
+                
+                # 잠시 후 새 설정으로 모니터링 다시 시작
+                # wx.CallLater를 사용하여 UI 스레드에서 안전하게 호출
+                wx.CallLater(200, self.admin_panel.on_start_monitoring, None)
+                print("[MainFrame] 모니터링 데몬 재시작 요청 완료")
+            elif hasattr(self, 'admin_panel') and self.admin_panel:
+                # 모니터링 데몬이 실행 중이 아니거나 admin_panel은 있지만 monitoring_daemon이 없는 경우
+                # (예: 초기 실행 시 아직 모니터링 시작 전)
+                # 이 경우, 다음 on_start_monitoring 호출 시 새 설정을 사용하게 됨
+                print("[MainFrame] 설정 변경 감지: 모니터링 데몬이 실행 중이 아니므로 재시작 건너뜀.")
+            
         dlg.Destroy()
 
     def on_server_fully_ready_for_docs(self, success, message=""):
@@ -241,6 +268,9 @@ class App(wx.App):
             need_input = True
         if not config.get('client_ip'):
             ips = list(get_local_ips())
+            print("-------------------------------")
+            print(ips)
+            print("-------------------------------")
             config['client_ip'] = ips[0] if ips else ''
             need_input = True
         if not config.get('port'):

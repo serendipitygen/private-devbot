@@ -7,9 +7,9 @@ from datetime import datetime
 import socket
 import json
 import traceback
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 from ui.api_client import ApiClient
-from ip_middleware import load_monitoring_info, save_monitoring_info
+from ip_middleware import get_local_ips
 from ui.config_util import load_json_config, get_config_file
 import fnmatch
 
@@ -41,14 +41,49 @@ class MonitoringDaemon:
         
         self.max_metrics_history = 1000  # 최대 메트릭 저장 개수
         self.monitoring_interval = 10  # 모니터링 간격 (초)
+        self.init_api_base_url()
 
-        config = load_json_config(get_config_file())
-        api_base_url = "http://" + config.get("ip") + ":" + str(config.get("port"))
+    def init_api_base_url(self):
+        try:
+            config = load_json_config(get_config_file())
+            ip = config.get("ip")
+            # "ip" 키가 없으면 "client_ip" 키를 사용
+            if ip is None:
+                ip = config.get("client_ip")
+            
+            port = config.get("port")
 
-        self.api_client = ApiClient(lambda: {"api_base_url": api_base_url}, lambda: {})
-        self.load_config()
-        self._pause_event = threading.Event()
-        self._pause_event.clear()
+            if ip is None or port is None:
+                # 에러 메시지를 좀 더 구체적으로 변경
+                missing_keys = []
+                if ip is None:
+                    missing_keys.append("'ip' or 'client_ip'")
+                if port is None:
+                    missing_keys.append("'port'")
+                
+                error_msg = f"MonitoringDaemon: {', '.join(missing_keys)} not found in config or is None."
+                print(f"[ERROR] {error_msg}")
+                raise ValueError(error_msg)
+
+            api_base_url = f"http://{ip}:{port}"
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print(api_base_url)
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            self.api_client = ApiClient(lambda: {"api_base_url": api_base_url}, lambda: {})
+            self.load_config()
+            self._pause_event = threading.Event()
+            self._pause_event.clear()
+
+        except FileNotFoundError:
+            print("[ERROR] MonitoringDaemon: Configuration file not found. Cannot initialize.")
+            raise
+        except ValueError as ve:
+            print(f"[ERROR] MonitoringDaemon: Configuration error - {ve}")
+            raise
+        except Exception as e:
+            print(f"[ERROR] MonitoringDaemon: Unexpected error during initialization: {e}")
+            traceback.print_exc()
+            raise
 
     def load_config(self):
         """설정 파일을 로드합니다."""
@@ -106,7 +141,7 @@ class MonitoringDaemon:
                     if fnmatch.fnmatch(fname, 'monitoring_files_*_*.yaml'):
                         try:
                             rag_part = fname.split('_')[2] if len(fname.split('_')) > 2 else None
-                            info = load_monitoring_info(rag_part)
+                            info = self.load_monitoring_info(rag_part)
                             files.extend(info.get('files', []))
                         except Exception as e:
                             print(f"[모니터링] {fname} 로드 오류: {e}")
@@ -144,10 +179,13 @@ class MonitoringDaemon:
     def _monitor_loop(self):
         """메인 모니터링 루프"""
         check_count = 0
+
+        config = load_json_config(get_config_file())
+        interval = config.get('monitoring_interval')
         
         while self.running:
             if self._pause_event.is_set():
-                time.sleep(1)
+                time.sleep(interval)
                 continue
             try:
                 check_count += 1
@@ -169,7 +207,7 @@ class MonitoringDaemon:
                     print(f"[모니터링] 주기 #{check_count} 시작: {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
                 
                 # 메트릭 수집 및 파일 확인
-                self._collect_metrics()
+                #self._collect_metrics()
                 self._check_and_upload_files()
                 
                 # 주기 종료 시간 기록 및 소요 시간 계산
@@ -192,7 +230,7 @@ class MonitoringDaemon:
                 
                 # 다음 주기까지 대기
                 self.last_check_timestamp = end_time
-                time.sleep(self.monitoring_interval)
+                time.sleep(interval)
             except Exception as e:
                 print(f"[모니터링] 모니터링 루프 오류: {e}")
                 traceback.print_exc()
@@ -300,13 +338,13 @@ class MonitoringDaemon:
                 if fnmatch.fnmatch(fname, 'monitoring_files_*_*.yaml'):
                     rag_part = fname.split('_')[2] if len(fname.split('_')) > 2 else None
                     try:
-                        info = load_monitoring_info(rag_part)
+                        info = self.load_monitoring_info(rag_part)
                         files.extend(info.get('files', []))
                     except Exception as e:
                         print(f"[모니터링] {fname} 로드 오류: {e}")
             
             if not files:
-                print("[모니터링] 모니터링할 파일이 없습니다.")
+                #print("[모니터링] 모니터링할 파일이 없습니다.")
                 return
                 
             # 파일 개수가 많을 때만 상세 로그 출력
@@ -392,7 +430,7 @@ class MonitoringDaemon:
             
             if updated:
                 # 변경된 정보 저장
-                save_monitoring_info(info.get('ip'), info.get('port'), files)
+                self.save_monitoring_info(info.get('ip'), info.get('port'), files)
                 print("[모니터링] 모니터링 정보 업데이트됨")
             
             # 현재 파일 목록을 이전 목록으로 저장 (다음 비교를 위해)
@@ -426,3 +464,111 @@ class MonitoringDaemon:
             time.sleep(delay_sec)
             self._pause_event.clear()
         threading.Thread(target=delayed_resume, daemon=True).start() 
+
+
+    def get_monitoring_yaml_path(self, rag_name: str | None = None, port: str | None = None):
+        """
+        현재 사용 중인 IP와 포트를 기반으로 monitoring yaml 파일 경로를 생성합니다.
+        형식: monitoring_files_[IP]_[PORT].yaml
+        """
+        info = {}
+        rag_name = rag_name or 'default'
+        
+        if port is None:
+            # config나 환경변수에서 포트 추출 로직 필요시 추가
+            raise ValueError("Port is not set. Please set the port in the devbot_config.json file.")
+        
+        # store 폴더 하위에 저장
+        store_dir = os.path.join(os.getcwd(), 'store')
+        os.makedirs(store_dir, exist_ok=True)
+        filename = f'monitoring_files_{rag_name}_{port}.yaml'
+        return os.path.join(store_dir, filename)
+
+    def load_monitoring_info(self, rag_name: str | None = None, port: str | None = None):
+        path = self.get_monitoring_yaml_path(rag_name, port)
+        
+        if not os.path.exists(path):
+            return {'ip': None, 'port': None, 'files': []}
+        
+        with open(path, 'r', encoding='utf-8') as f:
+            return yaml.safe_load(f) or {'ip': None, 'port': None, 'files': []}
+
+    def save_monitoring_info(self, ip, port, files, rag_name: str | None = None):
+        path = self.get_monitoring_yaml_path(rag_name, port)
+        data = {'ip': ip, 'port': port, 'files': files}
+        with open(path, 'w', encoding='utf-8') as f:
+            yaml.safe_dump(data, f, allow_unicode=True)
+
+    def append_monitoring_file(self, file_path, rag_name: str | None = None):
+        info = self.load_monitoring_info(rag_name)
+        ip = list(get_local_ips())[0] if get_local_ips() else '127.0.0.1'
+        port = info.get('port')
+        if port is None:
+            raise ValueError("Port is not set. Please set the port in the devbot_config.json file.")
+
+        port = info.get('port')
+        files = info.get('files', [])
+        name = os.path.basename(file_path)
+        now = datetime.now().isoformat()
+        files.append({'name': name, 'path': file_path, 'registered_at': now})
+        self.save_monitoring_info(ip, port, files, rag_name)
+
+    def append_monitoring_files(self, file_paths, rag_name: str | None = None):
+        info = self.load_monitoring_info(rag_name)
+        ip = list(get_local_ips())[0] if get_local_ips() else '127.0.0.1'
+        port = info.get('port')
+
+        if port is None:
+            raise ValueError("Port is not set. Please set the port in the devbot_config.json file.")
+
+        files = info.get('files', [])
+        now = datetime.now().isoformat()
+        for file_path in file_paths:
+            name = os.path.basename(file_path)
+            files.append({'name': name, 'path': file_path, 'registered_at': now})
+        self.save_monitoring_info(ip, port, files, rag_name)
+
+    def clear_monitoring_files(self, rag_name: str | None = None):
+        """모든 문서 삭제 시 monitoring_files_ip_port.yaml 파일 초기화"""
+        info = self.load_monitoring_info(rag_name)
+        ip = info.get('ip') or (list(get_local_ips())[0] if get_local_ips() else '127.0.0.1')
+        port = info.get('port')
+
+        if port is None:
+            raise ValueError("Port is not set. Please set the port in the devbot_config.json file.")
+
+        # 파일 목록만 비우고 IP와 포트는 유지
+        self.save_monitoring_info(ip, port, [], rag_name)
+        print(f"[ip_middleware] monitoring_files_ip_port.yaml 파일 초기화 완료")
+
+    def delete_monitoring_file(self, file_path, rag_name: str | None = None):
+        """yaml 파일에서 특정 파일을 삭제합니다."""
+        info = self.load_monitoring_info(rag_name)
+        ip = info.get('ip') or (list(get_local_ips())[0] if get_local_ips() else '127.0.0.1')
+        port = info.get('port')
+
+        if port is None:
+            raise ValueError("Port is not set. Please set the port in the devbot_config.json file.")
+
+        files = info.get('files', [])
+        
+        # 파일 경로가 일치하는 항목 제거
+        files = [f for f in files if f.get('path') != file_path]
+        self.save_monitoring_info(ip, port, files, rag_name)
+        print(f"[ip_middleware] {os.path.basename(file_path)} yaml 파일에서 삭제됨")
+
+    def delete_monitoring_files(self, file_paths, rag_name: str | None = None):
+        """yaml 파일에서 여러 파일을 삭제합니다."""
+        info = self.load_monitoring_info(rag_name)
+        ip = info.get('ip') or (list(get_local_ips())[0] if get_local_ips() else '127.0.0.1')
+        port = info.get('port')
+
+        if port is None:
+            raise ValueError("Port is not set. Please set the port in the devbot_config.json file.")
+
+        files = info.get('files', [])
+        
+        # 파일 경로가 일치하지 않는 항목만 유지
+        files = [f for f in files if f.get('path') not in file_paths]
+        self.save_monitoring_info(ip, port, files, rag_name)
+        print(f"[ip_middleware] {len(file_paths)}개 파일 yaml 파일에서 삭제됨")

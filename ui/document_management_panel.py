@@ -9,13 +9,13 @@ from datetime import datetime
 
 from ui.transparent_overlay import TransparentOverlay
 from ui.config_util import load_json_config, save_json_config, get_config_file
-from ip_middleware import append_monitoring_file, append_monitoring_files
 
 class DocManagementPanel(wx.Panel):
-    def __init__(self, parent, api_client, main_frame_ref):
+    def __init__(self, parent, api_client, main_frame_ref, monitoring_daemon=None):
         wx.Panel.__init__(self, parent)
         self.api_client = api_client
         self.main_frame_ref = main_frame_ref # MainFrame 참조 저장
+        self.monitoring_daemon = monitoring_daemon
         
         # config에서 page_size 불러오기
         config = load_json_config(get_config_file())
@@ -28,6 +28,7 @@ class DocManagementPanel(wx.Panel):
         self.total_pages = 1
         self.total_documents = 0
         self.filtered_documents = []
+        
         
         # 메인 사이저
         main_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -192,6 +193,11 @@ class DocManagementPanel(wx.Panel):
 
         # API 클라이언트에 초기 RAG 설정
         self.api_client.set_rag('default')
+
+    def set_monitoring_daemon(self, monitoring_daemon):
+        if monitoring_daemon is None:
+            raise ValueError("monitoring_daemon이 None입니다.")
+        self.monitoring_daemon = monitoring_daemon
 
     def fetch_documents(self, page=1, page_size=10, file_name=None, file_path=None, file_type=None, min_chunks=None, max_chunks=None):
         """API에서 문서 목록을 가져옵니다."""
@@ -399,8 +405,8 @@ class DocManagementPanel(wx.Panel):
     
     def on_upload_file(self, event):
         """파일 업로드 다이얼로그를 열고 선택한 파일을 업로드합니다."""
-        from monitoring_daemon import monitoring_daemon
-        monitoring_daemon.pause_monitoring()
+        # TODO: monitoring_daemon 전달 필요
+        self.monitoring_daemon.pause_monitoring()
         with wx.FileDialog(
             self, "업로드할 파일 선택", wildcard="모든 파일 (*.*)|*.*",
             style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST | wx.FD_MULTIPLE
@@ -428,7 +434,7 @@ class DocManagementPanel(wx.Panel):
                 finally:
                     wx.CallAfter(progress.Destroy)
                     wx.CallAfter(self.enable_action_buttons)
-                    monitoring_daemon.resume_monitoring(10)
+                    self.monitoring_daemon.resume_monitoring(10)
             threading.Thread(target=upload_files_task, daemon=True).start()
 
     def upload_file_blocking(self, file_path):
@@ -739,4 +745,4 @@ class DocManagementPanel(wx.Panel):
             if hasattr(self.GetTopLevelParent(), 'SetStatusText'):
                 self.GetTopLevelParent().SetStatusText("문서 삭제 실패")
         finally:
-            self.on_refresh_documents(None)    
+            self.on_refresh_documents(None)

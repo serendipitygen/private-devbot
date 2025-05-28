@@ -1,30 +1,36 @@
+from datetime import datetime
+import os
+import re
+import socket
+import subprocess
+import sys
+import threading
+import time
+import traceback
+
+import psutil
 import wx
 import wx.grid
 import wx.html2
-import os
-import threading
-import subprocess
-import time
-import socket
-from datetime import datetime
-import psutil
-import re
-import traceback
-import sys
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from ip_middleware import get_local_ips
-from monitoring_daemon import MonitoringDaemon
 
-from ui.config_util import save_json_config, get_config_file
-# 로딩 스플래시 화면
-from ui.loading_splash import LoadingSplash
+from ip_middleware import get_local_ips
+from ui.config_util import get_config_file, save_json_config
 from ui.config_util import load_json_config
-from ui.process_util import write_pid_to_file, is_process_running, is_port_in_use, get_process_using_port, kill_process
+from ui.loading_splash import LoadingSplash
+from ui.process_util import (
+    get_process_using_port,
+    is_port_in_use,
+    is_process_running,
+    kill_process,
+    write_pid_to_file,
+)
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
 
 MAX_LOG_LINES = 3000
 
 class AdminPanel(wx.Panel):
-    def __init__(self, parent, api_client, main_frame_ref):
+    def __init__(self, parent, api_client, main_frame_ref, monitoring_daemon=None):
         super().__init__(parent)
         self.api_client = api_client
         self.main_frame_ref = main_frame_ref # Store reference to MainFrame
@@ -36,6 +42,7 @@ class AdminPanel(wx.Panel):
         self.server_pid_temp_for_status = None 
         self.server_pid = None  # 현재 서버 PID 저장
         self.current_port = 8123  # 기본 포트 초기화
+        self.monitoring_daemon = monitoring_daemon
     
         
         # 프로세스 종료 후 서버 자동 시작 관련 변수
@@ -165,9 +172,6 @@ class AdminPanel(wx.Panel):
         # 모니터링 타이머
         self.monitoring_timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.on_monitoring_timer, self.monitoring_timer)
-
-        # 모니터링 데몬 초기화
-        self.monitoring_daemon = None
             
     def _show_port_change_dialog(self):
         """포트 충돌 시 프로세스 종료 또는 다른 포트 선택 옵션을 제공하는 대화상자를 표시합니다."""
@@ -374,7 +378,7 @@ class AdminPanel(wx.Panel):
             if port_available:
                 print(f"[AdminPanel] Port {port} is now available after kill attempts.")
                 wx.MessageBox(f"포트 {port}를 사용하던 프로세스가 종료되었습니다.", "정보", wx.OK | wx.ICON_INFORMATION)
-                self._append_log_message(f"--- [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 포트 {port}를 사용 중이던 프로세스 종료 성공 ---")
+                self._append_log_message(f"--- [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 포트 {port}를 사용 중인 프로세스 종료 성공 ---")
                 
                 # 프로세스 종료 후 서버 자동 시작 설정
                 self._start_server_after_kill = True
@@ -422,6 +426,9 @@ class AdminPanel(wx.Panel):
                 current_config = self.main_frame_ref.config
                 # get_local_ips에서 첫 번째 IP 사용
                 ips = list(get_local_ips())
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                print(ips)
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 ip = ips[0] if ips else '127.0.0.1'
                 new_api_url = f'http://{ip}:{port}'
                 current_config['api_base_url'] = new_api_url
@@ -471,7 +478,7 @@ class AdminPanel(wx.Panel):
                         line = raw_line
 
                     if len(line) > 0:
-                        print(f"[AdminPanel] Read log line: {line[:50]}..." if len(line) > 50 else f"[AdminPanel] Read log line: {line}")
+                        print(f"[AdminPanel] Read log line: {line[:50]}..." if len(line) > 500 else f"[AdminPanel] Read log line: {line}")
                     
                     # 서버 시작 여부 감지 (Uvicorn 실행 메시지 또는 Application startup complete 메시지 확인)
                     if not server_started and ("Uvicorn running on" in line or "Application startup complete" in line):
@@ -481,7 +488,7 @@ class AdminPanel(wx.Panel):
                         wx.CallAfter(self._update_ui_for_server_running)
                     
                     if line.strip():  # 빈 줄 무시
-                        print(f"[AdminPanel] Appending log line to UI: {line[:30]}..." if len(line) > 30 else f"[AdminPanel] Appending log line to UI: {line}")
+                        print(f"[AdminPanel] Appending log line to UI: {line[:30]}..." if len(line) > 300 else f"[AdminPanel] Appending log line to UI: {line}")
                         wx.CallAfter(self._append_log_message, line.strip())   
             print("[AdminPanel] Exited log reading loop")
         except Exception as e:
@@ -507,7 +514,7 @@ class AdminPanel(wx.Panel):
             if hasattr(self.main_frame_ref, 'doc_panel') and self.main_frame_ref.doc_panel:
                 # API URL 갱신 후 직접 문서 목록 업데이트 호출
                 try:
-                    # 새로고침 버튼 클릭을 시뮤레이션
+                    # 새로고침 버튼 클릭을 시ミュ레이션
                     print("[AdminPanel] Forcing document panel to update document list")
                     self.main_frame_ref.doc_panel.on_refresh_documents(None)
                     
@@ -623,8 +630,21 @@ class AdminPanel(wx.Panel):
 
         config = load_json_config(get_config_file())
         default_port = config.get("port")
-        if is_port_in_use(default_port):
-            print(f"[AdminPanel] Auto-start: Default port {default_port} is already in use.")
+        if default_port is None:
+            print("[AdminPanel] Auto-start: Port not configured or is None.")
+            if self.main_frame_ref: wx.CallAfter(self.main_frame_ref.SetStatusText, "자동 시작 실패: 포트가 설정되지 않았습니다.")
+            return
+
+        try:
+            port_to_check_auto = int(default_port)
+        except (ValueError, TypeError) as e_conv:
+            print(f"[AdminPanel] Auto-start: Invalid port from config '{default_port}': {e_conv}")
+            if self.main_frame_ref: wx.CallAfter(self.main_frame_ref.SetStatusText, f"자동 시작 실패: 잘못된 포트 번호 ({default_port})")
+            return
+
+        print(f"[AdminPanel] auto_start_server: About to call is_port_in_use with port {port_to_check_auto} (type: {type(port_to_check_auto)})")
+        if is_port_in_use(port_to_check_auto):
+            print(f"[AdminPanel] Auto-start: Default port {port_to_check_auto} is already in use.")
             
         # Check if our managed server process is already running
         if self.server_process and self.server_process.poll() is None:
@@ -678,31 +698,26 @@ class AdminPanel(wx.Panel):
             config = load_json_config(get_config_file())
 
             default_port = config.get("port")
-            port_in_use = False
-            socket_port_in_use = False
-            
-            # 더 확실한 방법으로 포트 사용 중 여부 확인 (netstat 명령어)
+            if default_port is None:
+                print("[AdminPanel] on_start_server_internal: Port not configured or is None.")
+                if self.main_frame_ref: wx.CallAfter(self.main_frame_ref.SetStatusText, "서버 시작 실패: 포트가 설정되지 않았습니다.")
+                return
+
             try:
-                print(f"[AdminPanel] Checking port {default_port} using netstat command...")
-                netstat_result = subprocess.run(['netstat', '-ano'], 
-                                            capture_output=True, 
-                                            text=True, 
-                                            creationflags=subprocess.CREATE_NO_WINDOW)
-                port_str = f":{default_port}"
-                port_in_use = port_str in netstat_result.stdout
-                print(f"[AdminPanel] Port {default_port} is {'IN USE' if port_in_use else 'FREE'} according to netstat")
-            except Exception as e:
-                print(f"[AdminPanel] Error checking port with netstat: {e}")
-                
-            # 소켓 확인 방법도 시도 (두 개의 방법으로 이중 확인)
-            socket_port_in_use = is_port_in_use(default_port)
-                
-            # 둘 중 하나라도 포트가 사용 중이라면 포트 변경 작업 진행
-            if port_in_use or socket_port_in_use:
-                # 기존 코드 블록을 _run_server_when_port_in_use 함수로 추출
-                self._run_server_when_port_in_use(script_path, default_port)
+                port_to_check_internal = int(default_port)
+            except (ValueError, TypeError) as e_conv:
+                print(f"[AdminPanel] on_start_server_internal: Invalid port from config '{default_port}': {e_conv}")
+                if self.main_frame_ref: wx.CallAfter(self.main_frame_ref.SetStatusText, f"서버 시작 실패: 잘못된 포트 번호 ({default_port})")
+                return
+
+            print(f"[AdminPanel] on_start_server_internal: About to call is_port_in_use with port {port_to_check_internal} (type: {type(port_to_check_internal)})")
+            port_in_use = is_port_in_use(port_to_check_internal)
+            
+            if port_in_use:
+                print(f"[AdminPanel] Port {port_to_check_internal} is already in use. Attempting to handle...")
+                self._run_server_when_port_in_use(script_path, port_to_check_internal)
             else:
-                print(f"[AdminPanel] Port {default_port} is available for use.")
+                print(f"[AdminPanel] Port {port_to_check_internal} is available for use.")
                 
             print(f"[AdminPanel] Starting server process with script: {script_path}")
             # 서버 시작 전 스플래시 표시
@@ -728,6 +743,19 @@ class AdminPanel(wx.Panel):
             self.log_thread = threading.Thread(target=self._read_server_log, daemon=True)
             self.log_thread.start()
             
+            # 서버 로그 스레드 시작 후 모니터링 데몬 자동 시작
+            try:
+                self.on_start_monitoring(None)
+            except Exception as e_monitor:
+                print(f"[AdminPanel] Error during on_start_monitoring: {e_monitor}")
+                wx.LogError(f"모니터링 시작 중 오류 발생: {e_monitor}")
+                traceback.print_exc()
+
+            self.btn_start_server.Disable()
+            self.btn_stop_server.Enable()
+            self.btn_check_port.Disable()
+            self.port_input.Disable()
+            
             status_msg = f"Server Status: Starting via run.bat (PID: {self.server_pid})..."
             detailed_status_msg = f"문서 저장소 시작 중입니다. 잠시만 기다려 주세요... (서버 PID: {self.server_pid})"
             self.txt_server_status.SetLabel(status_msg)
@@ -736,15 +764,17 @@ class AdminPanel(wx.Panel):
             print(f"[AdminPanel] Server process started (PID: {self.server_pid}). Log monitoring initiated.")
 
         except Exception as e:
-            wx.LogError(f"Failed to start server: {e}")
+            error_message = str(e) if e else "Unknown error"
+            wx.LogError(f"Failed to start server: {error_message}")
             self.txt_server_status.SetLabel("Server Status: Error starting")
             if self.main_frame_ref: wx.CallAfter(self.main_frame_ref.SetStatusText, "서버 시작 중 오류가 발생했습니다.")
             self.server_process = None
             self.server_pid = None
 
-    def _run_server_when_port_in_use(self, script_path, default_port):
+    def _run_server_when_port_in_use(self, script_path, default_port_int):
         """포트가 사용 중일 때 서버 실행을 위한 포트 선택 및 프로세스 종료/변경 처리 로직을 별도 함수로 분리"""
-        print(f"[AdminPanel] *** Port {default_port} is already in use! Showing port change dialog. ***")
+        # default_port_int는 이미 정수형으로 전달받음
+        print(f"[AdminPanel] *** Port {default_port_int} is already in use! Showing port change dialog. ***")
         
         # 포트 선택 처리 중단 여부를 위한 플래그
         break_out_of_port_selection = False
@@ -757,18 +787,18 @@ class AdminPanel(wx.Panel):
         
         # 최대 3회까지 프로세스 정보 가져오기 시도
         while retry_count < max_retries:
-            process_info = get_process_using_port(default_port)
+            process_info = get_process_using_port(default_port_int)
             if process_info:
-                print(f"[AdminPanel] Successfully found process using port {default_port} on attempt {retry_count+1}")
+                print(f"[AdminPanel] Successfully found process using port {default_port_int} on attempt {retry_count+1}")
                 break
-            print(f"[AdminPanel] Retry {retry_count+1}/{max_retries} to find process using port {default_port}")
+            print(f"[AdminPanel] Retry {retry_count+1}/{max_retries} to find process using port {default_port_int}")
             retry_count += 1
             time.sleep(0.5)  # 재시도 전 잠시 대기
         
         # 프로세스 정보가 있을 경우 사용자에게 선택지 제공
         if process_info:
             # 프로세스 정보 문자열 생성
-            process_info_text = f"기본 포트({default_port})를 사용 중인 프로세스:\n\n"
+            process_info_text = f"기본 포트({default_port_int})를 사용 중인 프로세스:\n\n"
             process_info_text += f"PID: {process_info['pid']}\n"
             process_info_text += f"프로세스 이름: {process_info['name']}\n"
             process_info_text += f"생성 시간: {process_info['create_time']}\n"
@@ -798,24 +828,24 @@ class AdminPanel(wx.Panel):
                         time.sleep(1)  # 1초 대기
                         
                         # 포트가 이제 사용 가능한지 다시 확인
-                        port_available = not is_port_in_use(default_port)
+                        port_available = not is_port_in_use(default_port_int)
                         retry_count = 0
                         max_retries = 5  # 최대 5회 시도
                         
                         while not port_available and retry_count < max_retries:
-                            print(f"[AdminPanel] Waiting for port {default_port} to be released... (Attempt {retry_count+1}/{max_retries})")
+                            print(f"[AdminPanel] Waiting for port {default_port_int} to be released... (Attempt {retry_count+1}/{max_retries})")
                             time.sleep(1)  # 1초 더 대기
-                            port_available = not is_port_in_use(default_port)
+                            port_available = not is_port_in_use(default_port_int)
                             retry_count += 1
                             
                         if port_available:
-                            print(f"[AdminPanel] Port {default_port} is now available. Using default port.")
+                            print(f"[AdminPanel] Port {default_port_int} is now available. Using default port.")
                             # 기본 포트 사용 계속
                             new_port = None
                             break_out_of_port_selection = True
                         else:
-                            print(f"[AdminPanel] Port {default_port} is still in use after killing process. Asking for different port.")
-                            wx.MessageBox(f"프로세스는 종료되었지만 포트 {default_port}가 여전히 사용 중입니다. 다른 포트를 선택해주세요.", "정보", wx.OK | wx.ICON_INFORMATION)
+                            print(f"[AdminPanel] Port {default_port_int} is still in use after killing process. Asking for different port.")
+                            wx.MessageBox(f"프로세스는 종료되었지만 포트 {default_port_int}가 여전히 사용 중입니다. 다른 포트를 선택해주세요.", "정보", wx.OK | wx.ICON_INFORMATION)
                             new_port = self._show_port_change_dialog()
                     else:
                         print(f"[AdminPanel] Failed to kill process {process_info['pid']}")
@@ -920,7 +950,7 @@ class AdminPanel(wx.Panel):
         shutdown_thread.daemon = True
         shutdown_thread.start()
         
-        # UI 상태 업데이트 - 종료 중임을 표시
+        # UI 상태 업데이트
         self.txt_server_status.SetLabel("Server Status: Stopping...")
         if self.main_frame_ref:
             self.main_frame_ref.SetStatusText(f"서버 종료 요청이 전송되었습니다 (PIDs: {pid_list}).")
@@ -1044,29 +1074,34 @@ class AdminPanel(wx.Panel):
     def on_check_port(self, event):
         """특정 포트를 사용 중인 프로세스를 확인합니다."""
         try:
-            port = int(self.port_input.GetValue().strip())
-            if port < 1 or port > 65535:
+            port_str = self.port_input.GetValue()
+            if not port_str.isdigit():
+                wx.MessageBox("유효한 포트 번호를 입력해주세요.", "오류", wx.OK | wx.ICON_ERROR)
+                return
+
+            port_to_check = int(port_str)
+            if port_to_check < 1 or port_to_check > 65535:
                 wx.MessageBox("유효한 포트 번호는 1-65535 사이입니다.", "오류", wx.OK | wx.ICON_ERROR)
                 return
                 
-            # 포트 사용 중인지 확인
-            port_in_use = is_port_in_use(port)
+            print(f"[AdminPanel] on_check_port: About to call is_port_in_use with port {port_to_check} (type: {type(port_to_check)})")
+            port_in_use = is_port_in_use(port_to_check)
             
             if not port_in_use:
-                wx.MessageBox(f"포트 {port}는 현재 사용 중이 아닙니다.", "정보", wx.OK | wx.ICON_INFORMATION)
+                wx.MessageBox(f"포트 {port_to_check}는 현재 사용 중이 아닙니다.", "정보", wx.OK | wx.ICON_INFORMATION)
                 self.btn_kill_process.Disable()
                 return
                 
             # 프로세스 정보 가져오기
-            process_info = get_process_using_port(port)
+            process_info = get_process_using_port(port_to_check)
             
             if not process_info:
-                wx.MessageBox(f"포트 {port}는 사용 중이지만, 사용 중인 프로세스 정보를 찾을 수 없습니다.", "정보", wx.OK | wx.ICON_INFORMATION)
+                wx.MessageBox(f"포트 {port_to_check}는 사용 중이지만, 사용 중인 프로세스 정보를 찾을 수 없습니다.", "정보", wx.OK | wx.ICON_INFORMATION)
                 self.btn_kill_process.Disable()
                 return
                 
             # 프로세스 정보 표시
-            process_info_text = f"포트 {port}를 사용 중인 프로세스:\n\n"
+            process_info_text = f"포트 {port_to_check}를 사용 중인 프로세스:\n\n"
             process_info_text += f"PID: {process_info['pid']}\n"
             process_info_text += f"프로세스 이름: {process_info['name']}\n"
             process_info_text += f"생성 시간: {process_info['create_time']}\n"
@@ -1106,7 +1141,7 @@ class AdminPanel(wx.Panel):
             btn_sizer.Add(btn_kill, 0, wx.ALL, 5)
             
             # 버튼 이벤트 바인딩
-            dlg.Bind(wx.EVT_BUTTON, lambda evt: self._kill_process_from_dialog(evt, process_info, port, dlg), btn_kill)
+            dlg.Bind(wx.EVT_BUTTON, lambda evt: self._kill_process_from_dialog(evt, process_info, port_to_check, dlg), btn_kill)
             
             btn_panel.SetSizer(btn_sizer)
             vbox.Add(btn_panel, 0, wx.ALL | wx.CENTER, 5)
@@ -1120,7 +1155,7 @@ class AdminPanel(wx.Panel):
             
             # 현재 확인된 프로세스 정보 저장
             self.current_port_process = process_info
-            self._append_log_message(f"--- [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 포트 {port}를 사용 중인 프로세스 PID {process_info['pid']} 확인됨 ---")
+            self._append_log_message(f"--- [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 포트 {port_to_check}를 사용 중인 프로세스 PID {process_info['pid']} 확인됨 ---")
             
         except Exception as e:
             wx.MessageBox(f"포트 확인 중 오류가 발생했습니다: {e}", "오류", wx.OK | wx.ICON_ERROR)
@@ -1139,7 +1174,7 @@ class AdminPanel(wx.Panel):
                 # 포트 상태 다시 확인
                 port_available = not is_port_in_use(port)
                 if port_available:
-                    wx.MessageBox(f"프로세스는 종료되었지만, 포트 {port}가 여전히 사용 중입니다.", "정보", wx.OK | wx.ICON_INFORMATION)
+                    wx.MessageBox(f"프로세스는 종료되었지만 포트 {port}가 여전히 사용 중입니다.", "정보", wx.OK | wx.ICON_INFORMATION)
                 else:
                     wx.MessageBox(f"포트 {port}가 성공적으로 해제되었습니다.", "정보", wx.OK | wx.ICON_INFORMATION)
                     
@@ -1163,7 +1198,7 @@ class AdminPanel(wx.Panel):
             return
             
         process_info = self.current_port_process
-        port = self.port_input.GetValue().strip()
+        port = int(self.port_input.GetValue())
         
         # 종료 확인 대화상자
         if wx.MessageBox(
@@ -1179,7 +1214,7 @@ class AdminPanel(wx.Panel):
         """모니터링 시작 버튼 클릭 처리"""
         print("[AdminPanel] 모니터링 시작 버튼 클릭됨")
         if self.monitoring_daemon is None:
-            self.monitoring_daemon = MonitoringDaemon()
+            raise ValueError("Monitoring daemon not initialized.")
             
         self.monitoring_daemon.start()
         self.btn_start_monitoring.Disable()

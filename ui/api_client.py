@@ -1,14 +1,16 @@
 import os
 import json
 import requests
+from urllib.parse import urlparse
 
 # --- API Client ---
 class ApiClient:
-    def __init__(self, get_config_func, get_upload_config_func):
+    def __init__(self, get_config_func, get_upload_config_func, monitoring_daemon=None):
         self.get_config = get_config_func
         self.get_upload_config = get_upload_config_func
         self.session = self._create_session()
         self.current_rag = 'default'
+        self.monitoring_daemon = monitoring_daemon
 
     def _create_session(self):
         return None 
@@ -17,11 +19,104 @@ class ApiClient:
         config = self.get_config()
         return config.get('api_base_url')
 
+    def _make_request_without_proxy(self, method, endpoint, params=None, data=None, files=None, json_data=None, headers=None, timeout=600):
+        """모든 API 요청을 처리하는 공통 메서드"""
+        base_url = self._get_base_url()
+        url = f"{base_url}/{endpoint.lstrip('/')}"
+        
+        # URL 파싱
+        parsed_url = urlparse(url)
+        host = parsed_url.hostname
+
+        config = self.get_config()
+        ip = config.get('client_ip')
+
+        # 프록시 적용 여부 결정
+        bypass_proxy = False
+        if host and (host.endswith(ip) or host.endswith('localhost') or host.endswith('127.0.0.1') or host.endswith('portal.vd.sec.samsung.net')):
+            bypass_proxy = True
+
+        # 프록시 설정
+        proxies = {
+            'http': 'http://168.219.61.252:8080',
+            'https': 'http://168.219.61.252:8080',
+        } if not bypass_proxy else {}
+
+        # SSL 인증 건너뛰기 (Flutter의 badCertificateCallback과 동일)
+        verify = False  # 실제 환경에서는 보안을 위해 False 대신 인증서 파일 경로를 사용해야 합니다.
+
+        print(f'[ApiClient] {method.upper()} 요청: {url}')
+        if params:
+            print(f'[ApiClient] 파라미터: {params}')
+        if json_data:
+            print(f'[ApiClient] JSON 데이터: {json_data}')
+        if headers:
+            print(f'[ApiClient] 헤더: {headers}')
+        
+        try:
+            # rag_name 처리 (기존 로직 유지)
+            rag_name = self.current_rag
+            if rag_name and rag_name != 'default':
+                if params is not None:
+                    params = dict(params)
+                    params['rag_name'] = rag_name
+                if json_data is not None:
+                    json_data = dict(json_data)
+                    json_data['rag_name'] = rag_name
+                if data is not None:
+                    data = dict(data)
+                    if 'rag_name' not in data:
+                        data['rag_name'] = rag_name
+
+            # 요청 실행
+            response = requests.request(
+                method=method,
+                url=url,
+                params=params,
+                data=data,
+                files=files,
+                json=json_data,
+                headers=headers,
+                timeout=timeout,
+                proxies=proxies,
+                verify=verify  # SSL 인증 건너뜀
+            )
+            print(f'[ApiClient] 응답 상태 코드: {response.status_code}')
+            
+            response.raise_for_status()
+            
+            # JSON 응답인 경우 파싱
+            if response.text and response.headers.get('content-type', '').startswith('application/json'):
+                return response.json()
+            return response.text or None
+            
+        except requests.exceptions.HTTPError as e:
+            print(f'[ApiClient] HTTP 오류: {e}')
+            error_text = e.response.text[:200] if e.response and e.response.text else "N/A"
+            return {"error": "http_error", "status_code": e.response.status_code if e.response else 0, "details": error_text}
+            
+        except requests.exceptions.RequestException as e:
+            print(f'[ApiClient] 요청 오류: {e}')
+            return {"error": "request_exception", "details": str(e)}
+            
+        except json.JSONDecodeError as e:
+            print(f'[ApiClient] JSON 파싱 오류: {e}')
+            return {"error": "json_decode_error", "details": str(e)}
+            
+        except Exception as e:
+            print(f'[ApiClient] 예상치 못한 오류: {type(e).__name__} - {e}')
+            return {"error": "unexpected_error", "details": str(e)}
+
     def _make_request(self, method, endpoint, params=None, data=None, files=None, json_data=None, headers=None, timeout=600):
         """모든 API 요청을 처리하는 공통 메서드"""
         base_url = self._get_base_url()
         url = f"{base_url}/{endpoint.lstrip('/')}"
         
+        # TODO: 168.219.61.252 Proxy 에러 대처 필요
+        config = self.get_config()
+        ip = config.get('client_ip')
+        url = url.replace(ip, '127.0.0.1')
+
         print(f'[ApiClient] {method.upper()} 요청: {url}')
         if params:
             print(f'[ApiClient] 파라미터: {params}')
@@ -90,6 +185,7 @@ class ApiClient:
             params = {}
         if 'rag_name' not in params:
             params['rag_name'] = self.current_rag
+        print("########################################")
         return self._make_request('get', '/documents', params=params)
 
     def get_store_info(self):
@@ -130,8 +226,7 @@ class ApiClient:
         try:
             # 모니터링 일시 중지
             try:
-                from monitoring_daemon import monitoring_daemon
-                monitoring_daemon.pause_monitoring()
+                self.monitoring_daemon.pause_monitoring()
             except Exception as e:
                 print(f"[ApiClient] 모니터링 일시중지 실패: {e}")
             
@@ -158,8 +253,7 @@ class ApiClient:
         finally:
             # 업로드 완료 후 10초 뒤 모니터링 재개
             try:
-                from monitoring_daemon import monitoring_daemon
-                monitoring_daemon.resume_monitoring(10)
+                self.monitoring_daemon.resume_monitoring(10)
             except Exception as e:
                 print(f"[ApiClient] 모니터링 재개 실패: {e}")
 
