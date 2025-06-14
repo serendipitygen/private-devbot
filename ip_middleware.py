@@ -76,6 +76,9 @@ def get_local_ips() -> Set[str]:
                     pass  # ipconfig 명령 실패 시 무시
         except Exception:
             pass  # 호스트명 조회 실패 시 무시
+
+    ips.add('127.0.0.1')
+    ips.add('localhost')
     return ips
 
 class IPRestrictionMiddleware(BaseHTTPMiddleware):
@@ -94,6 +97,7 @@ class IPRestrictionMiddleware(BaseHTTPMiddleware):
         """설정 파일에서 허용된 IP 목록을 로드합니다.
         파일이 없거나 IP 목록이 비어있는 경우 현재 서버의 IP를 자동으로 등록합니다.
         변경 감지 메커니즘 적용: 파일이 변경된 경우에만 재로딩합니다.
+        기본적으로 프록시 서버 IP(168.219.61.213)를 허용합니다.
         """
         current_time = time.time()
         
@@ -119,13 +123,13 @@ class IPRestrictionMiddleware(BaseHTTPMiddleware):
                     if config and 'allowed_ips' in config:
                         self.allowed_ips = set(config['allowed_ips'])
                         self.is_allowed_all_ips = config.get('is_allowed_all_ips', False)
-                        print(f"허용된 IP 목록을 로드했습니다: {self.allowed_ips}")
+                        print(f"Loaded allowed IPs: {self.allowed_ips}")
                 
                 # 파일 수정 시간 업데이트
                 self.last_modified_time = os.path.getmtime(self.config_path)
             
-            # 항상 Private RAG 서버의 IP는 추가한다.
-            self.allowed_ips = self.allowed_ips | get_local_ips()
+            # 항상 Private RAG 서버의 IP와 프록시 서버 IP는 추가한다.
+            self.allowed_ips = self.allowed_ips | get_local_ips() | {'168.219.61.213'}
             
             # 새 파일 생성 또는 기존 파일 업데이트 필요 시
             if not config_exists or force:
@@ -137,7 +141,7 @@ class IPRestrictionMiddleware(BaseHTTPMiddleware):
             self.last_load_time = current_time
                 
         except Exception as e:
-            print(f"설정 파일 로드 중 오류 발생: {str(e)}")
+            print(f"Fail to load setting file of datastore: {str(e)}")
     
     def save_config(self):
         """현재 허용된 IP 목록을 설정 파일에 저장합니다."""
@@ -145,9 +149,9 @@ class IPRestrictionMiddleware(BaseHTTPMiddleware):
             config = {'allowed_ips': list(self.allowed_ips), 'is_allowed_all_ips': self.is_allowed_all_ips}
             with open(self.config_path, 'w') as file:
                 yaml.dump(config, file, default_flow_style=False)
-            print(f"설정이 저장되었습니다: {self.config_path}")
+            print(f"Saved the setting of datastore: {self.config_path}")
         except Exception as e:
-            print(f"설정 파일 저장 중 오류 발생: {str(e)}")
+            print(f"Error to save the setting of datastore: {str(e)}")
     
     def is_local_ip(self, ip) -> bool:
         """주어진 IP가 로컬 IP인지 확인합니다."""
@@ -179,7 +183,7 @@ class IPRestrictionMiddleware(BaseHTTPMiddleware):
                 "status": "success",
                 "valid_ips": [],
                 "invalid_ips": [],
-                "message": "모든 IP 허용으로 설정되었습니다."
+                "message": "All IPs are set to connect"
             }
         
         for ip in ips:
@@ -198,14 +202,14 @@ class IPRestrictionMiddleware(BaseHTTPMiddleware):
                 "status": "success" if not invalid_ips else "partial_success",
                 "valid_ips": valid_ips,
                 "invalid_ips": invalid_ips,
-                "message": "IP 목록이 업데이트되었습니다."
+                "message": "IP list was updated."
             }
         else:
             return {
                 "status": "failed",
                 "valid_ips": [],
                 "invalid_ips": ips,
-                "message": "IP 목록 업데이트에 실패했습니다."
+                "message": "Fail to set IP list"
             }
     
     def get_allowed_ips(self) -> List[str]:
@@ -245,14 +249,27 @@ class IPRestrictionMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
         
         # 허용된 IP 목록에 있는지 확인
-        if isinstance(client_ip, str):  # 문자열인 경우에만 검사
-            if client_ip in self.allowed_ips:
-                return await call_next(request)
-        elif isinstance(client_ip, list): # 리스트인 경우
-            for ip in client_ip:
-                if ip in self.allowed_ips:
+        try:
+            if isinstance(client_ip, str):  # 문자열인 경우
+                if client_ip in self.allowed_ips:
                     return await call_next(request)
+                # IP 주소 정규화 (예: ::ffff:192.168.1.1 -> 192.168.1.1)
+                if client_ip.startswith('::ffff:'):
+                    normalized_ip = client_ip[7:]
+                    if normalized_ip in self.allowed_ips:
+                        return await call_next(request)
+            elif isinstance(client_ip, list): # 리스트인 경우
+                for ip in client_ip:
+                    if ip in self.allowed_ips:
+                        return await call_next(request)
+                    # IP 주소 정규화
+                    if ip.startswith('::ffff:'):
+                        normalized_ip = ip[7:]
+                        if normalized_ip in self.allowed_ips:
+                            return await call_next(request)
+        except Exception as e:
+            print(f"IP 검증 중 오류 발생: {e}")
                 
         # 접근 거부
         print(f"차단된 IP: {client_ip}")
-        raise HTTPException(status_code=403, detail=f"접근이 거부되었습니다. 허용되지 않은 IP입니다: {client_ip}")
+        raise HTTPException(status_code=403, detail=f"Access is not allowed for the ip : {client_ip}")

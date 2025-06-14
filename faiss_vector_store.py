@@ -57,13 +57,13 @@ class FAISS_VECTOR_STORE:
         
         store_file = os.path.join(store_path, "store.pkl")
         if os.path.exists(store_file): 
-            logger.debug("[DEBUG] 기존에 존재하는 벡터스토어를 로딩합니다.")    
+            logger.debug("[DEBUG] Loading existing Vector Store")    
             with open(store_file, "rb") as f:
                 store_file_data = pickle.load(f)
                 store_data = store_file_data["docstore"]
                 index_to_docstore_id = store_file_data["index_to_docstore_id"]
         else:
-            logger.debug("[DEBUG] 벡터 DB를 새로 생성합니다.")
+            logger.debug("[DEBUG] Creating new Vector Store")
             store_data = InMemoryDocstore()
             index_to_docstore_id = {}
             
@@ -211,7 +211,7 @@ class FAISS_VECTOR_STORE:
                 pickle.dump(store_data, f)
                 
         except Exception as e:
-            print(f"벡터스토어 저장 중 오류 발생: {str(e)}")
+            print(f"Fail to save Vector Store: {str(e)}")
             raise
 
     def get_db_size(self) -> int:

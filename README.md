@@ -104,7 +104,8 @@ streamlit run .\private_rag_ui\app.py
 
 - 프론트엔드는 Flutter로 개발되어 있고 프로젝트 이름은 `private_devbot_admin`
 - 진행 중 또는 진행해야 하는 Task는 `DEV_DIARY.md` 파일 참고
-- 실행포트 확인 : netstat -ano | findstr ":8123"
+- 실행포트 확인 : netstat -ano | findstr ":8123"  
+- 해당 실행 포트 프로세스 Kill : taskkill /PID 1234 /F
 - 테스트용 API 호출 : curl http://localhost:8123/health
 
 ## conda-pack으로 conda 환경 압축

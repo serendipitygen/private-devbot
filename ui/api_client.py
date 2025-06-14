@@ -2,22 +2,32 @@ import os
 import json
 import requests
 from urllib.parse import urlparse
+from ip_middleware import get_local_ips
+from requests.adapters import HTTPAdapter, Retry
+from ui.config_util import load_json_config
+from monitoring_daemon import MonitoringDaemon
+from logger_util import ui_logger
 
 # --- API Client ---
 class ApiClient:
-    def __init__(self, get_config_func, get_upload_config_func, monitoring_daemon=None):
-        self.get_config = get_config_func
+    def __init__(self, get_upload_config_func, monitoring_daemon: MonitoringDaemon=None):
         self.get_upload_config = get_upload_config_func
         self.session = self._create_session()
-        self.current_rag = 'default'
-        self.monitoring_daemon = monitoring_daemon
+        self.current_rag_name = 'default'
+        if monitoring_daemon is None:
+            ui_logger.debug("[Error] monitoring daemon is None")
+        self.monitoring_daemon:MonitoringDaemon = monitoring_daemon
 
     def _create_session(self):
         return None 
 
     def _get_base_url(self):
-        config = self.get_config()
-        return config.get('api_base_url')
+        config = load_json_config()
+
+        if config['port'] == 8123:
+            ui_logger.debug("port is 8123")
+
+        return "http://" + config['client_ip'] + ":" + str(config['port'])
 
     def _make_request_without_proxy(self, method, endpoint, params=None, data=None, files=None, json_data=None, headers=None, timeout=600):
         """모든 API 요청을 처리하는 공통 메서드"""
@@ -28,34 +38,42 @@ class ApiClient:
         parsed_url = urlparse(url)
         host = parsed_url.hostname
 
-        config = self.get_config()
+        config = load_json_config()
         ip = config.get('client_ip')
 
-        # 프록시 적용 여부 결정
+        # 프록시 적용 여부 결정 (로컬 요청 또는 특정 도메인인 경우 프록시 우회)
         bypass_proxy = False
-        if host and (host.endswith(ip) or host.endswith('localhost') or host.endswith('127.0.0.1') or host.endswith('portal.vd.sec.samsung.net')):
+        local_ips = list(get_local_ips())
+        if host and (host in local_ips 
+                    or host == 'localhost' 
+                    or host == '127.0.0.1'
+                    or any(host.endswith(domain) for domain in ['.vd.sec.samsung.net', '.samsung.net'])
+                    or ip in local_ips):
             bypass_proxy = True
 
-        # 프록시 설정
-        proxies = {
-            'http': 'http://168.219.61.252:8080',
-            'https': 'http://168.219.61.252:8080',
-        } if not bypass_proxy else {}
+        # 2단계 요청: 프록시 시도 후 실패 시 직접 연결
+        proxies_list = [
+            {
+                'http': 'http://168.219.61.252:8080',
+                'https': 'http://168.219.61.252:8080'
+            },
+            {}  # 프록시 없이 직접 연결
+        ] if not bypass_proxy else [{}]
 
-        # SSL 인증 건너뛰기 (Flutter의 badCertificateCallback과 동일)
-        verify = False  # 실제 환경에서는 보안을 위해 False 대신 인증서 파일 경로를 사용해야 합니다.
+        # SSL 인증 설정 (개발 모드에서만 비활성화)
+        verify = os.getenv('VERIFY_SSL', 'true').lower() == 'true'
 
-        print(f'[ApiClient] {method.upper()} 요청: {url}')
+        ui_logger.debug(f'[ApiClient] {method.upper()} 요청: {url}')
         if params:
-            print(f'[ApiClient] 파라미터: {params}')
+            ui_logger.debug(f'[ApiClient] 파라미터: {params}')
         if json_data:
-            print(f'[ApiClient] JSON 데이터: {json_data}')
+            ui_logger.debug(f'[ApiClient] JSON 데이터: {json_data}')
         if headers:
-            print(f'[ApiClient] 헤더: {headers}')
+            ui_logger.debug(f'[ApiClient] 헤더: {headers}')
         
         try:
             # rag_name 처리 (기존 로직 유지)
-            rag_name = self.current_rag
+            rag_name = self.current_rag_name
             if rag_name and rag_name != 'default':
                 if params is not None:
                     params = dict(params)
@@ -69,65 +87,82 @@ class ApiClient:
                         data['rag_name'] = rag_name
 
             # 요청 실행
-            response = requests.request(
-                method=method,
-                url=url,
-                params=params,
-                data=data,
-                files=files,
-                json=json_data,
-                headers=headers,
-                timeout=timeout,
-                proxies=proxies,
-                verify=verify  # SSL 인증 건너뜀
+            # 세션 생성 및 재시도 설정
+            session = requests.Session()
+            retry = Retry(
+                total=1,  # 각 연결 방식별 1회 재시도
+                backoff_factor=1,
+                status_forcelist=[500, 502, 503, 504],
+                allowed_methods=['GET', 'POST', 'PUT', 'DELETE'],
+                respect_retry_after_header=True
             )
-            print(f'[ApiClient] 응답 상태 코드: {response.status_code}')
+            adapter = HTTPAdapter(max_retries=retry)
+            session.mount('http://', adapter)
+            session.mount('https://', adapter)
+
+            last_error = None
+            for proxies in proxies_list:
+                try:
+                    response = session.request(
+                        method=method,
+                        url=url,
+                        params=params,
+                        data=data,
+                        files=files,
+                        json=json_data,
+                        headers=headers,
+                        timeout=timeout/len(proxies_list),  # 시간 분할
+                        proxies=proxies,
+                        verify=verify
+                    )
+                    response.raise_for_status()
+                    return response.json() if response.text and response.headers.get('content-type', '').startswith('application/json') else response.text or None
+                except Exception as e:
+                    last_error = e
+                    ui_logger.exception(f"[ApiClient] 요청 실패 (프록시: {bool(proxies)}), 재시도...: {e}")
             
-            response.raise_for_status()
-            
-            # JSON 응답인 경우 파싱
-            if response.text and response.headers.get('content-type', '').startswith('application/json'):
-                return response.json()
-            return response.text or None
+            # 모든 시도 실패 시 마지막 오류 발생
+            raise last_error
             
         except requests.exceptions.HTTPError as e:
-            print(f'[ApiClient] HTTP 오류: {e}')
+            ui_logger.exception(f'[ApiClient] HTTP 오류: {e}')
             error_text = e.response.text[:200] if e.response and e.response.text else "N/A"
             return {"error": "http_error", "status_code": e.response.status_code if e.response else 0, "details": error_text}
             
         except requests.exceptions.RequestException as e:
-            print(f'[ApiClient] 요청 오류: {e}')
+            ui_logger.exception(f'[ApiClient] 요청 오류: {e}')
             return {"error": "request_exception", "details": str(e)}
             
         except json.JSONDecodeError as e:
-            print(f'[ApiClient] JSON 파싱 오류: {e}')
+            ui_logger.exception(f'[ApiClient] JSON 파싱 오류: {e}')
             return {"error": "json_decode_error", "details": str(e)}
             
         except Exception as e:
-            print(f'[ApiClient] 예상치 못한 오류: {type(e).__name__} - {e}')
+            ui_logger.exception(f'[ApiClient] 예상치 못한 오류: {type(e).__name__} - {e}')
             return {"error": "unexpected_error", "details": str(e)}
 
     def _make_request(self, method, endpoint, params=None, data=None, files=None, json_data=None, headers=None, timeout=600):
+        #return self._make_request_without_proxy(method, endpoint, params, data, files, json_data, headers, timeout)
         """모든 API 요청을 처리하는 공통 메서드"""
         base_url = self._get_base_url()
         url = f"{base_url}/{endpoint.lstrip('/')}"
         
         # TODO: 168.219.61.252 Proxy 에러 대처 필요
-        config = self.get_config()
+        config = load_json_config()
         ip = config.get('client_ip')
         url = url.replace(ip, '127.0.0.1')
 
-        print(f'[ApiClient] {method.upper()} 요청: {url}')
+        ui_logger.debug(f'[ApiClient] {method.upper()} 요청: {url}')
         if params:
-            print(f'[ApiClient] 파라미터: {params}')
+            ui_logger.debug(f'[ApiClient] 파라미터: {params}')
         if json_data:
-            print(f'[ApiClient] JSON 데이터: {json_data}')
+            ui_logger.debug(f'[ApiClient] JSON 데이터: {json_data}')
         if headers:
-            print(f'[ApiClient] 헤더: {headers}')
+            ui_logger.debug(f'[ApiClient] 헤더: {headers}')
         
         try:
             # rag_name은 쿼리나 form/json에 함께 보낸다 (우선순위: params -> data -> json)
-            rag_name = self.current_rag
+            rag_name = self.current_rag_name
             if rag_name and rag_name != 'default':
                 # GET 방식 등 URL 파라미터
                 if params is not None:
@@ -153,7 +188,7 @@ class ApiClient:
                 headers=headers,
                 timeout=timeout
             )
-            print(f'[ApiClient] 응답 상태 코드: {response.status_code}')
+            ui_logger.debug(f'[ApiClient] 응답 상태 코드: {response.status_code}')
             
             response.raise_for_status()
             
@@ -163,20 +198,29 @@ class ApiClient:
             return response.text or None
             
         except requests.exceptions.HTTPError as e:
-            print(f'[ApiClient] HTTP 오류: {e}')
+            if 'health' in endpoint:
+                ui_logger.warning("Can't conntect to DataStore because it is not started.")
+            else:
+                ui_logger.exception(f'[ApiClient] HTTP 오류: {e}')
             error_text = e.response.text[:200] if e.response and e.response.text else "N/A"
             return {"error": "http_error", "status_code": e.response.status_code if e.response else 0, "details": error_text}
             
         except requests.exceptions.RequestException as e:
-            print(f'[ApiClient] 요청 오류: {e}')
+            if 'health' in endpoint:
+                ui_logger.warning("Can't conntect to DataStore because it is not started.")
+            else:
+                ui_logger.exception(f'[ApiClient] 요청 오류: {e}')
             return {"error": "request_exception", "details": str(e)}
             
         except json.JSONDecodeError as e:
-            print(f'[ApiClient] JSON 파싱 오류: {e}')
+            ui_logger.exception(f'[ApiClient] JSON 파싱 오류: {e}')
             return {"error": "json_decode_error", "details": str(e)}
             
         except Exception as e:
-            print(f'[ApiClient] 예상치 못한 오류: {type(e).__name__} - {e}')
+            if 'health' in endpoint:
+                ui_logger.warning("Can't conntect to DataStore because it is not started.")
+            else:
+                ui_logger.exception(f'[ApiClient] 예상치 못한 오류: {type(e).__name__} - {e}')
             return {"error": "unexpected_error", "details": str(e)}
 
     def get_documents(self, params=None):
@@ -184,13 +228,13 @@ class ApiClient:
         if params is None:
             params = {}
         if 'rag_name' not in params:
-            params['rag_name'] = self.current_rag
-        print("########################################")
+            params['rag_name'] = self.current_rag_name
+
         return self._make_request('get', '/documents', params=params)
 
     def get_store_info(self):
         """문서 저장소 정보를 가져옵니다."""
-        response = self._make_request('get', '/status', params={'rag_name': self.current_rag})
+        response = self._make_request('get', '/status', params={'rag_name': self.current_rag_name})
         
         # status API의 응답에서 필요한 값만 추출하여 변환
         if isinstance(response, dict):
@@ -202,7 +246,7 @@ class ApiClient:
             # index_path를 vector_store_path로 사용
             vector_store_path = response.get("index_path", "N/A")
             
-            print(f"[ApiClient] status 응답 받음: 문서 {document_count}개, DB 크기 {db_size_mb}MB, 경로 {vector_store_path}")
+            ui_logger.debug(f"[ApiClient] status 응답 받음: 문서 {document_count}개, DB 크기 {db_size_mb}MB, 경로 {vector_store_path}")
             
             return {
                 "document_count": document_count,
@@ -210,7 +254,7 @@ class ApiClient:
                 "vector_store_path": vector_store_path
             }
         
-        print(f"[ApiClient] status 응답이 유효하지 않음: {response}")
+        ui_logger.error(f"[ApiClient] status 응답이 유효하지 않음: {response}")
         
         return {
             "document_count": 0,
@@ -218,44 +262,60 @@ class ApiClient:
             "vector_store_path": "N/A"
         }
     
+    def upload_file_path(self, file_path):
+        """파일 경로만 서버에 전달하여 업로드 요청을 보냅니다."""
+        if not os.path.exists(file_path):
+            return {"error": "file_not_found", "details": f"파일을 찾을 수 없습니다: {file_path}"}
+        try:
+            data = {'file_path': file_path, 'rag_name': self.current_rag_name}
+            result = self._make_request('post', '/upload_file_path', data=data, timeout=600)
+            if result and not (isinstance(result, dict) and "error" in result):
+                try:
+                    self.monitoring_daemon.append_monitoring_file(file_path, self.current_rag_name)
+                except Exception as e:
+                    ui_logger.exception(f"[ApiClient] yaml 파일 업데이트 오류: {e}")
+            return result
+        except Exception as e:
+            ui_logger.exception(f"[ApiClient] 파일 경로 업로드 오류: {e}")
+            return {"error": "file_upload_error", "details": str(e)}
+    
     def upload_file(self, file_path):
         """파일을 업로드합니다."""
         if not os.path.exists(file_path):
             return {"error": "file_not_found", "details": f"파일을 찾을 수 없습니다: {file_path}"}
-            
+        
         try:
-            # 모니터링 일시 중지
-            try:
-                self.monitoring_daemon.pause_monitoring()
-            except Exception as e:
-                print(f"[ApiClient] 모니터링 일시중지 실패: {e}")
+            self.monitoring_daemon.pause_monitoring()
+        except Exception as e:
+            ui_logger.exception(f"[ApiClient] 모니터링 일시중지 실패: {e}")
             
+        try:            
             # 파일과 파일 경로를 모두 폼 데이터로 전송
             with open(file_path, 'rb') as f:
                 files = {'file': (os.path.basename(file_path), f, 'application/octet-stream')}
-                data = {'file_path': file_path, 'rag_name': self.current_rag}
+                data = {'file_path': file_path, 'rag_name': self.current_rag_name}
                 
                 result = self._make_request('post', '/upload', files=files, data=data, timeout=600)
                 
                 # 파일 업로드 성공 시 monitoring_files_ip_port.yaml 파일 업데이트
                 if result and not (isinstance(result, dict) and "error" in result):
                     try:
-                        from ip_middleware import append_monitoring_file
-                        append_monitoring_file(file_path, self.current_rag)
+                        self.monitoring_daemon.append_monitoring_file(file_path, self.current_rag_name)
                         print(f"[ApiClient] {os.path.basename(file_path)} yaml 파일에 추가됨")
                     except Exception as e:
                         print(f"[ApiClient] yaml 파일 업데이트 오류: {e}")
                 
                 return result
         except Exception as e:
-            print(f"[ApiClient] 파일 업로드 오류: {e}")
+            ui_logger.exception(f"[ApiClient] 파일 업로드 오류: {e}")
             return {"error": "file_upload_error", "details": str(e)}
         finally:
-            # 업로드 완료 후 10초 뒤 모니터링 재개
             try:
-                self.monitoring_daemon.resume_monitoring(10)
+                self.monitoring_daemon.resume_monitoring()
             except Exception as e:
-                print(f"[ApiClient] 모니터링 재개 실패: {e}")
+                import traceback
+                traceback.print_exc()
+                ui_logger.exception(f"[ApiClient] 모니터링 재개 실패: {e}")
 
     def upload_folder(self, folder_path):
         """폴더 내 모든 파일을 업로드합니다."""
@@ -297,17 +357,16 @@ class ApiClient:
             # (개별 파일은 upload_file에서 처리되지만, 여기서도 확인)
             if success_count > 0:
                 try:
-                    from ip_middleware import append_monitoring_files
                     # 성공한 파일만 yaml에 추가
                     successful_files = []
                     for i, result in enumerate(results):
                         if not isinstance(result, dict) or "error" not in result:
                             successful_files.append(files_to_upload[i])
                     if successful_files:
-                        append_monitoring_files(successful_files, self.current_rag)
-                        print(f"[ApiClient] {len(successful_files)}개 파일 yaml에 추가됨")
+                        self.monitoring_daemon.append_monitoring_files(successful_files, self.current_rag_name)
+                        ui_logger.info(f"[ApiClient] {len(successful_files)}개 파일 yaml에 추가됨")
                 except Exception as e:
-                    print(f"[ApiClient] yaml 파일 업데이트 오류: {e}")
+                    ui_logger.exception(f"[ApiClient] yaml 파일 업데이트 오류: {e}")
             
             return {
                 "status": "success" if success_count == len(files_to_upload) else "partial",
@@ -318,7 +377,7 @@ class ApiClient:
             }
             
         except Exception as e:
-            print(f"[ApiClient] 폴더 업로드 오류: {e}")
+            ui_logger.exception(f"[ApiClient] 폴더 업로드 오류: {e}")
             return {"error": "folder_upload_error", "details": str(e)}
     
     def delete_documents(self, file_paths):
@@ -334,16 +393,15 @@ class ApiClient:
             "file_paths": file_paths
         }
         
-        print(f"[ApiClient] 문서 삭제 요청: {file_paths}")
-        result = self._make_request('delete', '/documents', json_data=data, headers=headers, params={'rag_name': self.current_rag})
+        ui_logger.debug(f"[ApiClient] 문서 삭제 요청: {file_paths}")
+        result = self._make_request('delete', '/documents', json_data=data, headers=headers, params={'rag_name': self.current_rag_name})
         
         # 문서 삭제 성공 시 monitoring_files_ip_port.yaml 파일 업데이트
         if result and not (isinstance(result, dict) and "error" in result):
             try:
-                from ip_middleware import delete_monitoring_files
-                delete_monitoring_files(file_paths, self.current_rag)
+                self.monitoring_daemon.delete_monitoring_file(file_paths, self.current_rag_name)
             except Exception as e:
-                print(f"[ApiClient] yaml 파일 업데이트 오류: {e}")
+                ui_logger.exception(f"[ApiClient] yaml 파일 업데이트 오류: {e}")
                 
         return result
     
@@ -361,35 +419,35 @@ class ApiClient:
             'X-Real-IP': '127.0.0.1'  # 로카 IP 주소를 기본으로 사용
         }
         
-        print(f"[ApiClient] 모든 문서 삭제 요청")
-        result = self._make_request('delete', '/documents/all', headers=headers, params={'rag_name': self.current_rag})
+        ui_logger.debug(f"[ApiClient] 모든 문서 삭제 요청")
+        result = self._make_request('delete', '/documents/all', headers=headers, params={'rag_name': self.current_rag_name})
         
         # 모든 문서 삭제 시 monitoring_files_ip_port.yaml 파일도 초기화
         try:
-            from ip_middleware import clear_monitoring_files
-            clear_monitoring_files(self.current_rag)
+            self.monitoring_daemon.clear_monitoring_files(self.current_rag_name)
         except Exception as e:
-            print(f"[ApiClient] yaml 파일 초기화 오류: {e}")
+            ui_logger.exception(f"[ApiClient] yaml 파일 초기화 오류: {e}")
             
         return result
     
     def check_server_status(self):
         """서버 상태를 확인합니다."""
         try:
-            result = self._make_request('get', '/health', timeout=2)
+            result = self._make_request('get', '/health', timeout=10)
             if isinstance(result, dict) and 'error' in result:
                 return False
             return True
-        except Exception:
+        except Exception as e:
+            ui_logger.debug(f"서버 상태 체크 오류: {e}")
             return False
 
     # --------------------------------------------------
     # RAG 관리
-    def set_rag(self, rag_name: str | None):
-        self.current_rag = rag_name or 'default'
+    def set_rag_name(self, rag_name: str | None):
+        self.current_rag_name = rag_name or 'default'
 
-    def get_rag(self) -> str:
-        return self.current_rag
+    def get_rag_name(self) -> str:
+        return self.current_rag_name
 
     # ----------------------------- SEARCH -----------------------------
     def search(self, query: str, k: int = 5):
@@ -397,6 +455,6 @@ class ApiClient:
         json_data = {
             "query": query,
             "k": k,
-            "rag_name": self.current_rag
+            "rag_name": self.current_rag_name
         }
         return self._make_request('post', '/search', json_data=json_data)

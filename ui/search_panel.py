@@ -1,47 +1,70 @@
 import wx
 import os
 from typing import List, Dict
+from ui.api_client import ApiClient
+from logger_util import ui_logger
+from .ui_setting import MODERN_COLORS
+
 
 class SearchPanel(wx.Panel):
     """RAG 선택 + 검색어 입력 후 결과를 보여주는 패널"""
 
-    def __init__(self, parent, api_client):
+    def __init__(self, parent, api_client:ApiClient):
         super().__init__(parent)
-        self.api_client = api_client
+        self.api_client:ApiClient = api_client
+        self.SetBackgroundColour(MODERN_COLORS['notebook_background'])
 
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # ------------------ 입력 영역 ------------------
         input_box = wx.StaticBox(self, label="검색 조건")
+        input_box.SetForegroundColour(MODERN_COLORS['title_text'])
         input_sizer = wx.StaticBoxSizer(input_box, wx.VERTICAL)
 
         row = wx.BoxSizer(wx.HORIZONTAL)
 
         # RAG 선택
         rag_label = wx.StaticText(self, label="RAG")
+        rag_label.SetForegroundColour(MODERN_COLORS['text'])
+        rag_label.SetForegroundColour(MODERN_COLORS['text'])
         store_root = os.path.join(os.getcwd(), 'store')
         rag_choices = ['default']
         if os.path.isdir(store_root):
             rag_choices += [d for d in os.listdir(store_root) if os.path.isdir(os.path.join(store_root, d)) and d not in rag_choices]
         self.choice_rag = wx.Choice(self, choices=rag_choices)
         self.choice_rag.SetSelection(0)
+        self.choice_rag.SetBackgroundColour(MODERN_COLORS['choice_background'])
+        self.choice_rag.SetBackgroundColour(MODERN_COLORS['choice_background'])
         row.Add(rag_label, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5)
         row.Add(self.choice_rag, 0, wx.RIGHT, 15)
 
         # 검색어
         query_label = wx.StaticText(self, label="검색어")
+        query_label.SetForegroundColour(MODERN_COLORS['text'])
+        query_label.SetForegroundColour(MODERN_COLORS['text'])
         self.text_query = wx.TextCtrl(self, size=(300, -1), style=wx.TE_PROCESS_ENTER)
+        self.text_query.SetBackgroundColour(MODERN_COLORS['textbox_background'])
+        self.text_query.SetForegroundColour(MODERN_COLORS['text'])
+        self.text_query.SetForegroundColour(MODERN_COLORS['text'])
         row.Add(query_label, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5)
         row.Add(self.text_query, 1, wx.RIGHT, 15)
 
         # 개수
         k_label = wx.StaticText(self, label="개수")
+        k_label.SetForegroundColour(MODERN_COLORS['text'])
+        k_label.SetForegroundColour(MODERN_COLORS['text'])
         self.text_k = wx.TextCtrl(self, value="5", size=(50, -1))
+        self.text_k.SetBackgroundColour(MODERN_COLORS['textbox_background'])
+        self.text_k.SetForegroundColour(MODERN_COLORS['text'])
+        self.text_k.SetForegroundColour(MODERN_COLORS['text'])
         row.Add(k_label, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5)
         row.Add(self.text_k, 0, wx.RIGHT, 15)
 
         # 검색 버튼
         self.btn_search = wx.Button(self, label="검색")
+        self.btn_search.SetBackgroundColour(MODERN_COLORS['button_background'])
+        self.btn_search.SetForegroundColour(MODERN_COLORS['button_text'])
+        self.btn_search.SetForegroundColour(MODERN_COLORS['button_text'])
         row.Add(self.btn_search, 0)
 
         input_sizer.Add(row, 0, wx.ALL, 5)
@@ -49,10 +72,12 @@ class SearchPanel(wx.Panel):
 
         # ------------------ 결과 영역 ------------------
         result_box = wx.StaticBox(self, label="검색 결과")
+        result_box.SetForegroundColour(MODERN_COLORS['title_text'])
         result_sizer = wx.StaticBoxSizer(result_box, wx.VERTICAL)
 
         # 결과 리스트 (Score, 파일명, 파일 경로)
         self.list_results = wx.ListCtrl(self, style=wx.LC_REPORT | wx.LC_SINGLE_SEL, size=(-1, 120))
+        self.list_results.SetBackgroundColour(MODERN_COLORS['list_background'])
         self.list_results.InsertColumn(0, "Score", width=70)
         self.list_results.InsertColumn(1, "파일명", width=200)
         self.list_results.InsertColumn(2, "파일 경로", width=350)
@@ -60,7 +85,12 @@ class SearchPanel(wx.Panel):
 
         # 미리보기 멀티라인 텍스트 박스 (15줄)
         preview_label = wx.StaticText(self, label="미리보기")
+        preview_label.SetForegroundColour(MODERN_COLORS['text'])
+        preview_label.SetForegroundColour(MODERN_COLORS['text'])
         self.text_preview = wx.TextCtrl(self, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL | wx.VSCROLL, size=(-1, 240))
+        self.text_preview.SetBackgroundColour(MODERN_COLORS['textbox_background'])
+        self.text_preview.SetForegroundColour(MODERN_COLORS['text'])
+        self.text_preview.SetForegroundColour(MODERN_COLORS['text'])
         result_sizer.Add(preview_label, 0, wx.LEFT | wx.TOP, 5)
         result_sizer.Add(self.text_preview, 1, wx.EXPAND | wx.ALL, 5)
 
@@ -76,7 +106,7 @@ class SearchPanel(wx.Panel):
         self.text_query.Bind(wx.EVT_TEXT_ENTER, self.on_search)
 
         # 상태
-        self.api_client.set_rag('default')
+        self.api_client.set_rag_name('default')
 
         # 리스트 선택 이벤트 바인딩
         self._bind_events()
@@ -129,28 +159,28 @@ class SearchPanel(wx.Panel):
         if idx < 0 or idx >= len(self.current_results):
             self.text_preview.SetValue("")
             return
-        content = self.current_results[idx].get('content', '')
-        # 15줄까지만 표시, 이후는 스크롤
-        preview_lines = content.splitlines()
-        preview_text = '\n'.join(preview_lines[:15])
-        if len(preview_lines) > 15:
-            preview_text += '\n...'
-        self.text_preview.SetValue(preview_text)
+        
+        # 검색 결과에 포함된 'content' (청크)를 그대로 미리보기에 표시
+        content = self.current_results[idx].get('content', '미리보기할 내용이 없습니다.')
+        self.text_preview.SetValue(content)
 
     def on_item_activated(self, event):
         idx = event.GetIndex()
         if idx < 0 or idx >= len(self.current_results):
             return
+
+        # file_path를 가져와서 시스템 기본 프로그램으로 파일 열기
         file_path = self.current_results[idx].get('file_path')
         if file_path and os.path.exists(file_path):
             try:
                 os.startfile(file_path)
             except Exception as e:
-                wx.MessageBox(f"파일 열기 실패: {e}", "오류")
+                wx.MessageBox(f"파일을 열 수 없습니다: {e}", "오류")
+                ui_logger.exception(f"Failed to open file {file_path}: {e}")
         else:
-            wx.MessageBox("파일을 찾을 수 없습니다", "오류")
+            wx.MessageBox("파일 경로를 찾을 수 없거나 파일이 존재하지 않습니다.", "오류")
 
     # 리스트 선택 이벤트 바인딩
     def _bind_events(self):
         self.list_results.Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_item_selected)
-        self.list_results.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_item_activated) 
+        self.list_results.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_item_activated)

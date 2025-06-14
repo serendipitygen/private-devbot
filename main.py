@@ -6,10 +6,13 @@ from fastapi.responses import Response
 from pydantic import BaseModel
 from typing import List, Dict, Any
 import sys
+import os
+import logging
 
 import config
 import logger_util
 
+import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 from document_reader import DocumentReader
 import platform
@@ -30,8 +33,7 @@ app = FastAPI()
 
 # IP 제한 미들웨어 추가
 private_devbot_version = config.private_devbot_version
-ip_middleware = IPRestrictionMiddleware(app)
-app.add_middleware(IPRestrictionMiddleware, config_path=f"./store/devbot_config_{private_devbot_version}.yaml")
+ip_middleware = None
 
 # CORS 설정
 app.add_middleware(
@@ -122,6 +124,47 @@ async def upload_file_contents(request: FileContentsRequest):
             }
         )
 
+@app.post("/upload_file_path")
+async def upload_file_path(
+    file_path: str = Form(...),
+    rag_name: str | None = Form(None)
+):
+    vector_store = rag_manager.get_store(rag_name)
+    try:
+        logger.debug(f"[DEBUG] Upload by file path request - Path: {file_path}")
+        if not os.path.exists(file_path):
+            return JSONResponse(content={"status": "failed", "message": f"File not found: {file_path}"}, status_code=400)
+        ext = os.path.splitext(file_path)[1].lower()
+        if ext in [".eml"]:
+            file_contents = document_reader.get_eml_contents(filepath=file_path, type="EML")
+        elif ext in [".mht"]:
+            file_contents = document_reader.get_eml_contents(filepath=file_path, type="MHT")
+        elif ext in [".doc", ".docx"]:
+            file_contents = document_reader.get_msoffice_contents(filepath=file_path, contents_type="MSWORD")
+        elif ext in [".ppt", ".pptx"]:
+            file_contents = document_reader.get_msoffice_contents(filepath=file_path, contents_type="MSPOWERPOINT")
+        elif ext in [".xls", ".xlsx"]:
+            file_contents = document_reader.get_excel_contents(filepath=file_path, contents_type="MSEXCEL")
+        elif ext in [".pdf"]:
+            file_contents = document_reader.get_pdf_contents(filepath=file_path, contents_type="PDF")
+        else:
+            with open(file_path, "rb") as f:
+                contents = f.read()
+            import chardet
+            detection = chardet.detect(contents)
+            encoding = detection.get('encoding') or 'utf-8'
+            text_contents = contents.decode(encoding, errors='replace')
+            file_contents = {
+                "contents_type": "TEXT",
+                "contents": text_contents
+            }
+        result = await vector_store.upload(file_path=file_path, file_name=os.path.basename(file_path), contents=file_contents)
+        status = "success" if result.get("status") == "success" else "failed"
+        vector_store.save_indexed_files_and_vector_db()
+        return JSONResponse(content={"status": status, "message": result.get("message", ""), "details": result}, status_code=200 if status=="success" else 500)
+    except Exception as e:
+        logger.error(f"[ERROR] Upload by file path failed: {e}")
+        return JSONResponse(content={"status": "failed", "message": str(e)}, status_code=500)
 
 @app.post("/upload/batch")
 async def upload_files(
@@ -353,7 +396,7 @@ async def health_check():
         # 응답 객체 생성
         response = {
             "status": "success",
-            "message": "서버가 정상 작동 중입니다.",
+            "message": "server is working successfully",
             "timestamp": current_time
         }
         
@@ -368,8 +411,8 @@ async def health_check():
         
         return resp
     except Exception as e:
-        logger.error(f"[ERROR] 헬스 체크 실패: {str(e)}")
-        raise HTTPException(500, detail=f"서버 오류: {str(e)}")
+        logger.error(f"[ERROR] Fail to check Server Health: {str(e)}")
+        raise HTTPException(500, detail=f"Server Error: {str(e)}")
 
 @app.get("/status")
 async def get_status(rag_name: str | None = None):
@@ -427,8 +470,8 @@ async def register_ips(ips: List[str] = Body(...)):
         result = ip_middleware.update_allowed_ips(ips)
         return JSONResponse(content=result)
     except Exception as e:
-        logger.exception(f"[ERROR] IP 등록 실패: {str(e)}")
-        raise HTTPException(500, detail=f"IP 등록 실패: {str(e)}")
+        logger.exception(f"[ERROR] Fail to register IP: {str(e)}")
+        raise HTTPException(500, detail=f"Fail to register IP: {str(e)}")
 
 @app.get("/get_allowed_ips")
 async def get_allowed_ips():
@@ -447,24 +490,30 @@ async def get_allowed_ips():
         logger.exception(f"[ERROR] IP Searching failed: {str(e)}")
         raise HTTPException(500, detail=f"IP Searching Failure: {str(e)}")
 
-def run(port: int):
-    import uvicorn
-    from ip_middleware import IPRestrictionMiddleware
-        
-    # IP 미들웨어 설정 업데이트 (모든 필요한 IP 등록)
-    print("IP is updating...")
-    # IPRestrictionMiddleware(app, config_path=f"./store/devbot_config_{private_devbot_version}.yaml") # Removed redundant call
-    
-    # 서버 실행
-    if port is None:
-        print(f"[ERROR] Port is not set. Please set the port in the devbot_config.json file.")
-        sys.exit(1)
+# 로그 핸들러 정의
+class CustomLogHandler(logging.Handler):
+    def __init__(self):
+        super().__init__()
+        self.logs = []
 
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    def emit(self, record):
+        self.logs.append(self.format(record))
 
 
-if __name__ == "__main__":
-    # devbot_config.json 파일에서 포트 번호를 가져옵니다.
+import argparse
+
+def _get_port_from_cmd():
+    parser = argparse.ArgumentParser(description="Data Store Port Argument")
+
+    parser.add_argument(
+        "--port", type=int, required=False, help="Dart Store running port setting : 1025 ~ 65535"
+    )
+
+    args = parser.parse_args()
+
+    return args.port
+
+def _get_port_from_config_file():
     import os
     config_file_path = os.path.join(os.path.dirname(__file__), 'devbot_config.json') 
     try:
@@ -477,11 +526,28 @@ if __name__ == "__main__":
         print(f"[ERROR] Error decoding JSON from devbot_config.json")
         sys.exit(1)
     
-    port_to_run = app_config.get('port')
+    return int(app_config.get('port'))
 
-    if port_to_run is None:
+def _run_on_cmd(port: int):
+    assert port is not None
+    
+    default_vector_store.initialize_embedding_model_and_vectorstore()
+
+    ip_middleware = IPRestrictionMiddleware(app)
+    app.add_middleware(IPRestrictionMiddleware, config_path=f"./store/devbot_config_{private_devbot_version}.yaml")
+
+    uvicorn.run(app, host="0.0.0.0", port=port)
+
+if __name__ == "__main__":
+    # 명령 프롬프트에서 실행 시 port가 포함되어 있는지 확인
+    port = _get_port_from_cmd()
+
+    # devbot_config.json 파일에서 포트 번호를 가져옵니다.
+    if port is None:
+        port = _get_port_from_config_file()
+
+    if port is None:
         print(f"[ERROR] Port not specified in devbot_config.json. Defaulting to 8123 or exiting.")
-        # Decide whether to default or exit, e.g., sys.exit(1) or port_to_run = 8123
-        sys.exit(1) # Exiting if port is not in config
+        sys.exit(1)
 
-    run(port=port_to_run)
+    _run_on_cmd(port=port)

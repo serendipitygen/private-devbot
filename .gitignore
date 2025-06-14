@@ -17,3 +17,12 @@ document_extractor_for_remote_server.e*
 devbot_doc_extractor.zip
 monitoring_files_*.*
 private_devbot_conda/
+embedding_model
+*_old.md
+private_devbot_conda.zip
+server_pid.txt
+*.old
+*.*_old
+.vscode/
+ui/private_devbot_ui_config.json
+log/

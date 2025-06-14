@@ -18,7 +18,7 @@ class VectorStore:
         self.splitter = DocumentSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
         self.dimension = 1024
         #self.embedding = DummyEmbeddings(dim=1536)  # OpenAI 임베딩의 기본 차원
-        self.embeddings = self._get_embedding_model()
+        self.embeddings = None
 
         # RAG 별로 독립적인 벡터 스토어 디렉터리를 구성
         base_store_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "store")
@@ -26,10 +26,14 @@ class VectorStore:
         self.store_path = os.path.join(base_store_path, rag_name)
         os.makedirs(self.store_path, exist_ok=True)
 
-        self.vector_store = FAISS_VECTOR_STORE(embedding=self.embeddings, dimension=self.dimension, store_path=self.store_path)
+        self.vector_store = None
 
         self.indexed_files = dict()
         self.load_indexed_files_if_exist()
+    
+    def initialize_embedding_model_and_vectorstore(self):
+        self.embeddings = self._get_embedding_model()
+        self.vector_store = FAISS_VECTOR_STORE(embedding=self.embeddings, dimension=self.dimension, store_path=self.store_path)
 
     def sync_indexed_files_and_vector_db(self):
         file_list = self.vector_store.get_unique_file_paths()
@@ -54,7 +58,7 @@ class VectorStore:
                 model = SentenceTransformer(config.MODEL_NAME)
                 model.save(config.EMBEDDING_MODEL_PATH)
             else:
-                message = f"[DEBUG] 저장된 임베딩 모델을 로딩: {config.EMBEDDING_MODEL_PATH}"
+                message = f"[DEBUG] Loading the saved embedding mode: {config.EMBEDDING_MODEL_PATH}"
                 logger.info(message)
                 embeddings = HuggingFaceEmbeddings(model_name=config.EMBEDDING_MODEL_PATH)
 
@@ -100,7 +104,7 @@ class VectorStore:
 
 
                 if len(chunk.page_content) > 5000:
-                    logger.error("[ERROR] 청크의 길이가 너무 길어 검색 성능에 영향을 줄 수 있어서 5000자이내로 줄였습니다. : {file_path}")
+                    logger.error("[ERROR] Cut the size of contents under 5,000 due to performance : {file_path}")
                     chunk.page_content = chunk.page_content[:4985] + "... (truncated)"
                 
             self.vector_store.add_documents(chunks)
