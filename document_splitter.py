@@ -3,6 +3,15 @@ import unittest
 from typing import List, Optional
 import easyocr
 from PIL import Image
+# Pillow 10.0부터 Image.ANTIALIAS 상수가 제거되었으므로, 하위 호환을 위해 존재하지 않으면 추가
+if not hasattr(Image, "ANTIALIAS"):
+    # Resampling 대체 상수를 사용하여 ANTIALIAS 이름으로 재지정
+    try:
+        from PIL import Image as _PIL_Image
+        Image.ANTIALIAS = _PIL_Image.Resampling.LANCZOS  # type: ignore
+    except Exception:
+        # Resampling 모듈이 없는 구버전 Pillow 환경 등 예외는 무시
+        pass
 import cv2
 import numpy as np
 import chardet

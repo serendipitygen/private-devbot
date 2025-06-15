@@ -1,6 +1,62 @@
 import wx
 import wx.html2
 import markdown
+import re
+
+class RagNameDialog(wx.Dialog):
+    """새 RAG 이름을 입력받는 다이얼로그.
+
+    • 영문자와 숫자, 최대 10자, 공백 불가.
+    • 실시간으로 유효성 검사를 수행하고 OK 버튼을 토글.
+    • 이미 존재하는 RAG 이름은 사용할 수 없음.
+    """
+
+    def __init__(self, parent, existing_names: list[str]):
+        super().__init__(parent, title="RAG 추가", style=wx.DEFAULT_DIALOG_STYLE)
+
+        self.existing_names = set(n.lower() for n in existing_names)
+
+        panel = wx.Panel(self)
+        vbox = wx.BoxSizer(wx.VERTICAL)
+
+        self.msg_label = wx.StaticText(panel, label="새 RAG 이름 입력 (영문자, 숫자로만 공백없이 10자 이내로 작성하세요)")
+        vbox.Add(self.msg_label, 0, wx.ALL, 10)
+
+        self.input_ctrl = wx.TextCtrl(panel)
+        vbox.Add(self.input_ctrl, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 10)
+
+        btn_sizer = wx.StdDialogButtonSizer()
+        self.ok_btn = wx.Button(panel, wx.ID_OK)
+        self.ok_btn.Enable(False)
+        cancel_btn = wx.Button(panel, wx.ID_CANCEL)
+        btn_sizer.AddButton(self.ok_btn)
+        btn_sizer.AddButton(cancel_btn)
+        btn_sizer.Realize()
+        vbox.Add(btn_sizer, 0, wx.ALIGN_CENTER | wx.ALL, 10)
+
+        panel.SetSizer(vbox)
+        vbox.Fit(self)
+        self.CentreOnParent()
+
+        # Bind events
+        self.input_ctrl.Bind(wx.EVT_TEXT, self.on_text_change)
+
+    # ------------------------------------------------------------------
+    # Public helpers
+    # ------------------------------------------------------------------
+    def get_name(self) -> str:
+        return self.input_ctrl.GetValue().strip()
+
+    # ------------------------------------------------------------------
+    # Event handlers
+    # ------------------------------------------------------------------
+    def on_text_change(self, event):
+        name = self.input_ctrl.GetValue().strip()
+        is_valid = bool(re.fullmatch(r"[A-Za-z0-9]{1,10}", name)) and name.lower() not in self.existing_names
+        self.ok_btn.Enable(is_valid)
+        self.msg_label.SetForegroundColour("black" if is_valid else "red")
+        event.Skip()
+
 
 class FileViewerDialog(wx.Dialog):
     def __init__(self, parent, title, content, file_type):

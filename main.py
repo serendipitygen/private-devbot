@@ -533,7 +533,12 @@ def _get_port_from_config_file():
 def _run_on_cmd(port: int):
     assert port is not None
     
-    default_vector_store.initialize_embedding_model_and_vectorstore()
+    # VectorStore 초기화 (임베딩 모델 로드)
+    try:
+        if default_vector_store.vector_store is None:
+            default_vector_store.initialize_embedding_model_and_vectorstore()
+    except Exception as e:
+        logger.exception("[main] 초기 벡터 스토어 초기화 실패 – 서버는 계속 실행됩니다. 이후 요청 시 Lazy 초기화를 시도합니다.")
 
     ip_middleware = IPRestrictionMiddleware(app)
     app.add_middleware(IPRestrictionMiddleware, config_path=f"./store/devbot_config_{private_devbot_version}.yaml")

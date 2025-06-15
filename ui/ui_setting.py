@@ -1,41 +1,7 @@
-# # 모던한 색상 테마 정의
-# MODERN_COLORS = {
-#     'primary': '#3A7BF2',
-#     'secondary': '#6C757D',
-#     'success': '#28A745',
-#     'danger': '#DC3545',
-#     'warning': '#FFC107',
-#     'info': '#17A2B8',
-#     'light': '#F8F9FA',
-#     'dark': '#343A40',
-    
-#     'background': '#FFFFFF',
-#     'notebook_background': '#F5F5F5',
-#     'text': '#212529',
-#     'title_text': '#495057',
-    
-#     'button_background': '#4CAF50', # Green
-#     'button_text': '#FFFFFF',
-    
-#     'delete_button_background': '#FF6347', # Tomato
-    
-#     'textbox_background': '#FFFFFF',
-#     'textbox_text': '#495057',
-    
-#     'disabled_button_background': '#CCCCCC',  # Light Gray
-#     'disabled_button_text': '#666666',      # Dark Gray
-# }
-
-# MODERN_COLORS = { 
-#     'background': "#FFF9F2", # 아주 밝은 크림색 배경 
-#     'primary': '#FF6D00', # 따뜻한 오렌지 
-#     'secondary': '#26A69A', # 틸 그린 
-#     'text': '#2E2E2E', # 어두운 그레이 
-#     'text_secondary': '#616161', # 중간 그레이 
-#     'border': '#E0E0E0', # 밝은 회색 
-#     'hover': '#F5F5F5', # 매우 밝은 회색 
-#     'selected': '#FFE0B2' # 연한 오렌지 
-# }
+PRIVATE_DEVBOT_UI_VERSION = "v0.2.0"
+PRIVATE_DEVBOT_URL = "https://naver.com"
+PRIVATE_DEVBOT_VOC_URL = "https://naver.com"
+PRIVATE_DEVBOT_REGISTER_URL = "https://localhost:8001/private-rag/v2"
 
 # 화려한 모드
 MODERN_COLORS = { 

@@ -215,6 +215,13 @@ class FAISS_VECTOR_STORE:
             raise
 
     def get_db_size(self) -> int:
+        """Return estimated DB size in bytes.
+
+        Returns 0 if the internal `vectorstore` is not initialised yet so callers can
+        safely rely on the output without additional checks.
+        """
+        if self.vectorstore is None:
+            return 0
         # FAISS doesn't provide a direct way to get the size, so we'll estimate
         db_size = len(self.vectorstore.index_to_docstore_id) * 1536 * 4  # 4 bytes per float
         return db_size

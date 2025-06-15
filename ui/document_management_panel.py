@@ -17,7 +17,8 @@ from ui.api_client import ApiClient
 from monitoring_daemon import MonitoringDaemon
 from ui.ui_setting import MODERN_COLORS
 from logger_util import ui_logger
-from ui.dialogs import FileViewerDialog
+from ui.dialogs import FileViewerDialog, RagNameDialog
+from ui.api_client_for_public_devbot import registerOrUpdateToPublicDevbot
 
 class DocManagementPanel(wx.Panel):
     def __init__(self, parent, api_client:ApiClient, main_frame_ref, monitoring_daemon:MonitoringDaemon=None):
@@ -594,6 +595,42 @@ class DocManagementPanel(wx.Panel):
         self.update_page_info() # 페이지 버튼 상태는 페이징 정보에 따라 다시 결정
         self.update_page_info() # 페이지 버튼 상태는 페이징 정보에 따라 다시 결정
 
+    def _start_upload_job(self, file_paths, job_desc: str = "파일 업로드"):
+        """선택한(또는 수집한) 파일을 백그라운드 스레드에서 업로드한다.
+
+        Parameters
+        ----------
+        file_paths : list[str]
+            업로드할 파일 경로 목록
+        job_desc : str
+            사용자에게 표시할 작업 설명 (예: "파일 업로드", "폴더 업로드")
+        """
+        if not file_paths:
+            wx.MessageBox("업로드할 파일이 없습니다.", "알림", wx.OK | wx.ICON_INFORMATION)
+            return
+
+        # UI 잠금
+        self.disable_action_buttons()
+
+        def _task():
+            success_cnt = 0
+            for path in file_paths:
+                try:
+                    result = self.api_client.upload_file_path(path)
+                    if result and not (isinstance(result, dict) and "error" in result):
+                        success_cnt += 1
+                except Exception as e:
+                    ui_logger.exception(f"[DocManagementPanel] 파일 업로드 실패: {e}")
+            # UI 및 상태 갱신
+            wx.CallAfter(self.on_refresh_status, None)
+            wx.CallAfter(self.enable_action_buttons)
+            wx.CallAfter(wx.MessageBox,
+                         f"{job_desc} 완료: {success_cnt}/{len(file_paths)}개 성공",
+                         "작업 완료",
+                         wx.OK | wx.ICON_INFORMATION)
+
+        threading.Thread(target=_task, daemon=True).start()
+
     def on_item_activated(self, event):
         """리스트에서 항목을 더블 클릭했을 때 파일을 엽니다."""
         idx = event.GetIndex()
@@ -672,14 +709,22 @@ class DocManagementPanel(wx.Panel):
         self.on_refresh_status(None)
 
     def on_add_rag(self, event):
-        with wx.TextEntryDialog(self, "새 RAG 이름 입력", "RAG 추가") as dlg:
-            if dlg.ShowModal() == wx.ID_OK:
-                rag_name = dlg.GetValue().strip()
-                if rag_name:
-                    if rag_name not in [self.rag_choice.GetString(i) for i in range(self.rag_choice.GetCount())]:
-                        self.rag_choice.Append(rag_name)
-                    self.rag_choice.SetStringSelection(rag_name)
-                    self.on_rag_changed(None)
+        """새 문서 저장소 그룹(RAG)을 추가합니다."""
+        existing_names = [self.rag_choice.GetString(i) for i in range(self.rag_choice.GetCount())]
+        dlg = RagNameDialog(self, existing_names)
+        if dlg.ShowModal() == wx.ID_OK:
+            rag_name = dlg.get_name()
+            # RagNameDialog가 유효성 및 중복 검증을 보장
+            self.rag_choice.Append(rag_name)
+            self.rag_choice.SetStringSelection(rag_name)
+            self.on_rag_changed(None)
+
+            # Public DevBot 레지스트리에 신규 RAG 등록
+            try:
+                registerOrUpdateToPublicDevbot(rag_name)
+            except Exception as e:
+                ui_logger.exception(f"[DocManagementPanel] RAG '{rag_name}' 등록 실패: {e}")
+        dlg.Destroy()
 
     def on_backup_store(self, event):
         """벡터 스토어 폴더를 선택한 경로에 백업합니다."""

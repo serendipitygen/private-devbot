@@ -11,6 +11,9 @@ import config
 import logger_util
 import datetime
 
+# 전역 임베딩 캐시: 모델 경로(또는 모델 이름)를 키로 하여 재사용
+_EMBEDDING_MODEL_CACHE = {}  # type: dict[str, HuggingFaceEmbeddings]
+
 logger = logger_util.get_logger()
 
 class VectorStore:
@@ -32,8 +35,14 @@ class VectorStore:
         self.load_indexed_files_if_exist()
     
     def initialize_embedding_model_and_vectorstore(self):
-        self.embeddings = self._get_embedding_model()
-        self.vector_store = FAISS_VECTOR_STORE(embedding=self.embeddings, dimension=self.dimension, store_path=self.store_path)
+        """임베딩/벡터스토어를 초기화한다. 이미 초기화된 경우 재사용한다."""
+        # 1) Embeddings 객체 재사용
+        if self.embeddings is None:
+            self.embeddings = self._get_embedding_model()
+
+        # 2) VectorStore 객체 재사용
+        if self.vector_store is None:
+            self.vector_store = FAISS_VECTOR_STORE(embedding=self.embeddings, store_path=self.store_path, dimension=self.dimension)
 
     def sync_indexed_files_and_vector_db(self):
         file_list = self.vector_store.get_unique_file_paths()
@@ -51,6 +60,14 @@ class VectorStore:
         
 
     def _get_embedding_model(self):
+        # 전역 캐시 확인 -> 이미 로드된 경우 즉시 반환하여 중복 로딩 방지
+        cached = _EMBEDDING_MODEL_CACHE.get(config.EMBEDDING_MODEL_PATH)
+        if cached is not None:
+            # dimension은 최초 계산된 값으로 세팅
+            self.dimension = len(cached.embed_query("Hello"))
+            logger.debug(f"[VectorStore] Reusing cached embeddings for {config.EMBEDDING_MODEL_PATH}")
+            return cached
+
         try:
             if not os.path.exists(config.EMBEDDING_MODEL_PATH):
                 embeddings = HuggingFaceEmbeddings(model_name=config.MODEL_NAME)
@@ -65,6 +82,8 @@ class VectorStore:
             emb = embeddings.embed_query("Hello")
             self.dimension = len(emb) if len(emb) <= 1536 else 1536
 
+            # 캐시에 저장하여 재사용
+            _EMBEDDING_MODEL_CACHE[config.EMBEDDING_MODEL_PATH] = embeddings
             return embeddings
             
             if self.embeddings is None:
@@ -75,6 +94,14 @@ class VectorStore:
 
     # 파일 1건 업로드
     async def upload(self, file_path: str, file_name: str, contents: dict) -> Dict:
+        # 벡터 스토어가 아직 초기화되지 않은 경우(예: 초기 임베딩 모델 로드 실패 후 재시도 시)
+        # 여기서 Lazy 초기화를 시도하여 업로드 실패 확률을 최소화한다.
+        if self.vector_store is None:
+            try:
+                self.initialize_embedding_model_and_vectorstore()
+            except Exception as e:
+                logger.exception(f"[VectorStore] Failed to initialise vector store lazily: {e}")
+                return {"status": "fail", "message": f"Vector store initialisation failed: {e}"}
         try:
             # 지원되지 않는 파일 타입은 제거
             if not self.splitter.is_supported_file_type(file_path):
@@ -157,6 +184,14 @@ class VectorStore:
         return file_count
 
     def get_db_size(self) -> int:
+        """Return current vector store DB size in bytes.
+
+        If the underlying vector store hasn't been initialised yet (self.vector_store is None)
+        we simply return 0 so that API callers such as `/status` can succeed instead of raising
+        an AttributeError.
+        """
+        if self.vector_store is None:
+            return 0
         return self.vector_store.get_db_size()
 
     def get_vector_db_path(self) -> str:

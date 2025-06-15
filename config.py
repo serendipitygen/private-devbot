@@ -1,5 +1,5 @@
 import os
-private_devbot_version = "v0.1.1"
+private_devbot_version = "v0.2.0"
 
 MODEL_NAME = "nlpai-lab/KURE-v1" # 성능 아주 괜찮음
 EMBEDDING_MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 

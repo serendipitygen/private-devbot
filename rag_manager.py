@@ -23,7 +23,15 @@ class RAGManager:  # pragma: no cover (단순 싱글턴)
             safe_dir = re.sub(r"[^A-Za-z0-9_\-]", "_", key)
             if safe_dir == "":
                 safe_dir = "default"
-            self._stores[key] = VectorStore(rag_name=safe_dir)
+            store = VectorStore(rag_name=safe_dir)
+            # 벡터 스토어 및 임베딩 초기화 (없는 경우에만)
+            try:
+                store.initialize_embedding_model_and_vectorstore()
+            except Exception as e:
+                # 초기화 실패 시 로깅만 하고 빈 스토어로 유지 (status 호출 시 0으로 처리 가능)
+                import logger_util
+                logger_util.get_logger().exception(f"[RAGManager] VectorStore 초기화 실패: {e}")
+            self._stores[key] = store
         return self._stores[key]
 
 

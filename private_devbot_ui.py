@@ -13,8 +13,9 @@ from ui.search_panel import SearchPanel
 from ui.config_util import load_json_config, load_initial_json_config
 from ui.loading_splash import LoadingSplash
 from monitoring_daemon import MonitoringDaemon
-from ui.ui_setting import MODERN_COLORS
+from ui.ui_setting import MODERN_COLORS, PRIVATE_DEVBOT_UI_VERSION
 from logger_util import ui_logger
+from ui.api_client_for_public_devbot import registerOrUpdateToPublicDevbot
 
 
 class CustomTabArt(wx.aui.AuiDefaultTabArt):
@@ -79,6 +80,11 @@ class MainFrame(wx.Frame):
         self.monitoring_daemon:MonitoringDaemon = MonitoringDaemon(main_frame_ref=self)
         
         self.api_client:ApiClient = ApiClient(self.get_current_upload_config, monitoring_daemon=self.monitoring_daemon)
+        # 기본 RAG("default")를 Public DevBot 레지스트리에 등록/업데이트
+        try:
+            registerOrUpdateToPublicDevbot('default')
+        except Exception as e:
+            ui_logger.exception(f"[MainFrame] 기본 RAG 등록 실패: {e}")
         self.doc_panel:DocManagementPanel = DocManagementPanel(self.notebook, api_client=self.api_client, main_frame_ref=self, monitoring_daemon=self.monitoring_daemon)
         self.search_panel:SearchPanel = SearchPanel(self.notebook, api_client=self.api_client)
         self.admin_panel:AdminPanel = AdminPanel(self.notebook, api_client=self.api_client, main_frame_ref=self, monitoring_daemon=self.monitoring_daemon)
@@ -277,7 +283,8 @@ class App(wx.App):
         time.sleep(0.2)
         self.splash.Show()
         time.sleep(0.2)
-        self.main_frame = MainFrame(None, 'Private DevBot 관리자', show_ui=False, loading_splash=self.splash)
+        title = f"Private DevBot 관리자 {PRIVATE_DEVBOT_UI_VERSION} 베타"
+        self.main_frame = MainFrame(None, title, show_ui=False, loading_splash=self.splash)
 
         # MainLoop로 진입 (스플래시가 화면에 보임)
         return True
