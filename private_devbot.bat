@@ -18,4 +18,4 @@ echo [INFO] Conda environment activated successfully.
 echo [INFO] Starting Private DevBOT RAG Server...
 set PYTHONUNBUFFERED=1
 echo [INFO] PYTHONUNBUFFERED=1 set to disable buffering
-python main.py
+python private_devbot_ui.py
