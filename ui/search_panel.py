@@ -3,7 +3,7 @@ import os
 from typing import List, Dict
 from ui.api_client import ApiClient
 from logger_util import ui_logger
-from .ui_setting import MODERN_COLORS
+from .ui_setting import MODERN_COLORS, PRIVATE_DEVBOT_URL
 
 
 class SearchPanel(wx.Panel):
@@ -67,7 +67,14 @@ class SearchPanel(wx.Panel):
         self.btn_search.SetToolTip("검색을 실행합니다 (Enter)")
         self.btn_search.SetForegroundColour(MODERN_COLORS['button_text'])
         self.btn_search.SetForegroundColour(MODERN_COLORS['button_text'])
-        row.Add(self.btn_search, 0)
+        row.Add(self.btn_search, 0, wx.RIGHT, 5)
+
+        # DevBOT 웹 열기 버튼
+        self.btn_open_web = wx.Button(self, label="DevBOT 웹 열기")
+        self.btn_open_web.SetBackgroundColour(MODERN_COLORS['button_background'])
+        self.btn_open_web.SetToolTip("DevBOT 웹 사이트를 MS Edge로 엽니다")
+        self.btn_open_web.SetForegroundColour(MODERN_COLORS['button_text'])
+        row.Add(self.btn_open_web, 0)
 
         input_sizer.Add(row, 0, wx.ALL, 5)
         main_sizer.Add(input_sizer, 0, wx.EXPAND | wx.ALL, 10)
@@ -102,6 +109,7 @@ class SearchPanel(wx.Panel):
 
         # 이벤트
         self.btn_search.Bind(wx.EVT_BUTTON, self.on_search)
+        self.btn_open_web.Bind(wx.EVT_BUTTON, self.on_open_web)
         self.list_results.Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_item_selected)
         self.list_results.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_item_activated)
         self.choice_rag.Bind(wx.EVT_CHOICE, self.on_rag_changed)
@@ -186,3 +194,14 @@ class SearchPanel(wx.Panel):
     def _bind_events(self):
         self.list_results.Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_item_selected)
         self.list_results.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_item_activated)
+
+    def on_open_web(self, event):
+        """MS Edge 브라우저로 PRIVATE_DEVBOT_URL 웹사이트를 연다."""
+        import subprocess
+        try:
+            url = PRIVATE_DEVBOT_URL
+            # Windows 전용: Edge 브라우저로 열기 (새 창)
+            subprocess.Popen(f'start "" msedge "{url}"', shell=True)
+        except Exception as e:
+            wx.MessageBox(f"웹사이트를 열 수 없습니다: {e}", "오류")
+            ui_logger.exception(f"Failed to open DevBOT website: {e}")
