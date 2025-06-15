@@ -4,5 +4,6 @@
     "client_ip": "172.30.1.44",
     "port": "8123",
     "knox_id": "min.ho.kim",
-    "api_base_url": "http://172.30.1.44:8123"
+    "api_base_url": "http://172.30.1.44:8123",
+    "backup_base_path": "C:\\Users\\stars\\Documents\\pd"
 }

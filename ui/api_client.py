@@ -438,7 +438,7 @@ class ApiClient:
                 return False
             return True
         except Exception as e:
-            ui_logger.debug(f"서버 상태 체크 오류: {e}")
+            ui_logger.debug(f"문서 저장소 상태 체크 오류: {e}")
             return False
 
     # --------------------------------------------------

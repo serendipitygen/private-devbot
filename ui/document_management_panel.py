@@ -5,6 +5,7 @@ import wx.grid
 import wx.html2
 import markdown
 import os
+import shutil
 import threading
 from datetime import datetime
 import time
@@ -29,6 +30,10 @@ class DocManagementPanel(wx.Panel):
         # config에서 page_size 불러오기
         config = load_json_config()
         self.page_size = int(config.get('page_size', 50))
+        # 백업 기본 경로 (선택되지 않았을 수도 있음)
+        if 'backup_base_path' not in config:
+            config['backup_base_path'] = ''
+        self.backup_base_path = config.get('backup_base_path', '')
         self._config = config
         
         # 로딩용 오버레이 패널 초기화
@@ -54,14 +59,14 @@ class DocManagementPanel(wx.Panel):
         
         # 상태 정보 텍스트와 경로 링크
         status_line_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.status_text_prefix = wx.StaticText(self, label="문서: 0건, DB 크기: 0MB, 벡터 스토어 경로: ")
+        self.status_text_prefix = wx.StaticText(self, label="문서: 0건, 저장소 크기: 0MB, 문서 저장소 경로: ")
         self.status_path_link = wx.StaticText(self, label="N/A")
         
         # 링크처럼 보이도록 스타일링
         link_font = self.status_path_link.GetFont()
         link_font.SetUnderlined(True)
         self.status_path_link.SetFont(link_font)
-        self.status_path_link.SetForegroundColour(wx.BLUE)
+        self.status_path_link.SetForegroundColour(MODERN_COLORS['hover'])
         
         # 클릭 및 커서 이벤트 바인딩
         self.status_path_link.Bind(wx.EVT_LEFT_DOWN, self.on_path_click)
@@ -73,11 +78,20 @@ class DocManagementPanel(wx.Panel):
         status_line_sizer.Add(self.status_path_link, 0, wx.ALIGN_CENTER_VERTICAL)
 
         self.btn_refresh_status = wx.Button(self, label="새로고침(F5)")
+        # --- Backup & Restore Buttons ---
+        self.btn_backup_store = wx.Button(self, label="백업")
+        self.btn_restore_store = wx.Button(self, label="복원")
+        for _btn in [self.btn_backup_store, self.btn_restore_store]:
+            _btn.SetBackgroundColour(MODERN_COLORS['button_background'])
+        self.btn_backup_store.Bind(wx.EVT_BUTTON, self.on_backup_store)
+        self.btn_restore_store.Bind(wx.EVT_BUTTON, self.on_restore_store)
         self.btn_refresh_status.Bind(wx.EVT_BUTTON, self.on_refresh_status)
         self.btn_refresh_status.SetBackgroundColour(MODERN_COLORS['primary'])
         
         status_info_sizer.Add(status_line_sizer, 1, wx.ALIGN_CENTER_VERTICAL)
         status_info_sizer.Add(self.btn_refresh_status, 0, wx.LEFT, 10)
+        status_info_sizer.Add(self.btn_backup_store, 0, wx.LEFT, 10)
+        status_info_sizer.Add(self.btn_restore_store, 0, wx.LEFT, 5)
         
         status_sizer.Add(status_info_sizer, 0, wx.ALL | wx.EXPAND, 5)
     
@@ -87,7 +101,7 @@ class DocManagementPanel(wx.Panel):
         
         self.btn_upload_file = wx.Button(self, label="파일 등록")
         self.btn_upload_folder = wx.Button(self, label="폴더 기준 모든 파일 등록")
-        self.btn_delete_selected = wx.Button(self, label="선택된 파일 삭제")
+        self.btn_delete_selected = wx.Button(self, label="선택된 파일 삭제(Del)")
         self.btn_delete_all = wx.Button(self, label="전체 삭제")
 
         self.btn_upload_file.SetBackgroundColour(MODERN_COLORS['button_background'])
@@ -104,7 +118,7 @@ class DocManagementPanel(wx.Panel):
         main_sizer.Add(status_sizer, 0, wx.EXPAND)
         
         # 필터링 섹션
-        filter_box = wx.StaticBox(self, label="필터링")
+        filter_box = wx.StaticBox(self, label="검색 조건")
         filter_sizer = wx.StaticBoxSizer(filter_box, wx.VERTICAL)
         filter_box.SetForegroundColour(MODERN_COLORS['title_text'])
         filter_box.SetFont(self.main_frame_ref.FONT_LIST['title_font'])
@@ -125,7 +139,7 @@ class DocManagementPanel(wx.Panel):
         rag_sizer.Add(rag_label, 0, wx.BOTTOM, 3)
         rag_choice_line = wx.BoxSizer(wx.HORIZONTAL)
         rag_choice_line.Add(self.rag_choice, 1, wx.RIGHT, 3)
-        self.btn_add_rag = wx.Button(self, label="추가")
+        self.btn_add_rag = wx.Button(self, label="그룹 추가")
         rag_choice_line.Add(self.btn_add_rag, 0)
         rag_sizer.Add(rag_choice_line, 0, wx.EXPAND)
         filter_controls_sizer.Add(rag_sizer, 1, wx.RIGHT, 5)
@@ -187,7 +201,7 @@ class DocManagementPanel(wx.Panel):
         filter_controls_sizer.Add(page_size_sizer, 0, wx.RIGHT, 5)
         
         # 필터링 버튼
-        self.btn_filter = wx.Button(self, label="필터링")
+        self.btn_filter = wx.Button(self, label="조회")
         filter_controls_sizer.Add(self.btn_filter, 0, wx.ALIGN_BOTTOM)
         self.btn_filter.SetBackgroundColour(MODERN_COLORS['button_background'])
         
@@ -254,12 +268,26 @@ class DocManagementPanel(wx.Panel):
         self.btn_add_rag.Bind(wx.EVT_BUTTON, self.on_add_rag)
 
         self.btn_add_rag.SetBackgroundColour(MODERN_COLORS['button_background'])
+        # --- 버튼 툴팁 설정 ---
+        self.btn_refresh_status.SetToolTip("문서 목록과 저장소 정보를 새로고침합니다 (F5)")
+        self.btn_backup_store.SetToolTip("현재 벡터 스토어를 선택한 경로에 백업합니다")
+        self.btn_restore_store.SetToolTip("선택한 백업으로 벡터 스토어를 복원합니다")
+        self.btn_upload_file.SetToolTip("하나 이상의 파일을 선택해 문서 저장소에 등록합니다")
+        self.btn_upload_folder.SetToolTip("폴더를 선택해 하위 파일을 모두 등록합니다")
+        self.btn_delete_selected.SetToolTip("선택된 문서를 삭제합니다 (Del)")
+        self.btn_delete_all.SetToolTip("모든 문서를 영구 삭제합니다")
+        self.btn_filter.SetToolTip("현재 필터 조건으로 문서를 조회합니다")
+        self.btn_prev_page.SetToolTip("이전 페이지로 이동합니다")
+        self.btn_next_page.SetToolTip("다음 페이지로 이동합니다")
+        self.btn_add_rag.SetToolTip("새 문서 저장소 그룹(RAG)을 추가합니다")
         
         # 문서 목록 항목 클릭 이벤트
         self.list_ctrl_docs.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_item_activated)
 
+        # 단축키 설정: F5(새로고침), Delete(선택 삭제)
         accel_tbl = wx.AcceleratorTable([
-            (wx.ACCEL_NORMAL, wx.WXK_F5, self.btn_refresh_status.GetId())
+            (wx.ACCEL_NORMAL, wx.WXK_F5, self.btn_refresh_status.GetId()),
+            (wx.ACCEL_NORMAL, wx.WXK_DELETE, self.btn_delete_selected.GetId())
         ])
         self.SetAcceleratorTable(accel_tbl)
         
@@ -536,119 +564,22 @@ class DocManagementPanel(wx.Panel):
             if dir_dialog.ShowModal() == wx.ID_CANCEL:
                 return
             folder_path = dir_dialog.GetPath()
+            # 선택한 폴더 내의 모든 파일 경로 수집 (하위 폴더 포함)
             file_paths = []
-            for root, _, files in os.walk(folder_path):
-                for filename in files:
-                    if not filename.startswith('.') and not filename.startswith('~'):
-                        file_paths.append(os.path.join(root, filename))
-            if file_paths:
-                self._start_upload_job(file_paths, "폴더 업로드")
-            else:
-                wx.MessageBox("폴더에 업로드할 파일이 없습니다.", "정보", wx.OK | wx.ICON_INFORMATION)
-
-    def _start_upload_job(self, file_paths, title):
-        """업로드와 새로고침 과정을 순차적으로 실행하고 UI를 제어합니다."""
-        self.monitoring_daemon.pause_monitoring()
-        self.disable_action_buttons()
-
-        progress_dialog = wx.ProgressDialog(
-            f"{title} 진행", "업로드 준비 중...", maximum=len(file_paths) + 1, # +1 for refresh step
-            parent=self, style=wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_ELAPSED_TIME | wx.PD_REMAINING_TIME | wx.PD_CAN_ABORT
-        )
-
-        # 결과를 저장할 컨테이너
-        result_container = {'success': 0, 'fail': 0, 'cancelled': False, 'error': None}
-
-        # 1. 파일 업로드 스레드 실행 및 대기
-        upload_thread = threading.Thread(target=self._upload_worker, args=(file_paths, progress_dialog, result_container))
-        upload_thread.daemon = True
-        upload_thread.start()
-        
-        # 업로드 스레드가 완료될 때까지 대기 (UI 이벤트 루프는 계속 동작)
-        while upload_thread.is_alive():
-            wx.GetApp().Yield()
-            time.sleep(0.1)
-
-        if result_container['cancelled']:
-            progress_dialog.Destroy()
-            self.enable_action_buttons()
-            self.monitoring_daemon.resume_monitoring()
-            msg = f"업로드가 사용자에 의해 취소되었습니다.\n성공: {result_container['success']}건, 실패: {result_container['fail']}건"
-            wx.MessageBox(msg, "업로드 취소", wx.OK | wx.ICON_INFORMATION)
-            return
-
-        # 2. 문서 목록 새로고침
-        try:
-            progress_dialog.Pulse("서버 처리 및 목록 새로고침 중...")
-            filter_params = self._get_filter_params()
-            self.update_document_list(filter_params, ui_update=True) # UI 업데이트까지 완료
-        except Exception as e:
-            ui_logger.exception("문서 목록 새로고침 중 오류 발생")
-            result_container['error'] = e
-        finally:
-            progress_dialog.Destroy()
-
-        # 3. 최종 결과 표시
-        self.enable_action_buttons()
-        self.monitoring_daemon.resume_monitoring()
-
-        if result_container['error']:
-            wx.MessageBox(f"문서 목록 새로고침 중 오류 발생: {result_container['error']}", "오류", wx.OK | wx.ICON_ERROR)
-
-        msg = f"업로드 완료: 성공 {result_container['success']}건, 실패: {result_container['fail']}건"
-        wx.MessageBox(msg, "업로드 완료", wx.OK | wx.ICON_INFORMATION)
-
-    def _upload_worker(self, file_paths, progress_dialog, result_container):
-        """파일 업로드만 수행하는 워커 스레드."""
-        success_count, fail_count = 0, 0
-        total = len(file_paths)
-
-        for i, file_path in enumerate(file_paths):
-            message = f"[{i + 1}/{total}] 업로드 중: {os.path.basename(file_path)}"
-            if not self._update_progress_from_thread(progress_dialog, i + 1, message):
-                result_container['cancelled'] = True
-                break
-            
-            try:
-                result = self.api_client.upload_file_path(file_path)
-                if result and result.get('status') == 'success':
-                    success_count += 1
-                    self.monitoring_daemon.append_monitoring_file(file_path=file_path, rag_name=self.api_client.get_rag_name())
-                else:
-                    fail_count += 1
-                    ui_logger.error(f"파일 업로드 실패: {os.path.basename(file_path)}, 오류: {result.get('message', '알 수 없는 오류')}")
-            except Exception as e:
-                fail_count += 1
-                ui_logger.exception(f"파일 업로드 중 예외 발생: {file_path}")
-
-        result_container['success'] = success_count
-        result_container['fail'] = fail_count
-
-    def _update_progress_from_thread(self, progress_dialog, current_value, message):
-        """
-        백그라운드 스레드에서 메인 스레드의 progress_dialog를 안전하게 업데이트하고
-        사용자의 취소 여부를 반환합니다.
-        """
-        keep_going = [True]
-        event = threading.Event()
-
-        def update_ui():
-            try:
-                keep_going[0], _ = progress_dialog.Update(current_value, message)
-            except wx.wxAssertionError:
-                keep_going[0] = False
-            finally:
-                event.set()
-
-        wx.CallAfter(update_ui)
-        event.wait()
-        return keep_going[0]
+            for root, _dirs, files in os.walk(folder_path):
+                for f in files:
+                    file_paths.append(os.path.join(root, f))
+            if not file_paths:
+                wx.MessageBox("선택한 폴더에 업로드할 파일이 없습니다.", "알림", wx.OK | wx.ICON_INFORMATION)
+                return
+            self._start_upload_job(file_paths, "폴더 업로드")
 
     def disable_action_buttons(self):
         """모든 주요 액션 버튼을 비활성화합니다."""
         for btn in [self.btn_upload_file, self.btn_upload_folder, self.btn_delete_selected, 
                     self.btn_delete_all, self.btn_refresh_status, self.btn_filter, 
-                    self.btn_prev_page, self.btn_next_page, self.btn_add_rag]:
+                    self.btn_prev_page, self.btn_next_page, self.btn_add_rag,
+                    self.btn_backup_store, self.btn_restore_store]:
             btn.Disable()
         self.rag_choice.Disable()
 
@@ -656,9 +587,11 @@ class DocManagementPanel(wx.Panel):
         """모든 주요 액션 버튼을 활성화합니다."""
         for btn in [self.btn_upload_file, self.btn_upload_folder, self.btn_delete_selected, 
                     self.btn_delete_all, self.btn_refresh_status, self.btn_filter, 
-                    self.btn_prev_page, self.btn_next_page, self.btn_add_rag]:
+                    self.btn_prev_page, self.btn_next_page, self.btn_add_rag,
+                    self.btn_backup_store, self.btn_restore_store]:
             btn.Enable()
         self.rag_choice.Enable()
+        self.update_page_info() # 페이지 버튼 상태는 페이징 정보에 따라 다시 결정
         self.update_page_info() # 페이지 버튼 상태는 페이징 정보에 따라 다시 결정
 
     def on_item_activated(self, event):
@@ -747,3 +680,127 @@ class DocManagementPanel(wx.Panel):
                         self.rag_choice.Append(rag_name)
                     self.rag_choice.SetStringSelection(rag_name)
                     self.on_rag_changed(None)
+
+    def on_backup_store(self, event):
+        """벡터 스토어 폴더를 선택한 경로에 백업합니다."""
+        store_dir = os.path.join(os.getcwd(), 'store')
+        if not os.path.isdir(store_dir):
+            wx.MessageBox("벡터 스토어 폴더를 찾을 수 없습니다.", "오류", wx.OK | wx.ICON_ERROR)
+            return
+
+        # 기본 백업 경로: 이전에 사용한 경로 또는 내 문서
+        default_path = self.backup_base_path if self.backup_base_path else os.path.expanduser("~\\Documents")
+
+        with wx.DirDialog(self, "백업 위치 선택", defaultPath=default_path,
+                          style=wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST) as dir_dlg:
+            if dir_dlg.ShowModal() == wx.ID_CANCEL:
+                return
+            dest_base = dir_dlg.GetPath()
+
+        # 현재 store 폴더를 백업 위치로 지정한 경우 방지
+        if os.path.abspath(dest_base) == os.path.abspath(store_dir):
+            wx.MessageBox("현재 스토어 폴더와 동일한 위치는 백업 대상이 될 수 없습니다.", "오류", wx.OK | wx.ICON_ERROR)
+            return
+
+        backup_root = os.path.join(dest_base, 'private_devbot_backup')
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        dest_dir = os.path.join(backup_root, timestamp)
+
+        def _task():
+            try:
+                os.makedirs(backup_root, exist_ok=True)
+                shutil.copytree(store_dir, dest_dir)
+                wx.CallAfter(wx.MessageBox, f"백업이 완료되었습니다:\n{dest_dir}", "백업 완료", wx.OK | wx.ICON_INFORMATION)
+            except Exception as e:
+                ui_logger.exception("벡터 스토어 백업 실패")
+                wx.CallAfter(wx.MessageBox, f"백업 중 오류 발생: {e}", "오류", wx.OK | wx.ICON_ERROR)
+            finally:
+                # 백업 경로 저장 및 UI 복구
+                self.backup_base_path = dest_base
+                self._config['backup_base_path'] = dest_base
+                save_json_config(self._config)
+                wx.CallAfter(self.enable_action_buttons)
+
+        self.disable_action_buttons()
+        threading.Thread(target=_task, daemon=True).start()
+
+    def on_restore_store(self, event):
+        """선택한 백업으로 벡터 스토어를 복원합니다."""
+        # 백업 기본 경로 확인
+        base_path = self.backup_base_path
+        if not base_path or not os.path.isdir(base_path):
+            with wx.DirDialog(self, "백업 위치 선택", style=wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST) as dir_dlg:
+                if dir_dlg.ShowModal() == wx.ID_CANCEL:
+                    return
+                base_path = dir_dlg.GetPath()
+                self.backup_base_path = base_path
+                self._config['backup_base_path'] = base_path
+                save_json_config(self._config)
+
+        backup_root = os.path.join(base_path, 'private_devbot_backup')
+        if not os.path.isdir(backup_root):
+            wx.MessageBox("백업 폴더를 찾을 수 없습니다.", "오류", wx.OK | wx.ICON_ERROR)
+            return
+
+        subfolders = sorted([d for d in os.listdir(backup_root) if os.path.isdir(os.path.join(backup_root, d))])
+        if not subfolders:
+            wx.MessageBox("사용 가능한 백업이 없습니다.", "알림", wx.OK | wx.ICON_INFORMATION)
+            return
+
+        with wx.SingleChoiceDialog(self, "복원할 백업을 선택하세요", "백업 선택", subfolders, style=wx.CHOICEDLG_STYLE) as choice_dlg:
+            if choice_dlg.ShowModal() == wx.ID_CANCEL:
+                return
+            selected = choice_dlg.GetStringSelection()
+
+        restore_src = os.path.join(backup_root, selected)
+        store_dir = os.path.join(os.getcwd(), 'store')
+
+        if wx.MessageBox(f"선택된 백업으로 복원하시겠습니까?\n{restore_src}", "최종 확인", wx.YES_NO | wx.ICON_QUESTION) != wx.YES:
+            return
+
+        def _task():
+            try:
+                # 모니터링 중지
+                if self.monitoring_daemon:
+                    self.monitoring_daemon.pause_monitoring()
+
+                # 서버 중지 (메인 스레드에서 실행)
+                if hasattr(self.main_frame_ref, 'admin_panel'):
+                    wx.CallAfter(self.main_frame_ref.admin_panel.on_stop_server, None)
+                    # 서버가 완전히 중지될 때까지 대기 (최대 60초)
+                    for _ in range(60):
+                        if not self.main_frame_ref.admin_panel.is_datastore_running:
+                            break
+                        time.sleep(1)
+
+                # 기존 store 폴더 삭제
+                if os.path.isdir(store_dir):
+                    shutil.rmtree(store_dir)
+
+                # 백업 폴더 복사
+                shutil.copytree(restore_src, store_dir)
+
+                # 서버 재시작 (메인 스레드에서 실행)
+                if hasattr(self.main_frame_ref, 'admin_panel'):
+                    wx.CallAfter(self.main_frame_ref.admin_panel.on_start_server, None)
+                    # 서버가 완전히 시작될 때까지 대기 (최대 60초)
+                    for _ in range(60):
+                        if self.main_frame_ref.admin_panel.is_datastore_running:
+                            break
+                        time.sleep(1)
+
+                # 모니터링 재개
+                if self.monitoring_daemon:
+                    self.monitoring_daemon.resume_monitoring()
+
+                wx.CallAfter(wx.MessageBox, "복원이 완료되었습니다.", "복원 완료", wx.OK | wx.ICON_INFORMATION)
+                wx.CallAfter(self.on_refresh_status, None)
+            except Exception as e:
+                ui_logger.exception("벡터 스토어 복원 실패")
+                wx.CallAfter(wx.MessageBox, f"복원 중 오류 발생: {e}", "오류", wx.OK | wx.ICON_ERROR)
+            finally:
+                wx.CallAfter(self.enable_action_buttons)
+
+        # UI 비활성화 후 백그라운드에서 복원 실행
+        self.disable_action_buttons()
+        threading.Thread(target=_task, daemon=True).start()

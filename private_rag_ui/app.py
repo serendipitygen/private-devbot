@@ -63,7 +63,7 @@ if submitted:
                 else:
                     st.error(f"검색 실패: {response.text}")
             except Exception as e:
-                st.error(f"서버 연결 오류: {str(e)}")
+                st.error(f"문서 저장소 연결 오류: {str(e)}")
 
 # 검색 결과 표시 부분 수정
 if 'results' in st.session_state and st.session_state.results:
@@ -94,7 +94,7 @@ def load_document_list():
             st.error(f"문서 목록 로드 실패: {response.text}")
             return []
     except Exception as e:
-        st.error(f"서버 연결 오류: {str(e)}")
+        st.error(f"문서 저장소 연결 오류: {str(e)}")
         return []
 
 # 앱 시작시 문서 목록 로드

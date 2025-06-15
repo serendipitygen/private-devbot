@@ -123,27 +123,17 @@ class MainFrame(wx.Frame):
     def auto_start_server(self):
         """프로그램 시작 시 서버 자동 시작"""
         try:
-            #self.loading_splash.Show()
-            # 진행 대화상자를 사용하지 않고 상태 표시줄만 사용하여 이벤트 루프 충돌 납지
-            self.SetStatusText("문서 저장소 서버를 시작하는 중...")
+            self.SetStatusText("문서 저장소를 시작하는 중...")
             
-            # 관리자 패널의 서버 시작 메서드 호출
             if hasattr(self, 'admin_panel') and self.admin_panel:
-                # 서버 시작
                 self.admin_panel.auto_start_server(self.on_server_fully_ready_for_docs)
-                
-                # # 서버 시작 진행 상황을 간단히 5초 동안 상태바에 표시
-                # for i in range(5):
-                #     self.SetStatusText(f"문서 저장소 서버를 시작하는 중... ({i+1}/5)")
-                #     time.sleep(1.0)
 
-                # 서버 시작 완료 후 상태 텍스트 업데이트 (모니터링 자동 시작은 AdminPanel에서 10초 후 실행)
-                self.SetStatusText("문서 저장소 서버가 시작되었습니다.")
+                self.SetStatusText("문서 저장소가 시작되었습니다.")
                 self.monitoring_daemon.start()
                 
         except Exception as e:
-            wx.LogError(f"서버 자동 시작 중 오류: {e}")
-            self.SetStatusText(f"서버 시작 오류: {str(e)}")
+            wx.LogError(f"문서 저장소 자동 시작 중 오류: {e}")
+            self.SetStatusText(f"문서 저장소 시작 오류: {str(e)}")
             time.sleep(0.5)
 
     def CreateMenuBar(self):
@@ -214,10 +204,9 @@ class MainFrame(wx.Frame):
 
             # 2. 서버 중지
             if self.admin_panel and self.admin_panel.is_datastore_running:
-                self.SetStatusText("서버를 종료하는 중...")
+                self.SetStatusText("문서 저장소를 종료하는 중...")
                 self.admin_panel.on_stop_server(None)
-                time.sleep(0.5) # 서버가 완전히 멈출 시간을 줌
-
+                time.sleep(0.5) 
         except Exception as e:
             ui_logger.exception(f"[MainFrame] 종료 처리 중 오류: {e}")
         finally:
@@ -242,10 +231,10 @@ class MainFrame(wx.Frame):
             if not self.IsShown():
                 self.Show(True)
             self.Raise()
-            self.SetStatusText("문서 저장소 서버가 시작되었습니다.")
+            self.SetStatusText("문서 저장소가 시작되었습니다.")
             
         except Exception as e:
-            ui_logger.exception(f"[MainFrame] 서버 준비 확인 중 오류")
+            ui_logger.exception(f"[MainFrame] 문서 저장소 준비 확인 중 오류")
 
 class App(wx.App):
     def OnInit(self):
@@ -288,7 +277,7 @@ class App(wx.App):
         time.sleep(0.2)
         self.splash.Show()
         time.sleep(0.2)
-        self.main_frame = MainFrame(None, 'Private DevBot UI', show_ui=False, loading_splash=self.splash)
+        self.main_frame = MainFrame(None, 'Private DevBot 관리자', show_ui=False, loading_splash=self.splash)
 
         # MainLoop로 진입 (스플래시가 화면에 보임)
         return True

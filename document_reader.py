@@ -16,6 +16,7 @@ import sys
 import os
 import json
 import re
+from pathlib import Path
 
 # TODO: 다형성 적용 필요
 class DocumentReader:
@@ -35,6 +36,23 @@ class DocumentReader:
             return self.get_pdf_contents(filepath=file_path, contents_type="PDF")
         else:
             return await self.get_text_contents(file=file, file_path=file_path)
+    
+    def get_contents_on_pc(self, file_path:str):
+        filename = Path(file_path).name
+        if filename.endswith("eml"):
+            return self.get_eml_contents(filepath=file_path, type="EML")
+        elif filename.endswith("mht"):
+            return self.get_eml_contents(filepath=file_path, type="MHT")
+        elif filename.endswith("doc") or filename.endswith("docx"):
+            return self.get_msoffice_contents(filepath=file_path, contents_type="MSWORD")
+        elif filename.endswith("ppt") or filename.endswith("pptx"):
+            return self.get_msoffice_contents(filepath=file_path, contents_type="MSPOWERPOINT")
+        elif file_path.endswith("xls") or file_path.endswith("xlsx"):
+            return self.get_excel_contents(filepath=file_path, contents_type="MSEXCEL")
+        elif filename.endswith("pdf"):
+            return self.get_pdf_contents(filepath=file_path, contents_type="PDF")
+        else:
+            return self.get_text_contents_on_pc(file_path=file_path)
 
     def get_msoffice_contents(self, filepath:str, contents_type:str):
         try:
@@ -255,6 +273,15 @@ class DocumentReader:
     
     async def get_text_contents(self, file: UploadFile, file_path: str):
         contents = await file.read()
+        return self._make_text_contents(contents)
+    
+    def get_text_contents_on_pc(self, file_path: str):
+        with open(file_path, "rb") as f:
+            contents = f.read()
+
+        return self._make_text_contents(contents)
+
+    def _make_text_contents(self, contents: bytes):        
         detection = chardet.detect(contents)
         encoding = detection.get('encoding')
 

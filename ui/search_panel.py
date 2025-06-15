@@ -63,6 +63,8 @@ class SearchPanel(wx.Panel):
         # 검색 버튼
         self.btn_search = wx.Button(self, label="검색")
         self.btn_search.SetBackgroundColour(MODERN_COLORS['button_background'])
+        # 버튼 사용법 툴팁 추가
+        self.btn_search.SetToolTip("검색을 실행합니다 (Enter)")
         self.btn_search.SetForegroundColour(MODERN_COLORS['button_text'])
         self.btn_search.SetForegroundColour(MODERN_COLORS['button_text'])
         row.Add(self.btn_search, 0)

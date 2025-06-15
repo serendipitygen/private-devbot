@@ -135,29 +135,31 @@ async def upload_file_path(
         if not os.path.exists(file_path):
             return JSONResponse(content={"status": "failed", "message": f"File not found: {file_path}"}, status_code=400)
         ext = os.path.splitext(file_path)[1].lower()
-        if ext in [".eml"]:
-            file_contents = document_reader.get_eml_contents(filepath=file_path, type="EML")
-        elif ext in [".mht"]:
-            file_contents = document_reader.get_eml_contents(filepath=file_path, type="MHT")
-        elif ext in [".doc", ".docx"]:
-            file_contents = document_reader.get_msoffice_contents(filepath=file_path, contents_type="MSWORD")
-        elif ext in [".ppt", ".pptx"]:
-            file_contents = document_reader.get_msoffice_contents(filepath=file_path, contents_type="MSPOWERPOINT")
-        elif ext in [".xls", ".xlsx"]:
-            file_contents = document_reader.get_excel_contents(filepath=file_path, contents_type="MSEXCEL")
-        elif ext in [".pdf"]:
-            file_contents = document_reader.get_pdf_contents(filepath=file_path, contents_type="PDF")
-        else:
-            with open(file_path, "rb") as f:
-                contents = f.read()
-            import chardet
-            detection = chardet.detect(contents)
-            encoding = detection.get('encoding') or 'utf-8'
-            text_contents = contents.decode(encoding, errors='replace')
-            file_contents = {
-                "contents_type": "TEXT",
-                "contents": text_contents
-            }
+        # if ext in [".eml"]:
+        #     file_contents = document_reader.get_eml_contents(filepath=file_path, type="EML")
+        # elif ext in [".mht"]:
+        #     file_contents = document_reader.get_eml_contents(filepath=file_path, type="MHT")
+        # elif ext in [".doc", ".docx"]:
+        #     file_contents = document_reader.get_msoffice_contents(filepath=file_path, contents_type="MSWORD")
+        # elif ext in [".ppt", ".pptx"]:
+        #     file_contents = document_reader.get_msoffice_contents(filepath=file_path, contents_type="MSPOWERPOINT")
+        # elif ext in [".xls", ".xlsx"]:
+        #     file_contents = document_reader.get_excel_contents(filepath=file_path, contents_type="MSEXCEL")
+        # elif ext in [".pdf"]:
+        #     file_contents = document_reader.get_pdf_contents(filepath=file_path, contents_type="PDF")
+        # else:
+        #     with open(file_path, "rb") as f:
+        #         contents = f.read()
+        #     import chardet
+        #     detection = chardet.detect(contents)
+        #     encoding = detection.get('encoding') or 'utf-8'
+        #     text_contents = contents.decode(encoding, errors='replace')
+        #     file_contents = {
+        #         "contents_type": "TEXT",
+        #         "contents": text_contents
+        #     }
+
+        file_contents = document_reader.get_contents_on_pc(file_path=file_path)
         result = await vector_store.upload(file_path=file_path, file_name=os.path.basename(file_path), contents=file_contents)
         status = "success" if result.get("status") == "success" else "failed"
         vector_store.save_indexed_files_and_vector_db()
@@ -396,7 +398,7 @@ async def health_check():
         # 응답 객체 생성
         response = {
             "status": "success",
-            "message": "server is working successfully",
+            "message": "DataStore is working successfully",
             "timestamp": current_time
         }
         
@@ -411,8 +413,8 @@ async def health_check():
         
         return resp
     except Exception as e:
-        logger.error(f"[ERROR] Fail to check Server Health: {str(e)}")
-        raise HTTPException(500, detail=f"Server Error: {str(e)}")
+        logger.error(f"[ERROR] Fail to check DataStore Health: {str(e)}")
+        raise HTTPException(500, detail=f"DataStore Error: {str(e)}")
 
 @app.get("/status")
 async def get_status(rag_name: str | None = None):

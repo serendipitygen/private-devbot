@@ -26,3 +26,4 @@ server_pid.txt
 .vscode/
 ui/private_devbot_ui_config.json
 log/
+ui/private_devbot_ui_config.json

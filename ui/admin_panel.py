@@ -45,18 +45,20 @@ class AdminPanel(wx.Panel):
         vbox = wx.BoxSizer(wx.VERTICAL)
 
         # 서버 제어 섹션
-        server_control_static_box = wx.StaticBox(self, label="서버 제어 및 포트 관리")
+        server_control_static_box = wx.StaticBox(self, label="문서 저장소 제어 및 포트 관리")
         server_control_static_box.SetForegroundColour(MODERN_COLORS['title_text'])
         server_control_sizer = wx.StaticBoxSizer(server_control_static_box, wx.VERTICAL)
         
         # 서버 시작/종료 버튼
         server_buttons_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.btn_start_server = wx.Button(self, label='서버 시작')
+        self.btn_start_server = wx.Button(self, label='문서 저장소 시작')
         self.btn_start_server.SetBackgroundColour(MODERN_COLORS['button_background'])
         self.btn_start_server.SetForegroundColour(MODERN_COLORS['button_text'])
-        self.btn_stop_server = wx.Button(self, label='서버 종료')
+        self.btn_start_server.SetToolTip("문서 저장소 프로세스를 실행합니다")
+        self.btn_stop_server = wx.Button(self, label='문서 저장소 종료')
         self.btn_stop_server.SetBackgroundColour(MODERN_COLORS['delete_button_background'])
         self.btn_stop_server.SetForegroundColour(MODERN_COLORS['button_text'])
+        self.btn_stop_server.SetToolTip("실행 중인 문서 저장소 프로세스를 중지합니다")
         self.btn_stop_server.Disable()
 
         # 초기 버튼 상태 설정
@@ -86,6 +88,9 @@ class AdminPanel(wx.Panel):
         self.btn_kill_process = wx.Button(self, label='프로세스 종료')
         self.btn_kill_process.SetBackgroundColour(MODERN_COLORS['delete_button_background'])
         self.btn_kill_process.SetForegroundColour(MODERN_COLORS['button_text'])
+        # 포트 관리 툴팁
+        self.btn_check_port.SetToolTip("입력한 포트를 사용 중인 프로세스가 있는지 확인합니다")
+        self.btn_kill_process.SetToolTip("선택한 포트를 점유 중인 프로세스를 종료합니다")
         self.btn_kill_process.Disable()  # 처음에는 비활성화
         self._update_button_state(self.btn_check_port)
         self._update_button_state(self.btn_kill_process)
@@ -100,14 +105,14 @@ class AdminPanel(wx.Panel):
         separator2 = wx.StaticLine(self, style=wx.LI_HORIZONTAL)
         server_control_sizer.Add(separator2, 0, wx.EXPAND | wx.TOP | wx.BOTTOM, 5)
         
-        self.txt_server_status = wx.StaticText(self, label="서버 상태: 알 수 없음")
+        self.txt_server_status = wx.StaticText(self, label="문서 저장소 상태: 알 수 없음")
         self.txt_server_status.SetForegroundColour(MODERN_COLORS['text'])
         server_control_sizer.Add(self.txt_server_status, 0, wx.EXPAND | wx.ALL, 5)
         
         vbox.Add(server_control_sizer, 0, wx.EXPAND | wx.ALL, 10)
 
-        # 시스템 모니터링 섹션
-        monitoring_static_box = wx.StaticBox(self, label="시스템 모니터링")
+        # 문서 파일 모니터링 섹션
+        monitoring_static_box = wx.StaticBox(self, label="문서 파일 모니터링")
         monitoring_static_box.SetForegroundColour(MODERN_COLORS['title_text'])
         monitoring_sizer = wx.StaticBoxSizer(monitoring_static_box, wx.VERTICAL)
         
@@ -116,9 +121,11 @@ class AdminPanel(wx.Panel):
         self.btn_start_monitoring = wx.Button(self, label='모니터링 시작')
         self.btn_start_monitoring.SetBackgroundColour(MODERN_COLORS['button_background'])
         self.btn_start_monitoring.SetForegroundColour(MODERN_COLORS['button_text'])
+        self.btn_start_monitoring.SetToolTip("문서 디렉터리 변경 감지를 시작합니다")
         self.btn_stop_monitoring = wx.Button(self, label='모니터링 중지')
         self.btn_stop_monitoring.SetBackgroundColour(MODERN_COLORS['delete_button_background'])
         self.btn_stop_monitoring.SetForegroundColour(MODERN_COLORS['button_text'])
+        self.btn_stop_monitoring.SetToolTip("문서 변경 감지를 중지합니다")
         self.btn_stop_monitoring.Disable()
         self._update_button_state(self.btn_start_monitoring)
         self._update_button_state(self.btn_stop_monitoring)
@@ -130,6 +137,7 @@ class AdminPanel(wx.Panel):
         self.monitoring_interval_input = wx.TextCtrl(self, value=str(self.monitoring_interval), style=wx.TE_PROCESS_ENTER)
         self.monitoring_interval_input.SetBackgroundColour(MODERN_COLORS['textbox_background'])
         self.monitoring_interval_input.SetForegroundColour(MODERN_COLORS['text'])
+        self.monitoring_interval_input.SetToolTip("감지 주기를 초 단위로 입력 후 Enter")
         
         monitoring_controls.Add(self.btn_start_monitoring, 0, wx.RIGHT, 5)
         monitoring_controls.Add(self.btn_stop_monitoring, 0, wx.RIGHT, 5)
@@ -172,7 +180,7 @@ class AdminPanel(wx.Panel):
         
         vbox.Add(monitoring_sizer, 0, wx.ALL | wx.EXPAND, 10)
 
-        log_static_box = wx.StaticBox(self, label="Server Logs")
+        log_static_box = wx.StaticBox(self, label="Logs")
         log_static_box.SetForegroundColour(MODERN_COLORS['title_text'])
         log_box_sizer = wx.StaticBoxSizer(log_static_box, wx.VERTICAL)
 
@@ -355,7 +363,7 @@ class AdminPanel(wx.Panel):
         """서버가 시작되었을 때 UI 상태를 업데이트합니다."""
         try:
             #self._hide_loading_splash()
-            ui_logger.info("[AdminPanel] Updating UI for server running state")
+            ui_logger.info("[AdminPanel] Updating UI for DataStore running state")
             
             # 버튼 상태 업데이트
             self.btn_start_server.Disable()
@@ -374,18 +382,18 @@ class AdminPanel(wx.Panel):
             
             self._force_document_refresh()
             # 서버 상태 텍스트 업데이트
-            self.txt_server_status.SetLabel(f"서버 상태: 실행 중 (포트: {current_port})")
+            self.txt_server_status.SetLabel(f"문서 저장소 상태: 실행 중 (포트: {current_port})")
             
             # 로그에 메시지 추가
-            self._append_log_message(f"--- [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 서버가 성공적으로 시작되었습니다. (포트: {current_port}) ---")
+            self._append_log_message(f"--- [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 문서 저장소가 성공적으로 시작되었습니다. (포트: {current_port}) ---")
             
-            ui_logger.info(f"[AdminPanel] UI updated for server running on port {current_port}")
+            ui_logger.info(f"[AdminPanel] UI updated for DataStore running on port {current_port}")
 
             # 10초 뒤 모니터링 데몬 자동 시작
             wx.CallLater(10000, self._auto_start_monitoring)
         except Exception as e:
-            ui_logger.exception(f"[AdminPanel] Error updating UI for server running: {e}")
-            wx.LogError(f"서버 실행 UI 업데이트 오류: {e}")
+            ui_logger.exception(f"[AdminPanel] Error updating UI for DataStore running: {e}")
+            wx.LogError(f"문서 저장소 실행 UI 업데이트 오류: {e}")
             self._append_log_message(f"--- [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] UI 업데이트 중 오류: {e} ---")
 
     def _update_button_state(self, button):
@@ -427,12 +435,12 @@ class AdminPanel(wx.Panel):
                 #TODO: 해당 포트의 프로세스를 죽이고 실행할 것인지 묻는 대화상자 출력 필요
                 self._run_server_when_port_in_use(port_to_check_auto)
             else:
-                ui_logger.debug("[AdminPanel] Auto-start: Attempting to start server process.")
+                ui_logger.debug("[AdminPanel] Auto-start: Attempting to start DataStore process.")
                 self.on_start_server_internal(auto_start_mode=True)
 
             # Check if our managed server process is already running
             if self._is_datastore_running():
-                ui_logger.debug("[AdminPanel] Auto-start: Server process already managed by this UI instance and running.")
+                ui_logger.debug("[AdminPanel] Auto-start: DataStore process already managed by this UI instance and running.")
                 return
         except Exception as e:
             ui_logger.exception("auto_start_server 실행 오류")
@@ -459,21 +467,21 @@ class AdminPanel(wx.Panel):
         # 이미 서버 프로세스가 실행 중인지 확인
         if self._is_datastore_running():
             if not auto_start_mode:
-                wx.MessageBox("서버가 이미 실행 중입니다.", "알림", wx.OK | wx.ICON_INFORMATION)
+                wx.MessageBox("문서 저장소가 이미 실행 중입니다.", "알림", wx.OK | wx.ICON_INFORMATION)
             else:
-                ui_logger.debug("[AdminPanel] on_start_server_internal (auto_start): Server already managed and running.")
+                ui_logger.debug("[AdminPanel] on_start_server_internal (auto_start): DataStore already managed and running.")
             return
 
         try:
             port_to_check_internal = get_datastore_port()
             if port_to_check_internal is None:
                 ui_logger.warning("[AdminPanel] on_start_server_internal: Port not configured or is None.")
-                if self.main_frame_ref: wx.CallAfter(self.main_frame_ref.SetStatusText, "서버 시작 실패: 포트가 설정되지 않았습니다.")
+                if self.main_frame_ref: wx.CallAfter(self.main_frame_ref.SetStatusText, "문서 저장소 시작 실패: 포트가 설정되지 않았습니다.")
                 return
 
             ui_logger.debug(f"[AdminPanel] on_start_server_internal: About to call is_port_in_use with port {port_to_check_internal} (type: {type(port_to_check_internal)})")
 
-            status_msg = f"Server is Starting..."
+            status_msg = f"문서 저장소 시작 중..."
             detailed_status_msg = f"문서 저장소 시작 중입니다. 잠시만 기다려 주세요..."
             self.txt_server_status.SetLabel(status_msg)
             if self.main_frame_ref:
@@ -486,12 +494,12 @@ class AdminPanel(wx.Panel):
 
             self._update_ui_for_server_running()
 
-            status_msg = f"Server is Started"
+            status_msg = f"DataStore is Started"
             detailed_status_msg = f"문서 저장소가 시작되었습니다. ※ 모든 파일 정보는 개인 PC에서만 활용됩니다."
             self.txt_server_status.SetLabel(status_msg)
             if self.main_frame_ref:
                 wx.CallAfter(self.main_frame_ref.SetStatusText, detailed_status_msg)
-            ui_logger.info(f"[AdminPanel] Server process started. Log monitoring initiated.")
+            ui_logger.info(f"[AdminPanel] DataStore process started. Log monitoring initiated.")
             
             self.on_start_monitoring(None)
         except Exception as e_monitor:
@@ -501,10 +509,10 @@ class AdminPanel(wx.Panel):
         except Exception as e:
             ui_logger.exception('문서 저장소 시작 오류')
             error_message = str(e) if e else "Unknown error"
-            wx.LogError(f"Failed to start server: {error_message}")
-            self.txt_server_status.SetLabel("Server Status: Error starting")
+            wx.LogError(f"Failed to start DataStore: {error_message}")
+            self.txt_server_status.SetLabel("DataStore Status: Error starting")
             if self.main_frame_ref: 
-                wx.CallAfter(self.main_frame_ref.SetStatusText, "서버 시작 중 오류가 발생했습니다.")
+                wx.CallAfter(self.main_frame_ref.SetStatusText, "문서 저장소 시작 중 오류가 발생했습니다.")
  
 
     def _run_server_when_port_in_use(self, default_port_int: int):
@@ -538,7 +546,7 @@ class AdminPanel(wx.Panel):
         if threading.current_thread() is threading.main_thread():
             dlg = wx.MessageDialog(
                 self, 
-                message_text  + "실행 중인 프로세스를 종료하고 서버를 기본 포트로 시작할까요?",
+                message_text  + "실행 중인 프로세스를 종료하고 문서 저장소를 기본 포트로 시작할까요?",
                 "포트 충돌: 프로세스 처리 방법 선택",
                 wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION
             )
@@ -570,20 +578,20 @@ class AdminPanel(wx.Panel):
                 ui_logger.info(f"[AdminPanel] User canceled the operation")
                 default_port_int = None  
     
-                ui_logger.debug(f"[AdminPanel] User canceled port change dialog. Aborting server start.")
-                wx.CallAfter(self._append_log_message, f"--- [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 서버 시작이 취소되었습니다. ---")
-                self.txt_server_status.SetLabel("Server Status: Startup canceled by user")
+                ui_logger.debug(f"[AdminPanel] User canceled port change dialog. Aborting DataStore start.")
+                wx.CallAfter(self._append_log_message, f"--- [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 문서 저장소 시작이 취소되었습니다. ---")
+                self.txt_server_status.SetLabel("DataStore Status: Startup canceled by user")
                 if self.main_frame_ref:
-                    wx.CallAfter(self.main_frame_ref.SetStatusText, "서버 시작이 취소되었습니다.")
+                    wx.CallAfter(self.main_frame_ref.SetStatusText, "문서 저장소 시작이 취소되었습니다.")
                 return
 
 
-        status_msg = f"Server is Starting..."
+        status_msg = f"DataStore is Starting..."
         detailed_status_msg = f"문서 저장소 시작 중입니다. 잠시만 기다려 주세요..."
         self.txt_server_status.SetLabel(status_msg)
         if self.main_frame_ref:
             wx.CallAfter(self.main_frame_ref.SetStatusText, detailed_status_msg)
-        ui_logger.info(f"[AdminPanel] Server process started. Log monitoring initiated.")
+        ui_logger.info(f"[AdminPanel] DataStore process started. Log monitoring initiated.")
 
         self._start_datastore()
         time.sleep(10)
@@ -594,12 +602,12 @@ class AdminPanel(wx.Panel):
         #wx.CallAfter(self._update_ui_for_server_running())
         self._update_ui_for_server_running()
 
-        status_msg = f"Server is Started."
+        status_msg = f"DataStore is Started."
         detailed_status_msg = f"문서 저장소가 시작되었습니다. ※ 모든 파일 정보는 개인 PC에서만 활용됩니다."
         self.txt_server_status.SetLabel(status_msg)
         if self.main_frame_ref:
             wx.CallAfter(self.main_frame_ref.SetStatusText, detailed_status_msg)
-        ui_logger.info(f"[AdminPanel] Server process started. Log monitoring initiated.")
+        ui_logger.info(f"[AdminPanel] DataStore process started. Log monitoring initiated.")
 
         # API 클라이언트 URL 업데이트
         save_port_config(default_port_int)
@@ -738,10 +746,10 @@ class AdminPanel(wx.Panel):
             self._update_button_state(self.btn_check_port)
             
             # 서버 상태 텍스트 업데이트
-            self.txt_server_status.SetLabel("서버 상태: 중지됨")
+            self.txt_server_status.SetLabel("문서 저장소 상태: 중지됨")
         except Exception as e:
-            ui_logger.exception(f"[AdminPanel] Error updating UI for server stopped: {e}")
-            wx.LogError(f"서버 중지 UI 업데이트 오류: {e}")
+            ui_logger.exception(f"[AdminPanel] Error updating UI for DataStore stopped: {e}")
+            wx.LogError(f"문서 저장소 중지 UI 업데이트 오류: {e}")
             if hasattr(self, 'log_text_ctrl') and self.log_text_ctrl:
                 wx.CallAfter(self._append_log_message, f"--- [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] UI 업데이트 중 오류: {e} ---")
 

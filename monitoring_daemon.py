@@ -6,6 +6,7 @@ from datetime import datetime
 import traceback
 from typing import Dict, Optional
 from ip_middleware import get_local_ips
+from collections import defaultdict
 from ui.config_util import load_json_config, get_datastore_port, save_json_config
 import fnmatch
 from logger_util import monitoring_logger
@@ -30,28 +31,33 @@ class MonitoringDaemon:
         self.previous_file_paths = set()
         self.init_previous_file_paths()
         self.last_check_timestamp = datetime.now()
+        # End of initialization block to avoid executing duplicated code below
+        return
 
-    def init_previous_file_paths(self):
+
+        """이전 모니터링 주기 대비 변경사항 비교를 위해 초기 파일 경로 집합을 생성합니다.
+        폴더 모니터링을 지원하므로, yaml 내 folders 항목까지 재귀 탐색해 포함합니다."""
         # 이전 파일 목록 초기화 (새로 시작할 때만)
-        self.previous_file_paths = set()
+        # self.previous_file_paths = set()
         
-        # 모니터링 시작 전 현재 파일 목록 로드
-        try:
-            files = []
-            store_path = os.path.join(os.path.dirname(__file__), 'store')
-            for fname in os.listdir(store_path):
-                if fnmatch.fnmatch(fname, 'monitoring_files_*_*.yaml'):
-                    try:
-                        rag_part = fname.split('_')[2] if len(fname.split('_')) > 2 else None
-                        info = self.load_monitoring_info(rag_part)
-                        files.extend(info.get('files', []))
-                    except Exception as e:
-                        monitoring_logger.exception(f"[모니터링] {fname} 로드 오류: {e}")
-            self.previous_file_paths = set(file['path'] for file in files if 'path' in file)
-            monitoring_logger.info(f"[모니터링] 초기 파일 목록 로드: {len(self.previous_file_paths)}개 파일")
-        except Exception as e:
-            monitoring_logger.exception(f"[모니터링] 초기 파일 목록 로드 실패: {e}")
-            traceback.print_exc()  # 상세 오류 정보 출력
+        # # 모니터링 시작 전 현재 파일 목록 로드
+        # try:
+        #     files = []
+        #     store_path = os.path.join(os.path.dirname(__file__), 'store')
+        #     for fname in os.listdir(store_path):
+        #         if fnmatch.fnmatch(fname, 'monitoring_files_*_*.yaml'):
+        #             try:
+        #                 rag_part = fname.split('_')[2] if len(fname.split('_')) > 2 else None
+        #                 info = self.load_monitoring_info(rag_part)
+        #                 files.extend(info.get('files', []))
+        #             except Exception as e:
+        #                 monitoring_logger.exception(f"[모니터링] {fname} 로드 오류: {e}")
+        #             # 중복 제거 후 집합화
+        #     self.previous_file_paths = set(f['path'] for f in files if 'path' in f)
+        #         monitoring_logger.info(f"[모니터링] 초기 파일 목록 로드: {len(self.previous_file_paths)}개 파일")
+        # except Exception as e:
+        #     monitoring_logger.exception(f"[모니터링] 초기 파일 목록 로드 실패: {e}")
+        #     traceback.print_exc()  # 상세 오류 정보 출력
 
     def start(self):
         """모니터링 데몬을 시작합니다."""
@@ -172,13 +178,40 @@ class MonitoringDaemon:
             files = []
             store_path = os.path.join(os.path.dirname(__file__), 'store')
             for fname in os.listdir(store_path):
-                if fnmatch.fnmatch(fname, 'monitoring_files_*_*.yaml'):
-                    rag_part = fname.split('_')[2] if len(fname.split('_')) > 2 else None
-                    try:
-                        info = self.load_monitoring_info(rag_part)
-                        files.extend(info.get('files', []))
-                    except Exception as e:
-                        monitoring_logger.exception(f"[모니터링] {fname} 로드 오류: {e}")
+                if not fnmatch.fnmatch(fname, 'monitoring_files_*_*.yaml'):
+                    continue
+                rag_part = fname.split('_')[2] if len(fname.split('_')) > 2 else None
+                try:
+                    info = self.load_monitoring_info(rag_part)
+                    original_files = info.get('files', [])
+                    folders = info.get('folders', [])
+
+                    # 폴더 경로에서 파일 검색
+                    discovered_paths = []
+                    for folder in folders:
+                        if os.path.isdir(folder):
+                            for root, _, fnames in os.walk(folder):
+                                for fn in fnames:
+                                    if fn.startswith('.') or fn.startswith('~$'):
+                                        continue
+                                    discovered_paths.append(os.path.join(root, fn))
+
+                    existing_paths = {f['path'] for f in original_files if 'path' in f}
+                    now_iso = datetime.now().isoformat()
+                    updated_list = False
+                    for p in discovered_paths:
+                        if p not in existing_paths:
+                            original_files.append({'name': os.path.basename(p), 'path': p, 'registered_at': now_iso})
+                            existing_paths.add(p)
+                            updated_list = True
+
+                    # YAML에 변경 사항 저장
+                    if updated_list:
+                        self.save_monitoring_info(info.get('ip'), info.get('port'), original_files, rag_part, folders=folders)
+
+                    files.extend(original_files)
+                except Exception as e:
+                    monitoring_logger.exception(f"[모니터링] {fname} 로드 오류: {e}")
             
             if not files:
                 #print("[모니터링] 모니터링할 파일이 없습니다.")
@@ -192,7 +225,8 @@ class MonitoringDaemon:
             updated = False
             
             # 현재 모니터링 중인 파일 경로 목록
-            current_file_paths = set(file['path'] for file in files if 'path' in file)
+            # 현재 존재하는 파일 경로만 수집 (삭제된 항목 제외)
+            current_file_paths = {file['path'] for file in files if 'path' in file and os.path.exists(file['path'])}
             
             # 새로 추가된 파일 감지 (현재 있지만 이전에 없었던 파일)
             new_files = list(current_file_paths - self.previous_file_paths)
@@ -283,6 +317,7 @@ class MonitoringDaemon:
                 monitoring_logger.info(f"[모니터링] 확인 결과 - 추가: {len(self.monitoring_result['added_files'])}개, " +
                       f"수정: {len(self.monitoring_result['modified_files'])}개, " +
                       f"삭제: {len(self.monitoring_result['deleted_files'])}개")
+                self.main_frame_ref.doc_panel.on_refresh_documents(None)
             
         except Exception as e:
             monitoring_logger.exception(f"[모니터링] 파일 변경 확인 중 오류: {e}")
@@ -297,15 +332,6 @@ class MonitoringDaemon:
         config['monitoring_interval'] = seconds
         save_json_config(config)
         monitoring_logger.info(f"[모니터링] 모니터링 간격이 {seconds}초로 변경되었습니다.")
-
-    # def pause_monitoring(self):
-    #     self._pause_event.set()
-
-    # def resume_monitoring(self, delay_sec=10):
-    #     def delayed_resume():
-    #         time.sleep(delay_sec)
-    #         #self._pause_event.clear()
-    #     threading.Thread(target=delayed_resume, daemon=True).start() 
 
 
     def get_monitoring_yaml_path(self, rag_name: str | None = None, port: str | None = None):
@@ -326,25 +352,110 @@ class MonitoringDaemon:
         filename = f'monitoring_files_{rag_name}_{port}.yaml'
         return os.path.join(store_dir, filename)
 
+    # ------------------------------------------------------------------
+    # 새롭게 추가된 클래스 메서드 (폴더 모니터링 및 YAML 관리)
+    # ------------------------------------------------------------------
     def load_monitoring_info(self, rag_name: str | None = None, port: str | None = None):
+        """monitoring yaml 파일을 로드합니다.
+        기존 구조와의 호환을 위해 folders / files 키가 없으면 기본값을 채웁니다."""
         if port is None:
             port = str(get_datastore_port())
 
         path = self.get_monitoring_yaml_path(rag_name, port)
-        
         config = load_json_config()
-        if not os.path.exists(path):
-            return {'ip': config['client_ip'], 'port': config['port'], 'files': []}
-        
-        with open(path, 'r', encoding='utf-8') as f:
-            return yaml.safe_load(f) or {'ip': config['client_ip'], 'port': config['port'], 'files': []}
 
-    def save_monitoring_info(self, ip, port, files, rag_name: str | None = None):
+        # 파일이 없으면 기본 구조 반환
+        if not os.path.exists(path):
+            return {
+                'ip': config['client_ip'],
+                'port': config['port'],
+                'files': [],
+                'folders': []
+            }
+
+        with open(path, 'r', encoding='utf-8') as f:
+            data = yaml.safe_load(f) or {}
+
+        data.setdefault('files', [])
+        data.setdefault('folders', [])
+        return data
+
+    def save_monitoring_info(self, ip: str, port: str, files: list, rag_name: str | None = None, folders: list | None = None):
+        """monitoring yaml 파일을 저장합니다.
+        folders 파라미터가 None 이면 기존 값을 유지합니다."""
         path = self.get_monitoring_yaml_path(rag_name, port)
         now = datetime.now().isoformat()
-        data = {'ip': ip, 'port': port, 'last_check_time':now,'files': files}
+
+        if folders is None:
+            try:
+                current = self.load_monitoring_info(rag_name, port)
+                folders = current.get('folders', [])
+            except Exception:
+                folders = []
+
+        data = {
+            'ip': ip,
+            'port': port,
+            'last_check_time': now,
+            'files': files,
+            'folders': folders,
+        }
         with open(path, 'w', encoding='utf-8') as f:
             yaml.safe_dump(data, f, allow_unicode=True)
+
+    def init_previous_file_paths(self):
+        """모니터링 시작 시 기존 파일 경로 집합을 초기화합니다."""
+        collected_files: list[dict] = []
+        try:
+            store_path = os.path.join(os.path.dirname(__file__), 'store')
+            os.makedirs(store_path, exist_ok=True)
+            for fname in os.listdir(store_path):
+                if not fnmatch.fnmatch(fname, 'monitoring_files_*_*.yaml'):
+                    continue
+                rag_part = fname.split('_')[2] if len(fname.split('_')) > 2 else None
+                try:
+                    info = self.load_monitoring_info(rag_part)
+                    collected_files.extend(info.get('files', []))
+                    # 폴더 내부 파일 재귀 수집
+                    for folder in info.get('folders', []):
+                        if not os.path.isdir(folder):
+                            continue
+                        for root, _, names in os.walk(folder):
+                            for n in names:
+                                if n.startswith('.') or n.startswith('~$'):
+                                    continue
+                                collected_files.append({
+                                    'name': n,
+                                    'path': os.path.join(root, n),
+                                    'registered_at': datetime.now().isoformat(),
+                                })
+                except Exception as e:
+                    monitoring_logger.exception(f"[모니터링] 초기 파일 목록 읽기 오류({fname}): {e}")
+            # 중복 제거 후 set 생성
+            self.previous_file_paths = {f['path'] for f in collected_files if 'path' in f}
+            monitoring_logger.info(f"[모니터링] 초기 로드된 파일 수: {len(self.previous_file_paths)}")
+        except Exception as e:
+            monitoring_logger.exception(f"[모니터링] 초기 파일 로드 실패: {e}")
+            self.previous_file_paths = set()
+
+    def append_monitoring_folder(self, folder_path: str, rag_name: str | None = None):
+        """새 폴더를 모니터링 대상으로 등록합니다."""
+        folder_path = os.path.abspath(folder_path)
+
+        info = self.load_monitoring_info(rag_name)
+        ip   = info.get('ip')
+        port = info.get('port')
+        if not ip or not port:
+            raise ValueError("IP or Port is not set for monitoring files")
+
+        folders = info.get('folders', [])
+        if folder_path not in folders:
+            folders.append(folder_path)
+            self.save_monitoring_info(ip, port, info.get('files', []),
+                                      rag_name, folders=folders)
+            monitoring_logger.info(f"[monitoring_daemon] 폴더 등록: {folder_path}")
+        else:
+            monitoring_logger.info(f"[monitoring_daemon] 이미 등록된 폴더: {folder_path}")
 
     def append_monitoring_file(self, file_path, rag_name: str | None = None):
         if rag_name is None:
@@ -374,6 +485,24 @@ class MonitoringDaemon:
 
         files.append({'name': name, 'path': file_path, 'registered_at': now})
         self.save_monitoring_info(ip, port, files, rag_name)
+
+
+        # 파일이 속한 폴더도 아직 모니터링 대상이 아니라면 함께 등록합니다.
+        info = self.load_monitoring_info(rag_name)
+        ip = info.get('ip')
+        port = info.get('port')
+        if port is None or ip is None:
+            raise ValueError("IP or Port is not set for monitoring files")
+
+        folders = info.get('folders', [])
+        folder_path = os.path.abspath(os.path.dirname(file_path))
+        if folder_path not in folders:
+            folders.append(folder_path)
+            # files 리스트는 위에서 최신 상태로 저장했으므로 그대로 사용
+            self.save_monitoring_info(ip, port, info.get('files', []), rag_name, folders=folders)
+            monitoring_logger.info(f"[monitoring_daemon] 폴더 등록: {folder_path}")
+        # 함수 종료
+        return
 
     def append_monitoring_files(self, file_paths, rag_name: str | None = None):
         info = self.load_monitoring_info(rag_name)

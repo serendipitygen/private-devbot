@@ -68,7 +68,7 @@ export HF_ENDPOINT="https://bart.sec.samsung.net/artifactory/api/huggingfaceml/h
 
 ## 파일 설명
 
-- main.py : FastAPI 서버 구동
+- main.py : FastAPI 문서 저장소 서버 구동
 - vector_store.py : FAISS 벡터 저장소로 FAISS DB와 임베딩 관리
 - faiss_vector_store.py : FAISS 벡터 저장소 구현
 - document_splitter.py : 문서를 토큰 단위로 분할
