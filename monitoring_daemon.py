@@ -466,9 +466,8 @@ class MonitoringDaemon:
         ip = info.get('ip')
         port = info.get('port')
         if port is None or ip is None:
-            raise ValueError("IP or Port is not set for moinotirng files")
+            raise ValueError("IP or Port is not set for monitoring files")
 
-        port = info.get('port')
         files = info.get('files', [])
         name = os.path.basename(file_path)
         now = datetime.now().isoformat()
@@ -478,29 +477,9 @@ class MonitoringDaemon:
             if f['path'] == file_path:
                 del files[i]
                 break
-        
-        # 여러 건인 경우 처리 방법
-        # remove_paths = {file_path1, file_path2}
-        # files = [f for f in files if f['path] not in remove_paths]
-
         files.append({'name': name, 'path': file_path, 'registered_at': now})
         self.save_monitoring_info(ip, port, files, rag_name)
-
-
-        # 파일이 속한 폴더도 아직 모니터링 대상이 아니라면 함께 등록합니다.
-        info = self.load_monitoring_info(rag_name)
-        ip = info.get('ip')
-        port = info.get('port')
-        if port is None or ip is None:
-            raise ValueError("IP or Port is not set for monitoring files")
-
-        folders = info.get('folders', [])
-        folder_path = os.path.abspath(os.path.dirname(file_path))
-        if folder_path not in folders:
-            folders.append(folder_path)
-            # files 리스트는 위에서 최신 상태로 저장했으므로 그대로 사용
-            self.save_monitoring_info(ip, port, info.get('files', []), rag_name, folders=folders)
-            monitoring_logger.info(f"[monitoring_daemon] 폴더 등록: {folder_path}")
+        # 폴더는 append_monitoring_folder 등 명시적 함수에서만 추가하도록 변경
         # 함수 종료
         return
 

@@ -16,6 +16,8 @@ from monitoring_daemon import MonitoringDaemon
 from ui.ui_setting import MODERN_COLORS, PRIVATE_DEVBOT_UI_VERSION
 from logger_util import ui_logger
 from ui.api_client_for_public_devbot import registerOrUpdateToPublicDevbot
+from ui.upload_status_panel import UploadStatusPanel
+from upload_queue_manager import UploadQueueManager
 
 
 class CustomTabArt(wx.aui.AuiDefaultTabArt):
@@ -85,13 +87,18 @@ class MainFrame(wx.Frame):
             registerOrUpdateToPublicDevbot('default')
         except Exception as e:
             ui_logger.exception(f"[MainFrame] 기본 RAG 등록 실패: {e}")
-        self.doc_panel:DocManagementPanel = DocManagementPanel(self.notebook, api_client=self.api_client, main_frame_ref=self, monitoring_daemon=self.monitoring_daemon)
+        self.upload_queue_manager = UploadQueueManager()
+        self.doc_panel:DocManagementPanel = DocManagementPanel(self.notebook, api_client=self.api_client, main_frame_ref=self, monitoring_daemon=self.monitoring_daemon, upload_queue_manager=self.upload_queue_manager)
         self.search_panel:SearchPanel = SearchPanel(self.notebook, api_client=self.api_client)
         self.admin_panel:AdminPanel = AdminPanel(self.notebook, api_client=self.api_client, main_frame_ref=self, monitoring_daemon=self.monitoring_daemon)
 
         self.notebook.AddPage(self.doc_panel, "Documents")
         self.notebook.AddPage(self.search_panel, "Search")
         self.notebook.AddPage(self.admin_panel, "Admin")
+        
+        # 파일 업로드 상태 패널 탭 추가
+        self.upload_status_panel = UploadStatusPanel(self.notebook, self.upload_queue_manager)
+        self.notebook.AddPage(self.upload_status_panel, "파일 업로드 상태")
 
 
     

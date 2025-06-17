@@ -21,12 +21,13 @@ from ui.dialogs import FileViewerDialog, RagNameDialog
 from ui.api_client_for_public_devbot import registerOrUpdateToPublicDevbot
 
 class DocManagementPanel(wx.Panel):
-    def __init__(self, parent, api_client:ApiClient, main_frame_ref, monitoring_daemon:MonitoringDaemon=None):
+    def __init__(self, parent, api_client:ApiClient, main_frame_ref, monitoring_daemon:MonitoringDaemon=None, upload_queue_manager=None):
         wx.Panel.__init__(self, parent)
         self.SetBackgroundColour(MODERN_COLORS['notebook_background'])
         self.api_client:ApiClient = api_client
         self.main_frame_ref = main_frame_ref # MainFrame 참조 저장
         self.monitoring_daemon:MonitoringDaemon = monitoring_daemon
+        self.upload_queue_manager = upload_queue_manager
         
         # config에서 page_size 불러오기
         config = load_json_config()
@@ -557,6 +558,14 @@ class DocManagementPanel(wx.Panel):
                 return
             file_paths = file_dialog.GetPaths()
             if file_paths:
+                remaining = self.upload_queue_manager.get_remaining_capacity()
+                if len(file_paths) > remaining:
+                    wx.MessageBox(
+                        f"업로드 가능한 파일 수를 초과했습니다.\n현재 업로드 가능한 파일 수: {remaining}건",
+                        "업로드 제한",
+                        wx.OK | wx.ICON_WARNING
+                    )
+                    return
                 self._start_upload_job(file_paths, "파일 업로드")
 
     def on_upload_folder(self, event):
@@ -600,6 +609,14 @@ class DocManagementPanel(wx.Panel):
                             "알림", wx.OK | wx.ICON_INFORMATION)
                 return
                     
+            remaining = self.upload_queue_manager.get_remaining_capacity()
+            if len(file_paths) > remaining:
+                wx.CallAfter(wx.MessageBox,
+                            f"업로드 가능한 파일 수를 초과했습니다.\n현재 업로드 가능한 파일 수: {remaining}건",
+                            "업로드 제한",
+                            wx.OK | wx.ICON_WARNING)
+                return
+                    
             wx.CallAfter(self._start_upload_job, file_paths, "폴더 업로드")
             
         except Exception as e:
@@ -609,36 +626,8 @@ class DocManagementPanel(wx.Panel):
         finally:
             wx.CallAfter(self.overlay.hide)
 
-    def disable_action_buttons(self):
-        """모든 주요 액션 버튼을 비활성화합니다."""
-        for btn in [self.btn_upload_file, self.btn_upload_folder, self.btn_delete_selected, 
-                    self.btn_delete_all, self.btn_refresh_status, self.btn_filter, 
-                    self.btn_prev_page, self.btn_next_page, self.btn_add_rag,
-                    self.btn_backup_store, self.btn_restore_store]:
-            btn.Disable()
-        self.rag_choice.Disable()
-
-    def enable_action_buttons(self):
-        """모든 주요 액션 버튼을 활성화합니다."""
-        for btn in [self.btn_upload_file, self.btn_upload_folder, self.btn_delete_selected, 
-                    self.btn_delete_all, self.btn_refresh_status, self.btn_filter, 
-                    self.btn_prev_page, self.btn_next_page, self.btn_add_rag,
-                    self.btn_backup_store, self.btn_restore_store]:
-            btn.Enable()
-        self.rag_choice.Enable()
-        self.update_page_info() # 페이지 버튼 상태는 페이징 정보에 따라 다시 결정
-        self.update_page_info() # 페이지 버튼 상태는 페이징 정보에 따라 다시 결정
-
     def _start_upload_job(self, file_paths, job_desc: str = "파일 업로드"):
-        """선택한(또는 수집한) 파일을 백그라운드 스레드에서 업로드한다.
-
-        Parameters
-        ----------
-        file_paths : list[str]
-            업로드할 파일 경로 목록
-        job_desc : str
-            사용자에게 표시할 작업 설명 (예: "파일 업로드", "폴더 업로드")
-        """
+        """선택한(또는 수집한) 파일을 백그라운드 스레드에서 업로드한다."""
         if not file_paths:
             wx.MessageBox("업로드할 파일이 없습니다.", "알림", wx.OK | wx.ICON_INFORMATION)
             return
@@ -648,39 +637,26 @@ class DocManagementPanel(wx.Panel):
 
         def _task():
             success_cnt = 0
+            failed_cnt = 0
             for path in file_paths:
                 try:
-                    result = self.api_client.upload_file_path(path)
-                    if result and not (isinstance(result, dict) and "error" in result):
+                    if self.upload_queue_manager.add_file(path):
                         success_cnt += 1
+                    else:
+                        failed_cnt += 1
                 except Exception as e:
                     ui_logger.exception(f"[DocManagementPanel] 파일 업로드 실패: {e}")
+                    failed_cnt += 1
+                    
             # UI 및 상태 갱신
             wx.CallAfter(self.on_refresh_status, None)
             wx.CallAfter(self.enable_action_buttons)
             wx.CallAfter(wx.MessageBox,
-                         f"{job_desc} 완료: {success_cnt}/{len(file_paths)}개 성공",
+                         f"파일 업로드 요청 완료: {success_cnt}건 대기열 추가, {failed_cnt}건 실패",
                          "작업 완료",
                          wx.OK | wx.ICON_INFORMATION)
 
         threading.Thread(target=_task, daemon=True).start()
-
-    def on_item_activated(self, event):
-        """리스트에서 항목을 더블 클릭했을 때 파일을 엽니다."""
-        idx = event.GetIndex()
-        if idx < 0: return
-        data_idx = self.list_ctrl_docs.GetItemData(idx)
-        if data_idx >= len(self.filtered_documents): return
-        doc = self.filtered_documents[data_idx]
-        file_path = doc.get("file_path")
-        if file_path and os.path.exists(file_path):
-            try:
-                os.startfile(file_path)
-            except Exception as e:
-                wx.MessageBox(f"파일을 여는 중 오류 발생: {e}", "오류", wx.OK | wx.ICON_ERROR)
-                ui_logger.exception("파일 열기 오류")
-        else:
-            wx.MessageBox("파일을 찾을 수 없습니다.", "오류", wx.OK | wx.ICON_ERROR)
 
     def on_delete_selected(self, event):
         """선택한 문서를 삭제합니다."""
@@ -883,3 +859,22 @@ class DocManagementPanel(wx.Panel):
         # UI 비활성화 후 백그라운드에서 복원 실행
         self.disable_action_buttons()
         threading.Thread(target=_task, daemon=True).start()
+
+    def disable_action_buttons(self):
+        """모든 주요 액션 버튼을 비활성화합니다."""
+        for btn in [self.btn_upload_file, self.btn_upload_folder, self.btn_delete_selected, 
+                    self.btn_delete_all, self.btn_refresh_status, self.btn_filter, 
+                    self.btn_prev_page, self.btn_next_page, self.btn_add_rag,
+                    self.btn_backup_store, self.btn_restore_store]:
+            btn.Disable()
+        self.rag_choice.Disable()
+
+    def enable_action_buttons(self):
+        """모든 주요 액션 버튼을 활성화합니다."""
+        for btn in [self.btn_upload_file, self.btn_upload_folder, self.btn_delete_selected, 
+                    self.btn_delete_all, self.btn_refresh_status, self.btn_filter, 
+                    self.btn_prev_page, self.btn_next_page, self.btn_add_rag,
+                    self.btn_backup_store, self.btn_restore_store]:
+            btn.Enable()
+        self.rag_choice.Enable()
+        self.update_page_info() # 페이지 버튼 상태는 페이징 정보에 따라 다시 결정
