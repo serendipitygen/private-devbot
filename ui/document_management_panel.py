@@ -561,19 +561,53 @@ class DocManagementPanel(wx.Panel):
 
     def on_upload_folder(self, event):
         """폴더를 선택하고 그 안의 모든 파일을 업로드합니다."""
-        with wx.DirDialog(self, "업로드할 폴더 선택", style=wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST) as dir_dialog:
-            if dir_dialog.ShowModal() == wx.ID_CANCEL:
-                return
-            folder_path = dir_dialog.GetPath()
-            # 선택한 폴더 내의 모든 파일 경로 수집 (하위 폴더 포함)
+        try:
+            # 로딩 표시
+            self.overlay.show("폴더 선택 중...")
+            wx.Yield()  # UI 업데이트를 위해 이벤트 루프 처리
+
+            with wx.DirDialog(self, "업로드할 폴더 선택", 
+                            style=wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST) as dir_dialog:
+                if dir_dialog.ShowModal() == wx.ID_CANCEL:
+                    self.overlay.hide()
+                    return
+                    
+                folder_path = dir_dialog.GetPath()
+                self.overlay.show("파일 수집 중...")
+                
+                # 백그라운드에서 파일 수집
+                threading.Thread(
+                    target=self._collect_and_upload_files,
+                    args=(folder_path,),
+                    daemon=True
+                ).start()
+                
+        except Exception as e:
+            self.overlay.hide()
+            wx.MessageBox(f"폴더 선택 중 오류 발생: {e}", "오류", wx.OK | wx.ICON_ERROR)
+            ui_logger.exception("폴더 업로드 오류")
+
+    def _collect_and_upload_files(self, folder_path):
+        """백그라운드에서 파일을 수집하고 업로드합니다."""
+        try:
             file_paths = []
             for root, _dirs, files in os.walk(folder_path):
                 for f in files:
                     file_paths.append(os.path.join(root, f))
+                    
             if not file_paths:
-                wx.MessageBox("선택한 폴더에 업로드할 파일이 없습니다.", "알림", wx.OK | wx.ICON_INFORMATION)
+                wx.CallAfter(wx.MessageBox, "선택한 폴더에 업로드할 파일이 없습니다.", 
+                            "알림", wx.OK | wx.ICON_INFORMATION)
                 return
-            self._start_upload_job(file_paths, "폴더 업로드")
+                    
+            wx.CallAfter(self._start_upload_job, file_paths, "폴더 업로드")
+            
+        except Exception as e:
+            wx.CallAfter(wx.MessageBox, f"파일 수집 중 오류 발생: {e}", 
+                        "오류", wx.OK | wx.ICON_ERROR)
+            ui_logger.exception("파일 수집 오류")
+        finally:
+            wx.CallAfter(self.overlay.hide)
 
     def disable_action_buttons(self):
         """모든 주요 액션 버튼을 비활성화합니다."""
