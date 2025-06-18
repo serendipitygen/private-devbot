@@ -17,7 +17,7 @@ from ui.ui_setting import MODERN_COLORS, PRIVATE_DEVBOT_UI_VERSION
 from logger_util import ui_logger
 from ui.api_client_for_public_devbot import registerOrUpdateToPublicDevbot
 from ui.upload_status_panel import UploadStatusPanel
-from upload_queue_manager import UploadQueueManager
+# from upload_queue_manager import UploadQueueManager  # UI에서는 직접 사용하지 않음
 
 
 class CustomTabArt(wx.aui.AuiDefaultTabArt):
@@ -87,8 +87,8 @@ class MainFrame(wx.Frame):
             registerOrUpdateToPublicDevbot('default')
         except Exception as e:
             ui_logger.exception(f"[MainFrame] 기본 RAG 등록 실패: {e}")
-        self.upload_queue_manager = UploadQueueManager()
-        self.doc_panel:DocManagementPanel = DocManagementPanel(self.notebook, api_client=self.api_client, main_frame_ref=self, monitoring_daemon=self.monitoring_daemon, upload_queue_manager=self.upload_queue_manager)
+        # UI에서는 upload_queue_manager를 생성하지 않고 서버와 통신만 함
+        self.doc_panel:DocManagementPanel = DocManagementPanel(self.notebook, api_client=self.api_client, main_frame_ref=self, monitoring_daemon=self.monitoring_daemon)
         self.search_panel:SearchPanel = SearchPanel(self.notebook, api_client=self.api_client)
         self.admin_panel:AdminPanel = AdminPanel(self.notebook, api_client=self.api_client, main_frame_ref=self, monitoring_daemon=self.monitoring_daemon)
 
@@ -96,8 +96,8 @@ class MainFrame(wx.Frame):
         self.notebook.AddPage(self.search_panel, "Search")
         self.notebook.AddPage(self.admin_panel, "Admin")
         
-        # 파일 업로드 상태 패널 탭 추가
-        self.upload_status_panel = UploadStatusPanel(self.notebook, self.upload_queue_manager)
+        # 파일 업로드 상태 패널 탭 추가 (서버와 WebSocket으로 통신)
+        self.upload_status_panel = UploadStatusPanel(self.notebook)
         self.notebook.AddPage(self.upload_status_panel, "파일 업로드 상태")
 
 

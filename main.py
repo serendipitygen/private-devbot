@@ -1,16 +1,16 @@
 import json
 import asyncio
-
-from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Body, Depends
-from fastapi.responses import JSONResponse
-from fastapi.responses import Response
-from pydantic import BaseModel
-from typing import List, Dict, Any
 import sys
 import os
 import logging
 import threading
 import queue
+from typing import List, Dict, Any
+
+from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Body, Depends, WebSocket, WebSocketDisconnect
+from fastapi.responses import JSONResponse, Response
+from pydantic import BaseModel
+
 from upload_queue_manager import UploadQueueManager
 
 import config
@@ -37,41 +37,47 @@ app = FastAPI()
 
 pubsub_event_type = "upload_status"
 
-# 업로드 큐 매니저 및 워커 스레드 생성
+# 업로드 큐 매니저 생성
 upload_queue_manager = UploadQueueManager(max_queue_size=10000)
 
-def upload_worker():
-    while True:
-        file_info = upload_queue_manager.get_next_file()
-        if file_info:
-            try:
-                rag_name = None
-                vector_store = rag_manager.get_store(rag_name)
-                # 파일 내용 읽기
-                contents = document_reader.get_contents_on_pc(file_info["file_path"])
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                result = loop.run_until_complete(
-                    vector_store.upload(
-                        file_path=file_info["file_path"],
-                        file_name=file_info["file_name"],
-                        contents=contents
-                    )
+def process_file_callback(file_info: Dict[str, Any]) -> Dict[str, Any]:
+    """파일 처리 콜백 함수"""
+    try:
+        rag_name = None
+        vector_store = rag_manager.get_store(rag_name)
+        
+        # 파일 내용 읽기
+        contents = document_reader.get_contents_on_pc(file_info["file_path"])
+        
+        # 새로운 이벤트 루프 생성하여 비동기 처리
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            result = loop.run_until_complete(
+                vector_store.upload(
+                    file_path=file_info["file_path"],
+                    file_name=file_info["file_name"],
+                    contents=contents
                 )
-                loop.close()
-                file_info["result"] = result
-                if result["status"] == "success":
-                    upload_queue_manager.mark_file_complete(file_info["file_path"])
-                else:
-                    upload_queue_manager.mark_file_failed(file_info["file_path"], result.get("message", "업로드 실패"))
-            except Exception as e:
-                upload_queue_manager.mark_file_failed(file_info["file_path"], str(e))
-        else:
-            import time
-            time.sleep(0.1)  # 큐가 비었을 때 잠시 대기
+            )
+        finally:
+            loop.close()
+            
+        # 벡터 스토어 저장
+        vector_store.save_indexed_files_and_vector_db()
+        
+        return result
+        
+    except Exception as e:
+        logger.exception(f"파일 처리 중 오류 발생: {file_info['file_path']}")
+        return {
+            "status": "failed",
+            "message": str(e)
+        }
 
-worker_thread = threading.Thread(target=upload_worker, daemon=True)
-worker_thread.start()
+# 파일 처리 콜백 설정 및 워커 시작
+upload_queue_manager.set_processing_callback(process_file_callback)
+upload_queue_manager.start_worker()
 
 # IP 제한 미들웨어 추가
 private_devbot_version = config.private_devbot_version
@@ -173,25 +179,56 @@ async def upload_file_path(
 ):
     try:
         logger.debug(f"[DEBUG] Upload by file path request - Path: {file_path}")
-        if not os.path.exists(file_path):
-            return JSONResponse(content={"status": "failed", "message": f"File not found: {file_path}"}, status_code=400)
-        try:
-            upload_queue_manager.add_file(file_path)
-            remaining = upload_queue_manager.get_remaining_capacity()
+        
+        result = upload_queue_manager.add_file(file_path)
+        
+        if result["success"]:
             return JSONResponse(content={
                 "status": "queued",
-                "message": f"파일이 업로드 대기열에 추가되었습니다. 남은 업로드 가능 개수: {remaining}개",
-                "remaining_capacity": remaining
+                "message": result["message"],
+                "remaining_capacity": result["remaining_capacity"]
             })
-        except queue.Full:
-            remaining = upload_queue_manager.get_remaining_capacity()
+        else:
+            status_code = 429 if "가득 찼습니다" in result["message"] else 400
             return JSONResponse(content={
                 "status": "failed",
-                "message": f"업로드 대기열이 가득 찼습니다. 현재 업로드 가능한 파일 개수: {remaining}개",
-                "remaining_capacity": remaining
-            }, status_code=429)
+                "message": result["message"],
+                "remaining_capacity": result["remaining_capacity"]
+            }, status_code=status_code)
+            
     except Exception as e:
         logger.error(f"[ERROR] Upload by file path failed: {e}")
+        return JSONResponse(content={"status": "failed", "message": str(e)}, status_code=500)
+
+@app.post("/upload_file_paths")
+async def upload_file_paths(
+    file_paths: List[str] = Body(...),
+    rag_name: str | None = None
+):
+    """여러 파일을 한번에 업로드 큐에 추가"""
+    try:
+        logger.debug(f"[DEBUG] Upload multiple file paths request - Count: {len(file_paths)}")
+        
+        result = upload_queue_manager.add_files(file_paths)
+        
+        if result["success"]:
+            return JSONResponse(content={
+                "status": "queued",
+                "message": result["message"],
+                "added_count": result["added_count"],
+                "failed_files": result["failed_files"],
+                "remaining_capacity": result["remaining_capacity"]
+            })
+        else:
+            status_code = 429 if "초과합니다" in result["message"] else 400
+            return JSONResponse(content={
+                "status": "failed",
+                "message": result["message"],
+                "remaining_capacity": result["remaining_capacity"]
+            }, status_code=status_code)
+            
+    except Exception as e:
+        logger.error(f"[ERROR] Upload multiple file paths failed: {e}")
         return JSONResponse(content={"status": "failed", "message": str(e)}, status_code=500)
 
 
@@ -522,15 +559,10 @@ async def get_allowed_ips():
 # 업로드 큐 상태 조회 엔드포인트
 @app.get("/upload_queue_status")
 async def upload_queue_status():
-    size = upload_queue_manager.get_queue_size()
-    remaining = upload_queue_manager.get_remaining_capacity()
-    return JSONResponse(content={
-        "queue_size": size,
-        "remaining_capacity": remaining
-    })
+    status = upload_queue_manager.get_status()
+    return JSONResponse(content=status)
 
 # ---- WebSocket 업로드 상태 실시간 알림 ----
-from fastapi import WebSocket, WebSocketDisconnect
 
 class ConnectionManager:
     def __init__(self):
@@ -568,16 +600,22 @@ async def websocket_endpoint(websocket: WebSocket):
 # 업로드 완료 시 WebSocket으로 알림 전송
 
 def upload_status_callback(file_info):
+    """업로드 상태 변경 시 WebSocket으로 클라이언트에 알림"""
     try:
+        # 메인 스레드의 이벤트 루프를 찾아서 WebSocket 메시지 전송
         loop = asyncio.get_event_loop()
         if loop.is_running():
             asyncio.run_coroutine_threadsafe(manager.send_message(file_info), loop)
         else:
             loop.run_until_complete(manager.send_message(file_info))
     except Exception as e:
-        pass  # 서버 로그로만 처리해도 됨
+        logger.debug(f"WebSocket 메시지 전송 실패: {e}")
 
-upload_queue_manager.subscribe(pubsub_event_type, upload_status_callback)
+# 모든 업로드 관련 이벤트를 구독
+upload_queue_manager.subscribe('file_added', upload_status_callback)
+upload_queue_manager.subscribe('file_processing', upload_status_callback)
+upload_queue_manager.subscribe('file_completed', upload_status_callback)
+upload_queue_manager.subscribe('file_failed', upload_status_callback)
 
 # 로그 핸들러 정의
 class CustomLogHandler(logging.Handler):

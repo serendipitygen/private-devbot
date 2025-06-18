@@ -21,13 +21,12 @@ from ui.dialogs import FileViewerDialog, RagNameDialog
 from ui.api_client_for_public_devbot import registerOrUpdateToPublicDevbot
 
 class DocManagementPanel(wx.Panel):
-    def __init__(self, parent, api_client:ApiClient, main_frame_ref, monitoring_daemon:MonitoringDaemon=None, upload_queue_manager=None):
+    def __init__(self, parent, api_client:ApiClient, main_frame_ref, monitoring_daemon:MonitoringDaemon=None):
         wx.Panel.__init__(self, parent)
         self.SetBackgroundColour(MODERN_COLORS['notebook_background'])
         self.api_client:ApiClient = api_client
         self.main_frame_ref = main_frame_ref # MainFrame 참조 저장
         self.monitoring_daemon:MonitoringDaemon = monitoring_daemon
-        self.upload_queue_manager = upload_queue_manager
         
         # config에서 page_size 불러오기
         config = load_json_config()
@@ -558,14 +557,20 @@ class DocManagementPanel(wx.Panel):
                 return
             file_paths = file_dialog.GetPaths()
             if file_paths:
-                remaining = self.upload_queue_manager.get_remaining_capacity()
-                if len(file_paths) > remaining:
-                    wx.MessageBox(
-                        f"업로드 가능한 파일 수를 초과했습니다.\n현재 업로드 가능한 파일 수: {remaining}건",
-                        "업로드 제한",
-                        wx.OK | wx.ICON_WARNING
-                    )
+                # 서버에서 큐 상태 확인
+                try:
+                    remaining = self._get_queue_remaining_capacity()
+                    if len(file_paths) > remaining:
+                        wx.MessageBox(
+                            f"업로드 가능한 파일 수를 초과했습니다.\n현재 업로드 가능한 파일 수: {remaining}건",
+                            "업로드 제한",
+                            wx.OK | wx.ICON_WARNING
+                        )
+                        return
+                except Exception as e:
+                    wx.MessageBox(f"서버 상태 확인 실패: {e}", "오류", wx.OK | wx.ICON_ERROR)
                     return
+                    
                 self._start_upload_job(file_paths, "파일 업로드")
 
     def on_upload_folder(self, event):
@@ -609,12 +614,16 @@ class DocManagementPanel(wx.Panel):
                             "알림", wx.OK | wx.ICON_INFORMATION)
                 return
                     
-            remaining = self.upload_queue_manager.get_remaining_capacity()
-            if len(file_paths) > remaining:
-                wx.CallAfter(wx.MessageBox,
-                            f"업로드 가능한 파일 수를 초과했습니다.\n현재 업로드 가능한 파일 수: {remaining}건",
-                            "업로드 제한",
-                            wx.OK | wx.ICON_WARNING)
+            try:
+                remaining = self._get_queue_remaining_capacity()
+                if len(file_paths) > remaining:
+                    wx.CallAfter(wx.MessageBox,
+                                f"업로드 가능한 파일 수를 초과했습니다.\n현재 업로드 가능한 파일 수: {remaining}건",
+                                "업로드 제한",
+                                wx.OK | wx.ICON_WARNING)
+                    return
+            except Exception as e:
+                wx.CallAfter(wx.MessageBox, f"서버 상태 확인 실패: {e}", "오류", wx.OK | wx.ICON_ERROR)
                 return
                     
             wx.CallAfter(self._start_upload_job, file_paths, "폴더 업로드")
@@ -636,27 +645,70 @@ class DocManagementPanel(wx.Panel):
         self.disable_action_buttons()
 
         def _task():
-            success_cnt = 0
-            failed_cnt = 0
-            for path in file_paths:
-                try:
-                    if self.upload_queue_manager.add_file(path):
-                        success_cnt += 1
-                    else:
-                        failed_cnt += 1
-                except Exception as e:
-                    ui_logger.exception(f"[DocManagementPanel] 파일 업로드 실패: {e}")
-                    failed_cnt += 1
-                    
-            # UI 및 상태 갱신
-            wx.CallAfter(self.on_refresh_status, None)
-            wx.CallAfter(self.enable_action_buttons)
-            wx.CallAfter(wx.MessageBox,
-                         f"파일 업로드 요청 완료: {success_cnt}건 대기열 추가, {failed_cnt}건 실패",
-                         "작업 완료",
-                         wx.OK | wx.ICON_INFORMATION)
+            try:
+                result = self._upload_files_to_queue(file_paths)
+                success_cnt = result.get('added_count', 0)
+                failed_files = result.get('failed_files', [])
+                failed_cnt = len(failed_files)
+                
+                message = f"파일 업로드 요청 완료: {success_cnt}건 대기열 추가"
+                if failed_cnt > 0:
+                    message += f", {failed_cnt}건 실패"
+                
+                # 안내 문구 표시
+                info_message = f"{message}\n\n선택된 파일들은 백그라운드로 파일을 추가하며, 파일 업로드시마다 메시지로 알려드립니다."
+                
+                wx.CallAfter(wx.MessageBox, info_message, "작업 완료", wx.OK | wx.ICON_INFORMATION)
+                
+            except Exception as e:
+                ui_logger.exception(f"[DocManagementPanel] 파일 업로드 실패: {e}")
+                wx.CallAfter(wx.MessageBox, f"파일 업로드 실패: {e}", "오류", wx.OK | wx.ICON_ERROR)
+            finally:
+                # UI 및 상태 갱신
+                wx.CallAfter(self.on_refresh_status, None)
+                wx.CallAfter(self.enable_action_buttons)
 
         threading.Thread(target=_task, daemon=True).start()
+
+    def _get_queue_remaining_capacity(self) -> int:
+        """서버에서 업로드 큐의 남은 용량을 조회합니다."""
+        try:
+            result = self.api_client._make_request('GET', 'upload_queue_status')
+            
+            if isinstance(result, dict) and 'error' in result:
+                raise Exception(f"서버 오류: {result.get('details', result.get('error'))}")
+            
+            if result is None:
+                ui_logger.warning("서버에서 빈 응답을 받았습니다.")
+                return 0
+                
+            if isinstance(result, dict):
+                return result.get('remaining_capacity', 0)
+            else:
+                ui_logger.warning(f"예상치 못한 응답 형식: {type(result)}")
+                return 0
+                
+        except Exception as e:
+            ui_logger.error(f"큐 상태 조회 실패: {e}")
+            raise
+
+    def _upload_files_to_queue(self, file_paths: list) -> dict:
+        """여러 파일을 서버 업로드 큐에 추가합니다."""
+        try:
+            result = self.api_client._make_request(
+                'POST',
+                'upload_file_paths',
+                json_data=file_paths
+            )
+            
+            if isinstance(result, dict) and 'error' in result:
+                raise Exception(f"서버 오류: {result.get('details', result.get('error'))}")
+                
+            return result if result else {"success": False, "message": "서버 응답 없음"}
+            
+        except Exception as e:
+            ui_logger.error(f"파일 업로드 큐 추가 실패: {e}")
+            raise
 
     def on_delete_selected(self, event):
         """선택한 문서를 삭제합니다."""

@@ -13,21 +13,38 @@ class ApiClient:
     def __init__(self, get_upload_config_func, monitoring_daemon: MonitoringDaemon=None):
         self.get_upload_config = get_upload_config_func
         self.session = self._create_session()
+        self.base_url = self._get_base_url()
         self.current_rag_name = 'default'
         if monitoring_daemon is None:
             ui_logger.debug("[Error] monitoring daemon is None")
         self.monitoring_daemon:MonitoringDaemon = monitoring_daemon
 
     def _create_session(self):
-        return None 
+        session = requests.Session()
+        retry = Retry(
+            total=3,
+            backoff_factor=1,
+            status_forcelist=[500, 502, 503, 504],
+            allowed_methods=['GET', 'POST', 'PUT', 'DELETE']
+        )
+        adapter = HTTPAdapter(max_retries=retry)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
+        return session 
 
     def _get_base_url(self):
         config = load_json_config()
-
-        if config['port'] == 8123:
-            ui_logger.debug("port is 8123")
-
-        return "http://" + config['client_ip'] + ":" + str(config['port'])
+        
+        # 로컬 서버는 127.0.0.1로 접속
+        client_ip = config.get('client_ip', '127.0.0.1')
+        if client_ip != '127.0.0.1':
+            client_ip = '127.0.0.1'
+            
+        port = config.get('port', 8124)
+        base_url = f"http://{client_ip}:{port}"
+        
+        ui_logger.debug(f"Base URL: {base_url}")
+        return base_url
 
     def _make_request_without_proxy(self, method, endpoint, params=None, data=None, files=None, json_data=None, headers=None, timeout=600):
         """모든 API 요청을 처리하는 공통 메서드"""
