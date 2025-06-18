@@ -562,6 +562,17 @@ async def upload_queue_status():
     status = upload_queue_manager.get_status()
     return JSONResponse(content=status)
 
+# 업로드 큐의 모든 파일 정보 조회 엔드포인트
+@app.get("/upload_queue_files")
+async def upload_queue_files():
+    """큐에 있는 모든 파일 정보를 반환합니다."""
+    try:
+        files_info = upload_queue_manager.get_all_files_info()
+        return JSONResponse(content=files_info)
+    except Exception as e:
+        logger.error(f"[ERROR] Upload queue files info failed: {e}")
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
 # ---- WebSocket 업로드 상태 실시간 알림 ----
 
 class ConnectionManager:

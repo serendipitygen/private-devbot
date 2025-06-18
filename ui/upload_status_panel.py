@@ -70,8 +70,8 @@ class UploadStatusPanel(wx.Panel):
         self.grid.CreateGrid(0, 6)
         
         # 컬럼 설정
-        columns = ["파일명", "경로", "상태", "추가 시간", "완료 시간", "메시지"]
-        widths = [200, 300, 100, 150, 150, 200]
+        columns = ["파일명", "경로", "상태", "시작 시간", "완료 시간", "메시지"]
+        widths = [180, 280, 100, 140, 140, 250]
         
         for i, (col_name, width) in enumerate(zip(columns, widths)):
             self.grid.SetColLabelValue(i, col_name)
@@ -108,13 +108,16 @@ class UploadStatusPanel(wx.Panel):
         def poll_upload_status():
             while self.running:
                 try:
-                    # 큐 상태 확인
-                    response = requests.get(f"http://127.0.0.1:{self.port}/upload_queue_status", timeout=3)
+                    # 모든 파일 정보 확인
+                    response = requests.get(f"http://127.0.0.1:{self.port}/upload_queue_files", timeout=3)
                     if response.status_code == 200:
-                        queue_data = response.json()
-                        queue_size = queue_data.get('queue_size', 0)
-                        worker_active = queue_data.get('worker_active', False)
-                        current_processing_file = queue_data.get('current_processing_file')
+                        files_data = response.json()
+                        current_processing_file = files_data.get('current_processing_file')
+                        pending_files = files_data.get('pending_files', [])
+                        completed_files = files_data.get('completed_files', [])
+                        failed_files = files_data.get('failed_files', [])
+                        queue_size = files_data.get('queue_size', 0)
+                        worker_active = files_data.get('worker_active', False)
                         
                         # 연결 상태 업데이트
                         status_msg = f"서버 연결됨 (큐: {queue_size}개"
@@ -125,26 +128,34 @@ class UploadStatusPanel(wx.Panel):
                         
                         wx.CallAfter(self.connection_label.SetLabel, status_msg)
                         
+                        # 대기 중인 파일들을 그리드에 표시
+                        for pending_file in pending_files:
+                            pending_file['status'] = 'pending'  # 상태를 pending으로 설정
+                            wx.CallAfter(self._update_current_processing_file, pending_file)
+                        
                         # 현재 처리 중인 파일이 있으면 그리드에 표시
                         if current_processing_file:
                             wx.CallAfter(self._update_current_processing_file, current_processing_file)
-                        else:
-                            # 처리 중인 파일이 없으면 그리드 정리
-                            wx.CallAfter(self._clear_processing_files)
-                            
-                            # 이전에 처리 중이던 파일이 있었다면 완료된 것으로 간주
-                            if self.last_processing_file:
-                                completed_file = self.last_processing_file.copy()
-                                completed_file['status'] = 'completed'
-                                completed_file['completed_time'] = time.time()
-                                print(f"[DEBUG] 파일 완료 감지: {completed_file.get('file_name', '알 수 없음')}")
-                                wx.CallAfter(self._update_current_processing_file, completed_file)
-                                wx.CallAfter(self._request_document_refresh)
+                        
+                        # 완료된 파일들을 그리드에 표시
+                        for completed_file in completed_files:
+                            completed_file['status'] = 'completed'
+                            wx.CallAfter(self._update_current_processing_file, completed_file)
+                        
+                        # 실패한 파일들을 그리드에 표시
+                        for failed_file in failed_files:
+                            failed_file['status'] = 'failed'
+                            wx.CallAfter(self._update_current_processing_file, failed_file)
+                        
+                        # 이전에 처리 중이던 파일이 있었는데 현재는 없다면 완료된 것으로 간주
+                        if self.last_processing_file and not current_processing_file:
+                            # 완료 감지는 completed_files에서 이미 처리되므로 여기서는 생략
+                            wx.CallAfter(self._request_document_refresh)
                         
                         # 현재 처리 중인 파일 상태 저장
                         self.last_processing_file = current_processing_file
                         
-                        # 완료된 파일 정리 (10초 후)
+                        # 완료된 파일 정리는 하지 않음 (계속 표시)
                         wx.CallAfter(self._cleanup_completed_files)
                             
                     else:
@@ -201,11 +212,28 @@ class UploadStatusPanel(wx.Panel):
             self.grid.SetCellValue(existing_row, 1, file_path)
         
         # 상태별 처리
-        if status == 'processing':
-            self.grid.SetCellValue(existing_row, 2, "처리 중")
+        if status == 'pending':
+            # 대기 중 상태 처리
+            added_time = file_info.get('added_time', 0)
+            if added_time:
+                added_time_str = datetime.datetime.fromtimestamp(added_time).strftime("%Y-%m-%d %H:%M:%S")
+            else:
+                added_time_str = time_str
+                
+            self.grid.SetCellValue(existing_row, 2, "⏰ 대기 중")
+            self.grid.SetCellValue(existing_row, 3, added_time_str)
+            self.grid.SetCellValue(existing_row, 4, "대기 중...")
+            self.grid.SetCellValue(existing_row, 5, "업로드 대기열에서 순서를 기다리고 있습니다...")
+            
+            # 대기 중 색상 설정 (연한 파란색)
+            for col in range(self.grid.GetNumberCols()):
+                self.grid.SetCellBackgroundColour(existing_row, col, wx.Colour(200, 220, 255))
+        
+        elif status == 'processing':
+            self.grid.SetCellValue(existing_row, 2, "⏳ 처리 중")
             self.grid.SetCellValue(existing_row, 3, time_str)
-            self.grid.SetCellValue(existing_row, 4, "")  # 완료 시간은 비워둠
-            self.grid.SetCellValue(existing_row, 5, "파일 처리 중...")
+            self.grid.SetCellValue(existing_row, 4, "처리 중...")  # 완료 시간은 처리 중 표시
+            self.grid.SetCellValue(existing_row, 5, "파일을 업로드하고 있습니다...")
             
             # 처리 중 색상 설정 (연한 노란색)
             for col in range(self.grid.GetNumberCols()):
@@ -216,19 +244,19 @@ class UploadStatusPanel(wx.Panel):
             if completed_time:
                 completed_time_str = datetime.datetime.fromtimestamp(completed_time).strftime("%Y-%m-%d %H:%M:%S")
             else:
-                completed_time_str = "알 수 없음"
+                completed_time_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             
             print(f"[DEBUG] 완료 상태 업데이트: {file_name} -> {completed_time_str}")
             
-            self.grid.SetCellValue(existing_row, 2, "업로드 완료")
+            self.grid.SetCellValue(existing_row, 2, "✓ 완료")
             self.grid.SetCellValue(existing_row, 4, completed_time_str)
-            self.grid.SetCellValue(existing_row, 5, "업로드가 성공적으로 완료되었습니다.")
+            self.grid.SetCellValue(existing_row, 5, "파일 업로드가 성공적으로 완료되었습니다.")
             
             # 완료 색상 설정 (연한 녹색)
             for col in range(self.grid.GetNumberCols()):
                 self.grid.SetCellBackgroundColour(existing_row, col, wx.Colour(200, 255, 200))
             
-            # 완료된 파일 추적에 추가 (10초 후 삭제를 위해)
+            # 완료된 파일 추적에 추가 (상태 유지를 위해)
             self.completed_files[file_path] = time.time()
             print(f"[DEBUG] 완료된 파일 추적에 추가: {file_path}")
         
@@ -237,18 +265,18 @@ class UploadStatusPanel(wx.Panel):
             if failed_time:
                 failed_time_str = datetime.datetime.fromtimestamp(failed_time).strftime("%Y-%m-%d %H:%M:%S")
             else:
-                failed_time_str = "알 수 없음"
+                failed_time_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             
             error_msg = file_info.get('error', '알 수 없는 오류')
-            self.grid.SetCellValue(existing_row, 2, "업로드 실패")
+            self.grid.SetCellValue(existing_row, 2, "✗ 실패")
             self.grid.SetCellValue(existing_row, 4, failed_time_str)
-            self.grid.SetCellValue(existing_row, 5, f"오류: {error_msg}")
+            self.grid.SetCellValue(existing_row, 5, f"업로드 실패: {error_msg}")
             
             # 실패 색상 설정 (연한 빨간색)
             for col in range(self.grid.GetNumberCols()):
                 self.grid.SetCellBackgroundColour(existing_row, col, wx.Colour(255, 200, 200))
             
-            # 실패한 파일도 추적에 추가 (10초 후 삭제를 위해)
+            # 실패한 파일도 추적에 추가 (상태 유지를 위해)
             self.completed_files[file_path] = time.time()
         
         self.grid.AutoSizeColumns()
@@ -271,26 +299,10 @@ class UploadStatusPanel(wx.Panel):
             self.grid.Refresh()
     
     def _cleanup_completed_files(self):
-        """10초 이상 지난 완료된 파일들을 그리드에서 제거"""
-        current_time = time.time()
-        files_to_remove = []
-        
-        for file_path, completion_time in self.completed_files.items():
-            if current_time - completion_time > 10:  # 10초 후 삭제
-                files_to_remove.append(file_path)
-        
-        # 그리드에서 해당 행들 삭제
-        for file_path in files_to_remove:
-            for row in range(self.grid.GetNumberRows()):
-                if self.grid.GetCellValue(row, 1) == file_path:
-                    print(f"[DEBUG] 완료된 파일 삭제: {file_path}")
-                    self.grid.DeleteRows(row, 1)
-                    break
-            del self.completed_files[file_path]
-        
-        if files_to_remove:
-            self.grid.Refresh()
-            print(f"[DEBUG] {len(files_to_remove)}개 완료된 파일이 정리되었습니다")
+        """완료된 파일들을 계속 표시 (삭제하지 않음)"""
+        # 완료된 파일들을 삭제하지 않고 계속 표시
+        # 사용자가 수동으로 "완료된 항목 지우기" 버튼을 눌러야 삭제됨
+        pass
     
     def _get_websocket_url(self):
         """WebSocket URL 생성"""
@@ -496,14 +508,28 @@ class UploadStatusPanel(wx.Panel):
         
         for row in range(self.grid.GetNumberRows()):
             status = self.grid.GetCellValue(row, 2)
-            if status in ['완료', '실패']:
+            if status in ['✓ 완료', '✗ 실패', '완료', '실패', '업로드 완료', '업로드 실패']:
                 rows_to_delete.append(row)
+        
+        if not rows_to_delete:
+            wx.MessageBox("삭제할 완료된 항목이 없습니다.", "알림", wx.OK | wx.ICON_INFORMATION)
+            return
+        
+        # 확인 대화상자
+        if wx.MessageBox(f"{len(rows_to_delete)}개의 완료된 항목을 삭제하시겠습니까?", 
+                        "완료된 항목 삭제", wx.YES_NO | wx.ICON_QUESTION) != wx.YES:
+            return
         
         # 역순으로 삭제 (인덱스 변경 방지)
         for row in reversed(rows_to_delete):
+            # 완료된 파일 추적에서도 제거
+            file_path = self.grid.GetCellValue(row, 1)
+            if file_path in self.completed_files:
+                del self.completed_files[file_path]
             self.grid.DeleteRows(row, 1)
         
         self.grid.Refresh()
+        print(f"[DEBUG] {len(rows_to_delete)}개 완료된 항목이 삭제되었습니다")
     
     def Destroy(self):
         """패널 종료 시 정리"""

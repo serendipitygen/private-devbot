@@ -605,12 +605,37 @@ class DocManagementPanel(wx.Panel):
         """백그라운드에서 파일을 수집하고 업로드합니다."""
         try:
             file_paths = []
+            # 지원되는 파일 확장자 목록
+            supported_extensions = {'.txt', '.md', '.pdf', '.docx', '.doc', '.pptx', '.ppt', 
+                                  '.xlsx', '.xls', '.csv', '.json', '.xml', '.html', '.htm'}
+            
             for root, _dirs, files in os.walk(folder_path):
                 for f in files:
-                    file_paths.append(os.path.join(root, f))
+                    # 숨김 파일 제외
+                    if f.startswith('.'):
+                        continue
+                    
+                    # 확장자 확인
+                    _, ext = os.path.splitext(f.lower())
+                    if ext not in supported_extensions:
+                        continue
+                    
+                    file_path = os.path.join(root, f)
+                    
+                    # 파일 크기 확인 (100MB 이하만)
+                    try:
+                        if os.path.getsize(file_path) > 100 * 1024 * 1024:  # 100MB
+                            continue
+                    except OSError:
+                        continue
+                    
+                    file_paths.append(file_path)
                     
             if not file_paths:
-                wx.CallAfter(wx.MessageBox, "선택한 폴더에 업로드할 파일이 없습니다.", 
+                wx.CallAfter(wx.MessageBox, 
+                            "선택한 폴더에 업로드 가능한 파일이 없습니다.\n"
+                            "지원되는 파일 형식: txt, md, pdf, docx, doc, pptx, ppt, xlsx, xls, csv, json, xml, html, htm\n"
+                            "파일 크기 제한: 100MB 이하", 
                             "알림", wx.OK | wx.ICON_INFORMATION)
                 return
                     
@@ -618,7 +643,9 @@ class DocManagementPanel(wx.Panel):
                 remaining = self._get_queue_remaining_capacity()
                 if len(file_paths) > remaining:
                     wx.CallAfter(wx.MessageBox,
-                                f"업로드 가능한 파일 수를 초과했습니다.\n현재 업로드 가능한 파일 수: {remaining}건",
+                                f"업로드 가능한 파일 수를 초과했습니다.\n"
+                                f"수집된 파일: {len(file_paths)}건\n"
+                                f"현재 업로드 가능한 파일 수: {remaining}건",
                                 "업로드 제한",
                                 wx.OK | wx.ICON_WARNING)
                     return
@@ -626,7 +653,7 @@ class DocManagementPanel(wx.Panel):
                 wx.CallAfter(wx.MessageBox, f"서버 상태 확인 실패: {e}", "오류", wx.OK | wx.ICON_ERROR)
                 return
                     
-            wx.CallAfter(self._start_upload_job, file_paths, "폴더 업로드")
+            wx.CallAfter(self._start_upload_job, file_paths, f"폴더 업로드 ({len(file_paths)}개 파일)")
             
         except Exception as e:
             wx.CallAfter(wx.MessageBox, f"파일 수집 중 오류 발생: {e}", 

@@ -17,6 +17,9 @@ class UploadQueueManager:
         self._worker_thread = None
         self._processing_callback = None
         self.current_processing_file = None  # 현재 처리 중인 파일 정보
+        self.pending_files = []  # 대기 중인 파일들을 별도로 관리
+        self.completed_files = []  # 완료된 파일들을 추적
+        self.failed_files = []  # 실패한 파일들을 추적
         self.logger = logging.getLogger(__name__)
         
     def set_processing_callback(self, callback: Callable[[Dict[str, Any]], Dict[str, Any]]):
@@ -65,6 +68,11 @@ class UploadQueueManager:
             }
             
             self.upload_queue.put_nowait(file_info)
+            
+            # pending_files 리스트에도 추가
+            with self._lock:
+                self.pending_files.append(file_info.copy())
+            
             self._notify_subscribers('file_added', file_info)
             
             return {
@@ -81,6 +89,11 @@ class UploadQueueManager:
                 'error': str(e),
                 'failed_time': datetime.now().timestamp()
             }
+            
+            # failed_files 리스트에 추가
+            with self._lock:
+                self.failed_files.append(error_info.copy())
+            
             self._notify_subscribers('file_failed', error_info)
             return {
                 "success": False,
@@ -137,6 +150,25 @@ class UploadQueueManager:
         """현재 처리 중인 파일 정보를 반환합니다."""
         return self.current_processing_file
     
+    def get_all_pending_files(self) -> List[Dict[str, Any]]:
+        """큐에 있는 모든 대기 중인 파일 목록을 반환합니다."""
+        with self._lock:
+            return [file_info.copy() for file_info in self.pending_files]
+    
+    def get_all_files_info(self) -> Dict[str, Any]:
+        """현재 처리 중인 파일과 대기 중인 파일들의 모든 정보를 반환합니다."""
+        with self._lock:
+            return {
+                "current_processing_file": self.current_processing_file,
+                "pending_files": [file_info.copy() for file_info in self.pending_files],
+                "completed_files": [file_info.copy() for file_info in self.completed_files[-50:]],  # 최근 50개만
+                "failed_files": [file_info.copy() for file_info in self.failed_files[-50:]],  # 최근 50개만
+                "queue_size": self.get_queue_size(),
+                "remaining_capacity": self.get_remaining_capacity(),
+                "max_capacity": self.max_queue_size,
+                "worker_active": self._worker_thread is not None and self._worker_thread.is_alive()
+            }
+    
     def subscribe(self, event_type: str, callback: Callable[[Dict[str, Any]], None]):
         """이벤트 구독을 등록합니다."""
         with self._lock:
@@ -175,6 +207,10 @@ class UploadQueueManager:
             try:
                 self.logger.debug(f"파일 처리 시작: {file_info['file_path']}")
                 
+                # pending_files에서 해당 파일 제거
+                with self._lock:
+                    self.pending_files = [f for f in self.pending_files if f['file_path'] != file_info['file_path']]
+                
                 # 현재 처리 중인 파일 정보 업데이트
                 self.current_processing_file = file_info.copy()
                 self.current_processing_file['status'] = 'processing'
@@ -195,6 +231,11 @@ class UploadQueueManager:
                         completed_info['status'] = 'completed'
                         completed_info['completed_time'] = datetime.now().timestamp()
                         completed_info['result'] = result
+                        
+                        # completed_files 리스트에 추가
+                        with self._lock:
+                            self.completed_files.append(completed_info.copy())
+                        
                         self._notify_subscribers('file_completed', completed_info)
                         self.logger.debug(f"파일 처리 완료: {file_info['file_path']}")
                     else:
@@ -202,6 +243,11 @@ class UploadQueueManager:
                         failed_info['status'] = 'failed'
                         failed_info['error'] = result.get('message', '알 수 없는 오류')
                         failed_info['failed_time'] = datetime.now().timestamp()
+                        
+                        # failed_files 리스트에 추가
+                        with self._lock:
+                            self.failed_files.append(failed_info.copy())
+                        
                         self._notify_subscribers('file_failed', failed_info)
                         self.logger.error(f"파일 처리 실패: {file_info['file_path']} - {failed_info['error']}")
                 else:
@@ -210,6 +256,11 @@ class UploadQueueManager:
                     failed_info['status'] = 'failed'
                     failed_info['error'] = '처리 콜백이 설정되지 않았습니다.'
                     failed_info['failed_time'] = datetime.now().timestamp()
+                    
+                    # failed_files 리스트에 추가
+                    with self._lock:
+                        self.failed_files.append(failed_info.copy())
+                    
                     self._notify_subscribers('file_failed', failed_info)
                     self.logger.error(f"파일 처리 실패: 콜백 없음 - {file_info['file_path']}")
                     
@@ -218,6 +269,11 @@ class UploadQueueManager:
                 failed_info['status'] = 'failed'
                 failed_info['error'] = str(e)
                 failed_info['failed_time'] = datetime.now().timestamp()
+                
+                # failed_files 리스트에 추가
+                with self._lock:
+                    self.failed_files.append(failed_info.copy())
+                
                 self._notify_subscribers('file_failed', failed_info)
                 self.logger.exception(f"파일 처리 중 예외 발생: {file_info['file_path']}")
             finally:
