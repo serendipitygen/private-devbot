@@ -18,7 +18,7 @@ async def health_check():
 
 
 @app.get("/read_excel_description")
-async def read_excel_description(excel_description_file_path: str = Query(..., description="Excel description markdown file name or path")) -> JSONResponse:
+async def read_excel_description(description_file_path: str = Query(..., description="Excel description markdown file name or path")) -> JSONResponse:
     """
     docs/excel/ 디렉토리의 마크다운 파일을 읽어 내용 반환
     파일명만 제공하면 docs/excel/ 아래에서 찾고, 전체 경로 제공도 가능
@@ -29,11 +29,11 @@ async def read_excel_description(excel_description_file_path: str = Query(..., d
         excel_docs_dir = project_root / "docs" / "excel"
         
         # 파일명만 제공된 경우 기본 경로(docs/excel/) 사용
-        if "/" not in excel_description_file_path and "\\" not in excel_description_file_path:
-            target_file = excel_docs_dir / excel_description_file_path
+        if "/" not in description_file_path and "\\" not in description_file_path:
+            target_file = excel_docs_dir / description_file_path
         else:
             # 전체 경로 제공된 경우
-            target_file = project_root / excel_description_file_path
+            target_file = project_root / description_file_path
         
         # 경로 정규화 및 보안 검증
         target_file = target_file.resolve()
@@ -45,25 +45,25 @@ async def read_excel_description(excel_description_file_path: str = Query(..., d
         
         # 파일 존재 확인
         if not target_file.exists():
-            return JSONResponse(status_code=404, content={"error": f"File not found: {excel_description_file_path}"})
+            return JSONResponse(status_code=404, content={"error": f"File not found: {description_file_path}"})
         
         # 파일인지 확인
         if not target_file.is_file():
-            return JSONResponse(status_code=400, content={"error": f"Not a file: {excel_description_file_path}"})
+            return JSONResponse(status_code=400, content={"error": f"Not a file: {description_file_path}"})
         
         # 마크다운 파일인지 확인
         if target_file.suffix.lower() not in ['.md', '.markdown']:
-            return JSONResponse(status_code=400, content={"error": f"Not a markdown file: {excel_description_file_path}"})
+            return JSONResponse(status_code=400, content={"error": f"Not a markdown file: {description_file_path}"})
         
         # 파일 읽기
         text = target_file.read_text(encoding="utf-8")
         
     except Exception as e:
-        logging.error(f"Failed to read file {excel_description_file_path}: {str(e)}")
+        logging.error(f"Failed to read file {description_file_path}: {str(e)}")
         return JSONResponse(status_code=500, content={"error": f"Failed to read file: {str(e)}"})
 
     return JSONResponse(content={"type": "read-excel-description", "message": text})
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host='0.0.0.0', port=8123)
+    uvicorn.run(app, host='0.0.0.0', port=8080)
