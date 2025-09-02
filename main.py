@@ -573,6 +573,10 @@ async def upload_queue_files():
         logger.error(f"[ERROR] Upload queue files info failed: {e}")
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
+# ---- axchallenge에서 추가한 sqlite 처리
+#from axchallenge.structured_data import router as structured_data_router
+#app.include_router(structured_data_router, prefix="/axchallenge")
+
 # ---- WebSocket 업로드 상태 실시간 알림 ----
 
 class ConnectionManager:
