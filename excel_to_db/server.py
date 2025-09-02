@@ -7,7 +7,9 @@ import io
 import base64
 import logging
 import json
+import sqlite3
 from pathlib import Path
+from typing import Optional
 
 app = FastAPI()
 logging.basicConfig(level=logging.INFO)
@@ -25,6 +27,12 @@ app.add_middleware(
 # Request Body 모델
 class ExcelDescriptionRequest(BaseModel):
     description_file_path: str
+
+
+class InsertExcelRequest(BaseModel):
+    excel_file_path: str
+    insert_sql: str
+    db_path: Optional[str] = "resources/data.db"
 
 
 
@@ -79,6 +87,87 @@ async def read_excel_description(request: ExcelDescriptionRequest) -> JSONRespon
         return JSONResponse(status_code=500, content={"error": f"Failed to read file: {str(e)}"})
 
     return JSONResponse(content={"type": "read-excel-description", "message": text})
+
+
+@app.post("/insert_excel")
+async def insert_excel(request: InsertExcelRequest) -> JSONResponse:
+    """
+    Excel 파일을 읽어서 SQLite 데이터베이스에 각 행의 데이터를 삽입
+    첫 번째 행은 헤더로 간주하고 두 번째 행부터 데이터로 처리
+    """
+    try:
+        # 현재 프로젝트 루트 경로
+        project_root = Path(__file__).parent.parent
+        
+        # Excel 파일 경로 처리
+        excel_file = project_root / request.excel_file_path
+        excel_file = excel_file.resolve()
+        
+        # 데이터베이스 파일 경로 처리
+        db_file = project_root / request.db_path
+        db_file = db_file.resolve()
+        
+        # 보안 검증: 프로젝트 디렉토리 내부인지 확인
+        if not str(excel_file).startswith(str(project_root.resolve())):
+            return JSONResponse(status_code=403, content={"error": "Access denied: Excel file must be within project directory"})
+        
+        if not str(db_file).startswith(str(project_root.resolve())):
+            return JSONResponse(status_code=403, content={"error": "Access denied: Database file must be within project directory"})
+        
+        # Excel 파일 존재 확인
+        if not excel_file.exists():
+            return JSONResponse(status_code=404, content={"error": f"Excel file not found: {request.excel_file_path}"})
+        
+        if not excel_file.is_file():
+            return JSONResponse(status_code=400, content={"error": f"Not a file: {request.excel_file_path}"})
+        
+        # Excel 파일 확장자 확인
+        if excel_file.suffix.lower() not in ['.xlsx', '.xls']:
+            return JSONResponse(status_code=400, content={"error": f"Not an Excel file: {request.excel_file_path}"})
+        
+        # 데이터베이스 디렉토리 생성 (필요한 경우)
+        db_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Excel 파일 읽기 (첫 번째 행은 헤더)
+        df = pd.read_excel(excel_file)
+        
+        if df.empty:
+            return JSONResponse(status_code=400, content={"error": "Excel file is empty"})
+        
+        # SQLite 데이터베이스 연결 및 데이터 삽입
+        conn = sqlite3.connect(str(db_file))
+        cursor = conn.cursor()
+        
+        inserted_count = 0
+        failed_count = 0
+        
+        # 각 행의 데이터를 데이터베이스에 삽입
+        for index, row in df.iterrows():
+            try:
+                # NaN 값을 None으로 변환
+                row_data = tuple(None if pd.isna(value) else value for value in row)
+                cursor.execute(request.insert_sql, row_data)
+                inserted_count += 1
+            except Exception as row_error:
+                logging.warning(f"Failed to insert row {index + 2}: {str(row_error)}")
+                failed_count += 1
+        
+        # 트랜잭션 커밋
+        conn.commit()
+        conn.close()
+        
+        return JSONResponse(content={
+            "type": "insert-excel",
+            "message": f"Excel data insertion completed. Inserted: {inserted_count}, Failed: {failed_count}",
+            "inserted_count": inserted_count,
+            "failed_count": failed_count,
+            "total_rows": len(df)
+        })
+        
+    except Exception as e:
+        logging.error(f"Failed to insert Excel data: {str(e)}")
+        return JSONResponse(status_code=500, content={"error": f"Failed to insert Excel data: {str(e)}"})
+
 
 if __name__ == '__main__':
     import uvicorn
