@@ -102,7 +102,6 @@ async def analyze_excel(request: Request, excel: UploadFile = File(None)):
         
         response = {
             'status': 'success',
-            'filename': filename,
             'columns': columns,
             'first_10_rows': result_data
         }
