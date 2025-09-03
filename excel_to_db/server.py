@@ -102,33 +102,36 @@ async def insert_excel(request: InsertExcelRequest) -> JSONResponse:
         # Excel 파일 경로 처리
         excel_file = project_root / request.excel_file_path
         excel_file = excel_file.resolve()
+        print(excel_file)
+        #excel_file = request.excel_file_path
         
         # 데이터베이스 파일 경로 처리
         db_file = project_root / request.db_path
         db_file = db_file.resolve()
         
         # 보안 검증: 프로젝트 디렉토리 내부인지 확인
-        if not str(excel_file).startswith(str(project_root.resolve())):
-            return JSONResponse(status_code=403, content={"error": "Access denied: Excel file must be within project directory"})
+        #if not str(excel_file).startswith(str(project_root.resolve())):
+        #    return JSONResponse(status_code=403, content={"error": "Access denied: Excel file must be within project directory"})
         
         if not str(db_file).startswith(str(project_root.resolve())):
             return JSONResponse(status_code=403, content={"error": "Access denied: Database file must be within project directory"})
         
         # Excel 파일 존재 확인
-        if not excel_file.exists():
-            return JSONResponse(status_code=404, content={"error": f"Excel file not found: {request.excel_file_path}"})
+        #if not excel_file.exists():
+        #    return JSONResponse(status_code=404, content={"error": f"Excel file not found: {request.excel_file_path}"})
         
-        if not excel_file.is_file():
-            return JSONResponse(status_code=400, content={"error": f"Not a file: {request.excel_file_path}"})
+        #if not excel_file.is_file():
+        #    return JSONResponse(status_code=400, content={"error": f"Not a file: {request.excel_file_path}"})
         
         # Excel 파일 확장자 확인
-        if excel_file.suffix.lower() not in ['.xlsx', '.xls']:
-            return JSONResponse(status_code=400, content={"error": f"Not an Excel file: {request.excel_file_path}"})
+        #if excel_file.suffix.lower() not in ['.xlsx', '.xls']:
+        #    return JSONResponse(status_code=400, content={"error": f"Not an Excel file: {request.excel_file_path}"})
         
         # 데이터베이스 디렉토리 생성 (필요한 경우)
         db_file.parent.mkdir(parents=True, exist_ok=True)
         
         # Excel 파일 읽기 (첫 번째 행은 헤더)
+        print(excel_file)
         df = pd.read_excel(excel_file)
         
         if df.empty:

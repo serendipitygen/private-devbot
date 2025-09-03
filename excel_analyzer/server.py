@@ -8,6 +8,7 @@ import json
 import os
 import tempfile
 from datetime import datetime
+from pathlib import Path
 
 app = FastAPI()
 logging.basicConfig(level=logging.INFO)
@@ -51,12 +52,17 @@ async def excel_modification(request: Request):
         first_3_rows = modified_df.head(3).to_dict('records')
         logging.info(f"First 3 rows of modified DataFrame: {first_3_rows}")
         
+        
+        project_root = Path(__file__).parent.parent / "docs" / "excel"
+        print(project_root)
+
         # 임시 위치에 수정된 Excel 파일 저장
-        temp_dir = tempfile.gettempdir()
+        #temp_dir = tempfile.gettempdir()
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         original_name = os.path.splitext(os.path.basename(file_path))[0]
         modified_filename = f"{original_name}_modified_{timestamp}.xlsx"
-        modified_file_path = os.path.join(temp_dir, modified_filename)
+        #modified_file_path = os.path.join(temp_dir, modified_filename)
+        modified_file_path = os.path.join(project_root, modified_filename)
         
         # Excel 파일로 저장 (헤더 없이)
         modified_df.to_excel(modified_file_path, index=False, header=False)
