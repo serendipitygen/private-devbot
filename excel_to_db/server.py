@@ -34,7 +34,9 @@ class InsertExcelRequest(BaseModel):
     insert_sql: str
     db_path: Optional[str] = "resources/data.db"
 
-
+class SaveSystemPromptRequest(BaseModel):
+    filename: str
+    prompt: str
 
 @app.get('/health')
 async def health_check():
@@ -170,6 +172,57 @@ async def insert_excel(request: InsertExcelRequest) -> JSONResponse:
     except Exception as e:
         logging.error(f"Failed to insert Excel data: {str(e)}")
         return JSONResponse(status_code=500, content={"error": f"Failed to insert Excel data: {str(e)}"})
+
+@app.post("/save_system_prompt")
+async def save_system_prompt(request: SaveSystemPromptRequest) -> JSONResponse:
+    """
+    시스템 프롬프트를 데이터베이스에 저장
+    filename이 이미 존재하면 업데이트, 없으면 새로 삽입
+    """
+    try:
+        # 현재 프로젝트 루트 경로
+        project_root = Path(__file__).parent.parent
+        db_file = project_root / "resources" / "data.db"
+        
+        # 데이터베이스 디렉토리 생성 (필요한 경우)
+        db_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        # SQLite 데이터베이스 연결
+        conn = sqlite3.connect(str(db_file))
+        cursor = conn.cursor()
+        
+        # SYSTEM_PROMPT 테이블 생성 (존재하지 않으면)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS SYSTEM_PROMPT (
+                filename TEXT PRIMARY KEY,
+                prompt TEXT NOT NULL
+            )
+        """)
+        
+        # UPSERT 로직: INSERT OR REPLACE 사용
+        cursor.execute("""
+            INSERT OR REPLACE INTO SYSTEM_PROMPT (filename, prompt)
+            VALUES (?, ?)
+        """, (request.filename, request.prompt))
+        
+        # 변경 사항 확인
+        is_update = cursor.rowcount > 0 and cursor.lastrowid is None
+        operation = "updated" if is_update else "inserted"
+        
+        # 트랜잭션 커밋
+        conn.commit()
+        conn.close()
+        
+        return JSONResponse(content={
+            "type": "save-system-prompt",
+            "message": f"System prompt {operation} successfully for filename: {request.filename}",
+            "filename": request.filename,
+            "operation": operation
+        })
+        
+    except Exception as e:
+        logging.error(f"Failed to save system prompt: {str(e)}")
+        return JSONResponse(status_code=500, content={"error": f"Failed to save system prompt: {str(e)}"})
 
 
 if __name__ == '__main__':
