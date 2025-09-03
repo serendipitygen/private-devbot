@@ -1,49 +1,22 @@
-from fastapi import FastAPI, Request, HTTPException, UploadFile, File
-from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-import pandas as pd
-import io
-import base64
-import logging
-import json
-import sqlite3
-from pathlib import Path
-from typing import Optional
-from fastapi import FastAPI, Request, HTTPException, UploadFile, File
-from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-import pandas as pd
-import io
-import base64
-import logging
-import json
-import sqlite3
-from pathlib import Path
-from typing import Optional
-from pathlib import Path
-from fastapi.responses import JSONResponse, PlainTextResponse
-from fastapi.staticfiles import StaticFiles
-import uuid
-import seaborn as sns
-import matplotlib.pyplot as plt
-import pandas as pd
-from fastapi import FastAPI, APIRouter, HTTPException, Query
-from pydantic import BaseModel
-import sqlite3
-from typing import List, Optional, Union
-from fastapi import FastAPI, Request, HTTPException, UploadFile, File
-from fastapi.responses import JSONResponse
-import pandas as pd
-import io
-import base64
-import logging
-import json
-import os
-import tempfile
 from datetime import datetime
+from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from pathlib import Path
+from pydantic import BaseModel
+from typing import List, Optional
+
+import base64
+import io
+import logging
+import matplotlib.pyplot as plt
+import os
+import pandas as pd
+import seaborn as sns
+import sqlite3
+import tempfile
+import uuid
 
 app = FastAPI()
 logging.basicConfig(level=logging.INFO)
@@ -56,6 +29,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/resources", StaticFiles(directory="resources"), name="resources")
+
+
+# --- Paths & DB --------------------------------------------------------------
+# 프로젝트 루트와 DB 경로를 한 곳에서만 정의/사용하도록 통일
+PROJECT_ROOT = Path(__file__).parent.parent.resolve()
+DATABASE_PATH = str((PROJECT_ROOT / "resources" / "data.db").resolve())
 
 
 # Request Body 모델
@@ -74,11 +55,6 @@ class SaveSystemPromptRequest(BaseModel):
     prompt: str
 
 
-@app.get('/health')
-async def health_check():
-    return JSONResponse(content={'status': 'healthy'})
-
-
 @app.post("/read_excel_description")
 async def read_excel_description(request: ExcelDescriptionRequest) -> JSONResponse:
     """
@@ -87,22 +63,21 @@ async def read_excel_description(request: ExcelDescriptionRequest) -> JSONRespon
     """
     try:
         # 현재 프로젝트 루트 경로
-        project_root = Path(__file__).parent.parent
-        excel_docs_dir = project_root / "docs" / "excel"
+        excel_docs_dir = PROJECT_ROOT / "docs" / "excel"
 
         # 파일명만 제공된 경우 기본 경로(docs/excel/) 사용
         if "/" not in request.description_file_path and "\\" not in request.description_file_path:
             target_file = excel_docs_dir / request.description_file_path
         else:
             # 전체 경로 제공된 경우
-            target_file = project_root / request.description_file_path
+            target_file = PROJECT_ROOT / request.description_file_path
 
         # 경로 정규화 및 보안 검증
         target_file = target_file.resolve()
-        project_root = project_root.resolve()
+        PROJECT_ROOT = PROJECT_ROOT.resolve()
 
         # 현재 프로젝트 디렉토리 내부인지 확인
-        if not str(target_file).startswith(str(project_root)):
+        if not str(target_file).startswith(str(PROJECT_ROOT)):
             return JSONResponse(status_code=403, content={"error": "Access denied: File must be within project directory"})
 
         # 파일 존재 확인
@@ -135,24 +110,21 @@ async def insert_excel(request: InsertExcelRequest) -> JSONResponse:
     첫 번째 행은 헤더로 간주하고 두 번째 행부터 데이터로 처리
     """
     try:
-        # 현재 프로젝트 루트 경로
-        project_root = Path(__file__).parent.parent
-
         # Excel 파일 경로 처리
-        excel_file = project_root / request.excel_file_path
+        excel_file = PROJECT_ROOT / request.excel_file_path
         excel_file = excel_file.resolve()
         print(excel_file)
         # excel_file = request.excel_file_path
 
         # 데이터베이스 파일 경로 처리
-        db_file = project_root / request.db_path
+        db_file = PROJECT_ROOT / request.db_path
         db_file = db_file.resolve()
 
         # 보안 검증: 프로젝트 디렉토리 내부인지 확인
         # if not str(excel_file).startswith(str(project_root.resolve())):
         #    return JSONResponse(status_code=403, content={"error": "Access denied: Excel file must be within project directory"})
 
-        if not str(db_file).startswith(str(project_root.resolve())):
+        if not str(db_file).startswith(str(PROJECT_ROOT.resolve())):
             return JSONResponse(status_code=403, content={"error": "Access denied: Database file must be within project directory"})
 
         # Excel 파일 존재 확인
@@ -220,9 +192,7 @@ async def save_system_prompt(request: SaveSystemPromptRequest) -> JSONResponse:
     filename이 이미 존재하면 업데이트, 없으면 새로 삽입
     """
     try:
-        # 현재 프로젝트 루트 경로
-        project_root = Path(__file__).parent.parent
-        db_file = project_root / "resources" / "data.db"
+        db_file = PROJECT_ROOT / "resources" / "data.db"
 
         # 데이터베이스 디렉토리 생성 (필요한 경우)
         db_file.parent.mkdir(parents=True, exist_ok=True)
@@ -306,8 +276,8 @@ async def excel_modification(request: Request):
         first_3_rows = modified_df.head(3).to_dict('records')
         logging.info(f"First 3 rows of modified DataFrame: {first_3_rows}")
 
-        project_root = Path(__file__).parent.parent / "docs" / "excel"
-        print(project_root)
+        excel_path = PROJECT_ROOT / "docs" / "excel"
+        print(excel_path)
 
         # 임시 위치에 수정된 Excel 파일 저장
         # temp_dir = tempfile.gettempdir()
@@ -315,7 +285,7 @@ async def excel_modification(request: Request):
         original_name = os.path.splitext(os.path.basename(file_path))[0]
         modified_filename = f"{original_name}_modified_{timestamp}.xlsx"
         # modified_file_path = os.path.join(temp_dir, modified_filename)
-        modified_file_path = os.path.join(project_root, modified_filename)
+        modified_file_path = os.path.join(excel_path, modified_filename)
 
         # Excel 파일로 저장 (헤더 없이)
         modified_df.to_excel(modified_file_path, index=False, header=False)
@@ -478,9 +448,6 @@ async def health_check():
     return JSONResponse(content={'status': 'healthy'})
 
 
-DATABASE_PATH = "resources/data.db"  # DB 경로 (상황에 맞게 수정 가능)
-
-
 class SQLRequest(BaseModel):
     sql: str
 
@@ -529,9 +496,6 @@ def get_schema():
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
-app.mount("/resources", StaticFiles(directory="resources"), name="resources")
 
 
 class ChartRequest(BaseModel):
