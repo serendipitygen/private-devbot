@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AX Challenge: DevBOT 엑셀 처리 성능 개선</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .presentation-container {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 5px;
+        }
+
+        .slide {
+            display: none;
+            width: 99.5%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 16px;
+            padding: 4px 6px;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28);
+            text-align: center;
+            animation: slideIn 0.6s ease-out;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .slide-content {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 140px);
+            max-height: 700px;
+            gap: 2px;
+        }
+
+        .slide-header {
+            flex-shrink: 0;
+            margin-bottom: 0px;
+        }
+
+        .slide-body {
+            flex: 1;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            overflow: hidden;
+        }
+
+        .slide-image {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            width: 65%;
+            max-height: 500px;
+            overflow: hidden;
+            padding: 0px;
+        }
+
+        .slide-text {
+            width: 35%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: hidden;
+            overflow-x: hidden;
+            padding: 0px;
+            min-width: 0;
+            font-size: 0.95rem;
+            line-height: 1.3;
+        }
+
+        /* 강제 축소: 오른쪽 텍스트 영역 내 모든 요소를 동일 배율로 축소 */
+        .slide-text h1,
+        .slide-text h2,
+        .slide-text h3,
+        .slide-text h4,
+        .slide-text h5,
+        .slide-text h6,
+        .slide-text p,
+        .slide-text li,
+        .slide-text span,
+        .slide-text strong,
+        .slide-text em,
+        .slide-text div {
+            font-size: 1em !important;
+            line-height: 1.15 !important;
+        }
+
+        /* 소제목(첫 줄) 강조 */
+        .slide-text > *:first-child {
+            font-size: 1.15rem !important;
+            font-weight: 700 !important;
+            line-height: 1.3 !important;
+            margin-bottom: 6px !important;
+        }
+
+        /* 리스트 마커 및 좌우 여백 최소화 */
+        .slide-text ul {
+            padding-left: 8px;
+            margin: 0;
+            column-count: 1 !important;
+            column-gap: 0 !important;
+        }
+
+        /* 이미지가 너무 작거나 없을 때를 위한 전체 폭 사용 */
+        .slide-content.full-width .slide-image {
+            max-width: 100%;
+        }
+
+        .slide-content.full-width .slide-body {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .slide-content.full-width .slide-text {
+            width: 100%;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slide h2 {
+            font-size: 0.85em;
+            color: #34495e;
+            margin-bottom: 2px;
+            position: relative;
+        }
+
+        .slide h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 1px;
+        }
+
+        .slide h3 {
+            font-size: 0.8rem;
+            color: #2c3e50;
+            margin-bottom: 1px;
+        }
+
+        .slide p {
+            font-size: 0.6rem;
+            line-height: 1.0;
+            color: #34495e;
+            margin-bottom: 1px;
+            word-wrap: break-word;
+            word-break: keep-all;
+        }
+
+        .slide ul {
+            text-align: left;
+            max-width: 100%;
+            margin: 0 auto;
+            column-count: 2;
+            column-gap: 15px;
+            column-fill: balance;
+        }
+
+        .slide li {
+            font-size: 0.55rem;
+            line-height: 1.0;
+            color: #34495e;
+            margin-bottom: 0px;
+            padding-left: 0px;
+            position: relative;
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+            break-inside: avoid;
+            page-break-inside: avoid;
+            word-wrap: break-word;
+            word-break: keep-all;
+        }
+
+        .slide img {
+            max-width: 100%;
+            max-height: 400px;
+            height: auto;
+            width: auto;
+            margin: 2px 0;
+            border-radius: 15px;
+            animation: zoomIn 0.8s ease-out;
+            object-fit: contain;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #ffeaa7 0%, #fab1a0 100%);
+            padding: 5px 15px;
+            border-radius: 25px;
+            color: #2d3436;
+            font-weight: bold;
+            display: inline-block;
+            margin: 5px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .stat-number {
+            font-size: 1rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0px;
+        }
+
+        .stat-label {
+            font-size: 0.6rem;
+            opacity: 0.9;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            z-index: 1000;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .problem-list li {
+            animation-delay: 0.1s;
+        }
+
+        .problem-list li:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .problem-list li:nth-child(3) {
+            animation-delay: 0.5s;
+        }
+
+        .problem-list li:nth-child(4) {
+            animation-delay: 0.7s;
+        }
+
+        .problem-list li:nth-child(5) {
+            animation-delay: 0.9s;
+        }
+
+        .solution-flow {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .flow-item {
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px;
+            min-width: 150px;
+            animation: bounceIn 1s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .arrow {
+            font-size: 2em;
+            color: #667eea;
+            margin: 0 20px;
+        }
+
+        .title-slide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .title-slide h1 {
+            color: white;
+            -webkit-text-fill-color: white;
+            background: none;
+            font-size: 3.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.8em;
+            opacity: 0.9;
+            margin-top: 30px;
+            animation: fadeIn 2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .comparison-card {
+            padding: 20px;
+            border-radius: 15px;
+            text-align: left;
+        }
+
+        .comparison-card h3 {
+            font-size: 0.65rem;
+            margin-bottom: 0px;
+        }
+
+        .comparison-card p {
+            font-size: 0.5rem;
+            margin-bottom: 0px;
+            line-height: 1.0;
+        }
+
+        .comparison-card li {
+            font-size: 0.5rem;
+            margin-bottom: 0px;
+            line-height: 1.0;
+        }
+
+        .before-card {
+            background: linear-gradient(135deg, #ff7675 0%, #e17055 100%);
+            color: white;
+        }
+
+        .after-card {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            color: white;
+        }
+
+        .help-text {
+            position: fixed;
+            bottom: 80px;
+            left: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            opacity: 0.7;
+            z-index: 1000;
+        }
+
+        /* 프로젝터 최적화 - 큰 화면 전용 */
+        @media (min-width: 1400px) {
+            .slide {
+                padding: 80px;
+                max-width: 1400px;
+            }
+            
+            .slide h1 {
+                font-size: 4.5em;
+            }
+            
+            .slide h2 {
+                font-size: 3em;
+            }
+            
+            .slide li {
+                font-size: 1.4em;
+                margin-bottom: 18px;
+            }
+            
+            .slide p {
+                font-size: 1.5em;
+            }
+            
+            .slide ul {
+                column-gap: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="slide-counter" id="slideCounter">1 / 10</div>
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="previousSlide()">◀ 이전</button>
+        <button class="nav-btn" id="nextBtn" onclick="nextSlide()">다음 ▶</button>
+    </div>
+    <div class="help-text">
+        키보드: ← → 방향키, 스페이스바, ESC
+    </div>
+
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active title-slide">
+            <h1>AX Challenge</h1>
+            <div class="subtitle">DevBOT 엑셀 처리 성능 개선</div>
+            <p style="margin-top: 50px; font-size: 1.3em;">VD AI 기반 지식 검색 챗봇의 혁신적 개선</p>
+        </div>
+
+        <!-- Slide 2: Problem Definition -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <h2>🚨 문제 정의</h2>
+                </div>
+                <div class="slide-body">
+                    <div class="slide-image">
+                        <img src="./excel_processing_issue.svg" alt="엑셀 처리 이슈 요약">
+                    </div>
+                    <div class="slide-text">
+                        <p>현재 DevBOT의 엑셀 질의응답에서 발생하는 <span class="highlight">심각한 한계점들</span></p>
+                        <ul class="problem-list">
+                            <li><strong>엑셀 데이터 전체를 보고 구해야 하는 값:</strong> 최대 매출금액, 최대 매출 상품</li>
+                            <li><strong>계산이 필요한 요청:</strong> 25년 3월 대비 25년 4월 매출 금액 차, A 제품의 매출액 25년 합</li>
+                            <li><strong>엑셀에 없는 데이터의 예측:</strong> 25년 10월 매출액 예측 (현재 25년 9월)</li>
+                            <li><strong>차트 생성:</strong> 24년, 25년 매출액 차트 분석</li>
+                            <li><strong>이상치 분석:</strong> 25년 매출 목표 대비 실적 분석 후 이상치 발견</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Root Cause Analysis -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <h2>🔍 원인 분석</h2>
+                </div>
+                <div class="slide-body">
+                    <div class="slide-image">
+                        <img src="./excel_fail_reason.svg" alt="엑셀 처리 문제 원인">
+                    </div>
+                    <div class="slide-text">
+                        <p>왜 이런 문제가 발생할까요?</p>
+                        <ul>
+                            <li><span class="highlight">LLM 토큰 길이 한계</span>로 엑셀 파일은 청크로 쪼개어서 저장되어야 함</li>
+                            <li>검색 시 하나의 엑셀 파일의 <span class="highlight">모든 청크 검색이 보장 안됨</span></li>
+                            <li>여러 줄의 제목이나 병합된 그룹핑 데이터의 의미를 정확히 인식 못함</li>
+                            <li>사용자 질문과 컬럼명이 일치하지 않는 경우 검색이 안됨</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Solution Overview -->
+        <div class="slide">
+            <div class="slide-content full-width">
+                <div class="slide-header">
+                    <h2>💡 개선 방안</h2>
+                </div>
+                <div class="slide-body" style="align-items:center; justify-content:center;">
+                    <div class="slide-image" style="width:100%;">
+                        <img src="./solution.svg" alt="개선 방안 요약" style="max-height:460px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Excel to DB Process (Images only, side-by-side) -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <h2>📈 엑셀 데이터 등록 프로세스</h2>
+                </div>
+                <div class="slide-body" style="align-items: center;">
+                    <div class="slide-image" style="width: 50%; padding: 0 10px;">
+                        <img src="./excel_to_db.svg" alt="엑셀 데이터 등록" style="max-height: 420px;">
+                    </div>
+                    <div class="slide-image" style="width: 50%; padding: 0 10px;">
+                        <img src="./n8n_excel_to_db.png" alt="엑셀 데이터 등록 n8n" style="max-height: 420px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Query Process (Images only, side-by-side) -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <h2>💬 엑셀 기반 질의응답</h2>
+                </div>
+                <div class="slide-body" style="align-items: center;">
+                    <div class="slide-image" style="width: 50%; padding: 0 10px;">
+                        <img src="./nl2sql_chat.svg" alt="엑셀 기반 질의응답" style="max-height: 420px;">
+                    </div>
+                    <div class="slide-image" style="width: 50%; padding: 0 10px;">
+                        <img src="./n8n_excel_chat.png" alt="엑셀 기반 질의응답 n8n" style="max-height: 420px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Quantitative Results (removed per request) -->
+
+        <!-- Slide 8: Qualitative Results (Left image + title only) -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <h2>🎯 정성적 개선 결과</h2>
+                </div>
+                <div class="slide-body" style="align-items:center;">
+                    <div class="slide-image" style="width: 50%; padding: 0 10px;">
+                        <img src="./result.svg" alt="개선 결과" style="max-height: 460px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Future Plans (image centered only) -->
+        <div class="slide">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <h2>🚀 추후 계획</h2>
+                </div>
+                <div class="slide-body" style="align-items:center; justify-content:center;">
+                    <div class="slide-image" style="width:100%;">
+                        <img src="./future_plan.svg" alt="추후 계획" style="max-height:460px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Thank You -->
+        <div class="slide title-slide">
+            <h1>감사합니다</h1>
+            <div class="subtitle">DevBOT의 새로운 도약을 함께하세요</div>
+            <p style="margin-top: 50px; font-size: 1.5em;">🎉 질문과 토론을 환영합니다 🎉</p>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        function updateSlide() {
+            // Hide all slides
+            slides.forEach(slide => slide.classList.remove('active'));
+            
+            // Show current slide
+            slides[currentSlide].classList.add('active');
+            
+            // Update progress bar
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            progressBar.style.width = progress + '%';
+            
+            // Update slide counter
+            slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+            
+            // Update navigation buttons
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+            
+            // Animate list items
+            const currentSlideElement = slides[currentSlide];
+            const listItems = currentSlideElement.querySelectorAll('li');
+            listItems.forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.2}s`;
+                item.style.opacity = '0';
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                }, index * 200);
+            });
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        function goToSlide(index) {
+            if (index >= 0 && index < totalSlides) {
+                currentSlide = index;
+                updateSlide();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowRight':
+                case ' ':
+                    e.preventDefault();
+                    nextSlide();
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    previousSlide();
+                    break;
+                case 'Escape':
+                    goToSlide(0);
+                    break;
+                case 'Home':
+                    goToSlide(0);
+                    break;
+                case 'End':
+                    goToSlide(totalSlides - 1);
+                    break;
+            }
+        });
+
+        // 프로젝터 전용 - 터치 기능 제거
+
+        // Initialize
+        updateSlide();
+
+        // Auto-hide help text after 5 seconds
+        setTimeout(() => {
+            const helpText = document.querySelector('.help-text');
+            helpText.style.transition = 'opacity 1s';
+            helpText.style.opacity = '0';
+        }, 5000);
+    </script>
+</body>
+</html>
