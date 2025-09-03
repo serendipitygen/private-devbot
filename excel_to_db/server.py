@@ -34,6 +34,7 @@ class InsertExcelRequest(BaseModel):
     insert_sql: str
     db_path: Optional[str] = "resources/data.db"
 
+
 class SaveSystemPromptRequest(BaseModel):
     filename: str
     prompt: str
@@ -172,6 +173,7 @@ async def insert_excel(request: InsertExcelRequest) -> JSONResponse:
     except Exception as e:
         logging.error(f"Failed to insert Excel data: {str(e)}")
         return JSONResponse(status_code=500, content={"error": f"Failed to insert Excel data: {str(e)}"})
+
 
 @app.post("/save_system_prompt")
 async def save_system_prompt(request: SaveSystemPromptRequest) -> JSONResponse:
