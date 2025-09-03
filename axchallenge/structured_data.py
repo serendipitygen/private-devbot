@@ -56,31 +56,13 @@ def get_schema():
             cursor = conn.cursor()
 
             # 테이블 코멘트 조회
-            cursor.execute("SELECT * FROM table_comments;")
+            cursor.execute("SELECT * FROM system_prompt;")
             schemas = []
             for row in cursor.fetchall():
                 schemas.append({
-                    "table_name": row[0],
-                    "table_comment": row[1]
+                    "filename": row[0],
+                    "prompt": row[1]
                 })
-
-            for table in schemas:
-                # 컬럼 정보 조회
-                table_name = table["table_name"]
-                cursor.execute(
-                    f"SELECT * FROM column_comments where table_name=\"{table_name}\";")
-                columns_info = cursor.fetchall()
-
-                # table_info 결과: cid, name, type, notnull, dflt_value, pk
-                columns = [
-                    {
-                        "column_name": col[1],
-                        "column_comment": col[2]
-                    }
-                    for col in columns_info
-                ]
-                table["columns"] = columns
-
             return {"type": "schema", "message": schemas}
 
     except Exception as e:
@@ -112,10 +94,10 @@ def make_chart(request: ChartRequest):
 
             # 4. 라인 차트 그리기
             colors = ["#4EA6E1", "#2EC146", "#AD2EC1", "#C1422E"]
-            for idx, y_column in enumerate(y_column_names):
-
+            for idx, y_column in enumerate(y_column_names[:4]):
+                print(y_column)
                 sns.lineplot(x=request.x_column_name,
-                             y=y_column,
+                             y=y_column.strip(),
                              data=df, marker="o",
                              linewidth=2.5,
                              label=y_column, color=colors[idx])
