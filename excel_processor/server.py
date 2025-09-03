@@ -468,8 +468,8 @@ def execute_sql(request: SQLRequest):
                 rows = cursor.fetchall()
                 results = [dict(zip(columns, row)) for row in rows]
                 return {"type": "select", "message": results}
-            elif sql.lower().startswith("delete"):
-                return {"type": "delete", "message": "DELETE is not allowed."}
+            #elif sql.lower().startswith("delete"):
+            #    return {"type": "delete", "message": "DELETE is not allowed."}
             else:
                 cursor.execute(sql)
                 conn.commit()
@@ -543,6 +543,18 @@ def make_chart(request: ChartRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+class ReportRequest(BaseModel):
+    html: str
+
+@app.post("/report-html")
+def save_report_html(request: ReportRequest):
+    file_path = f"resources/report/{uuid.uuid4()}.html"
+    report_path = PROJECT_ROOT / file_path
+    report_path = report_path.resolve()
+    with open(report_path, "w") as f:
+        f.write(request.html)
+    return {"type": "report", "message": f"https://fantastic-space-potato-r4r4qqjq976fjjp-8080.app.github.dev/{file_path}"}
 
 # --- dirty excel 처리용 (이미지, 차트 첨부 시)
 
